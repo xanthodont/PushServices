@@ -23,7 +23,7 @@
   </dependencies>
   
   <build>
-  	<finalName>mqtt-parser</finalName>
-  </build>
+  	
   
+  </build>
 </project>

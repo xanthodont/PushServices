@@ -124,6 +124,8 @@ public class MQTTClientService {
             ioSession = future.getSession();
         } catch (RuntimeIoException e) {
             //LOG.debug("Failed to connect, retry " + retries + " of (" + m_connectRetries + ")", e);
+        	e.printStackTrace();
+        	throw new ConnectionException("Failed to connect");
         }
 
         connectBarrier = new CountDownLatch(1);
