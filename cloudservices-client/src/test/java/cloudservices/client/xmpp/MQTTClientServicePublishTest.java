@@ -28,26 +28,25 @@ public class MQTTClientServicePublishTest {
 		final MQTTClientService client = new MQTTClientService(config);
 		client.connect();
 		
-		final String topic = "cmm";
+		final String topic = "common";
 		new Thread(new Runnable() {
 			public void run() {
 				// TODO Auto-generated method stub
 				int i = 0;
 				while (i < 1) {
-					try {
+					try {/*
 						File file = new File("D://t.txt");
 						FileInputStream input = new FileInputStream(file);  
 				        BufferedInputStream inBuff=new BufferedInputStream(input);  
-				        /*
-						FileOutputStream output = new FileOutputStream(file);  
-				        BufferedOutputStream outBuff=new BufferedOutputStream(output);  */
+				        
 				        byte[] b = new byte[1024 * 1];  
 				        int len;  
 				        while ((len =inBuff.read(b)) != -1) {  
 				        	client.publish(topic, b);
 				            //outBuff.write(b, 0, len);  
-				        }  
-				        b = "中文".getBytes("UTF-8");
+				        }
+				        */  
+				        byte[] b = "abcdefg".getBytes("UTF-8");
 						client.publish(topic, b);
 						Thread.sleep(2000);
 					} catch (PublishException e) {
@@ -59,10 +58,7 @@ public class MQTTClientServicePublishTest {
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
-					} catch (FileNotFoundException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (IOException e) {
+					}catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					} finally {
@@ -74,5 +70,5 @@ public class MQTTClientServicePublishTest {
 			}
 		}).start();
 	}
-
+	
 }

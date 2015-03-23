@@ -5,9 +5,9 @@ public interface IClientService {
 	
 	void startService();
 	
-	void shutdownService();
+	void shutdown();
 	
-	void subscribe();
+	void sendMessage();
 	
-	void publish();
+	void receive();
 }

@@ -59,7 +59,7 @@ public class MQTTClientService {
 	private String clientID;
 	private static final long CONNECT_TIMEOUT = 3 * 1000L; // 3 seconds
     private static final long SUBACK_TIMEOUT = 4 * 1000L;
-    private static final int KEEPALIVE_SECS = 3;
+    private static final int KEEPALIVE_SECS = 60;
     final static int RETRIES_QOS_GT0 = 3;
     
     private ScheduledFuture pingerHandler;
@@ -112,7 +112,7 @@ public class MQTTClientService {
     }
 	
 	public void connect() throws MQTTException {
-        connect(true);
+		connect(true);
     }
     
     
@@ -125,13 +125,16 @@ public class MQTTClientService {
         } catch (RuntimeIoException e) {
             //LOG.debug("Failed to connect, retry " + retries + " of (" + m_connectRetries + ")", e);
         	e.printStackTrace();
-        	throw new ConnectionException("Failed to connect");
+        	throw new ConnectionException("socket error! can't connect to server -- " + 
+        					String.format("%s:%d", config.getHost(), config.getPort()));
         }
 
         connectBarrier = new CountDownLatch(1);
 
         //send a message over the session
         ConnectMessage connMsg = new ConnectMessage();
+        connMsg.setUsername(config.getUsername());
+        connMsg.setPassword(config.getPassword());
         connMsg.setKeepAlive(KEEPALIVE_SECS);
         if (clientID == null) {
             clientID = generateClientID();

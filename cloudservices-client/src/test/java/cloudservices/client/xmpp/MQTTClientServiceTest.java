@@ -11,13 +11,14 @@ public class MQTTClientServiceTest {
 		// TODO Auto-generated method stub
 		ClientConfiguration config = new ClientConfiguration("172.21.4.64", MQTT_PORT);
 		config.setResourceName("android");
-		config.setUsername("12345678901234");
+		config.setUsername("1234567890123");
+		
 		
 		MQTTClientService client = new MQTTClientService(config);
 		client.connect();
 		
 		String topic = "cmm/"+config.getUsername();
-		client.subscribe("cmm", new IPublishCallback() {
+		client.subscribe("common", new IPublishCallback() {
 			public void published(String topic, byte[] message) {
 				// TODO Auto-generated method stub
 				System.out.printf("cmm Receive message:%s\n", new String(message));

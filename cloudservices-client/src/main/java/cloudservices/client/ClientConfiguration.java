@@ -27,7 +27,13 @@ public class ClientConfiguration {
 	private String model;
 	private String name;
 	
-	private int numberOfSchedulerThread;
+	/** 调试模式
+	 *  true 表示开启调试模式，程序输出日志信息
+	 *  false 表示调试模式关闭状态。默认为false 
+	 */
+	private boolean debugMode;
+	
+	private int numberOfSchedulerThread = 1;
 	
 	public ClientConfiguration(String host, int port) {
 		this.host = host;
