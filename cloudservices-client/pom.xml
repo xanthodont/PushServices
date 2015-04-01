@@ -8,17 +8,16 @@
   <artifactId>cloudservices-client</artifactId>
   
   <dependencies>
-  	<dependency>
-    	<groupId>org.apache.mina</groupId> 
-        <artifactId>mina-core</artifactId>
-        <version>${project.mina.version}</version> 
-    </dependency>
-    
-    <dependency> 
-		<groupId>com.konka</groupId>  
-        <artifactId>mqtt-parser</artifactId>  
-        <version>${project.version}</version>  
-    </dependency>
+    <dependency>
+		<groupId>org.slf4j</groupId>
+		<artifactId>slf4j-api</artifactId>
+		<version>1.7.5</version>
+	</dependency>	
+    <dependency>
+	  	<groupId>org.fusesource.mqtt-client</groupId>
+	  	<artifactId>mqtt-client</artifactId>
+	  	<version>1.10</version>
+	</dependency>
   </dependencies>
   
   <build>

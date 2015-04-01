@@ -1,13 +1,15 @@
 package cloudservices.client;
 
+import cloudservices.client.packets.Packet;
+
 public interface IClientService {
-	void config();
+	void config(ClientConfiguration config);
 	
-	void startService();
+	void startup();
 	
 	void shutdown();
 	
-	void sendMessage();
+	void sendPacket(Packet packet);
 	
 	void receive();
 }
