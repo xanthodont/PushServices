@@ -1,0 +1,58 @@
+<!DOCTYPE web-app PUBLIC
+ "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+ "http://java.sun.com/dtd/web-app_2_3.dtd" >
+
+<web-app>
+  <display-name>Archetype Created Web Application</display-name>
+  
+  <!-- spring配置 -->
+  <context-param> 
+  	<param-name>contextConfigLocation</param-name>
+  	<param-value>classpath:app.xml</param-value>
+  </context-param>
+  
+  <listener>  
+    <listener-class>  
+        org.springframework.web.context.ContextLoaderListener  
+    </listener-class>  
+  </listener>
+  <!-- Spring Mvc 配置 --> 
+  <servlet>
+	<servlet-name>spring</servlet-name>
+    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+	<load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>spring</servlet-name>
+    <url-pattern>/*</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+      <description></description>
+      <servlet-name>mqttServlet</servlet-name>
+      <init-param>
+  		<param-name>port</param-name>
+  		<param-value>1883</param-value>
+  	  </init-param>
+      <servlet-class>request.MqttServlet</servlet-class>
+      <load-on-startup>1</load-on-startup>
+  </servlet>
+  
+  <servlet>
+	<servlet-name>sendMessageServlet</servlet-name>
+    <servlet-class>request.SendServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>sendMessageServlet</servlet-name>
+    <url-pattern>/api/send</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+	<servlet-name>receiveMessageServlet</servlet-name>
+    <servlet-class>request.ReceiveServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>receiveMessageServlet</servlet-name>
+    <url-pattern>/api/receive</url-pattern>
+  </servlet-mapping>
+</web-app>
