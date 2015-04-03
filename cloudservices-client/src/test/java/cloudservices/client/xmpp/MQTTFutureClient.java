@@ -20,7 +20,7 @@ public class MQTTFutureClient {
     public  static Topic[] topics = {  
                     new Topic("china/beijing", QoS.EXACTLY_ONCE),  
                     new Topic("china/tianjin", QoS.AT_LEAST_ONCE),  
-                    new Topic("common", QoS.AT_MOST_ONCE)};  
+                    new Topic("common/admin", QoS.AT_MOST_ONCE)};  
     public final  static long RECONNECTION_ATTEMPT_MAX=6;  
     public final  static long RECONNECTION_DELAY=2000;  
       

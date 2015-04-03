@@ -59,6 +59,9 @@ public class ClientConfiguration {
 	private String model;
 	private String name;
 	
+	/** 连接超时时间 */
+	private long connectTimeout = 20L;
+	
 	/** 调试模式
 	 *  true 表示开启调试模式，程序输出日志信息
 	 *  false 表示调试模式关闭状态。默认为false 
@@ -247,6 +250,16 @@ public class ClientConfiguration {
 
 	public void setReconnectBackOffMultiplier(double reconnectBackOffMultiplier) {
 		this.reconnectBackOffMultiplier = reconnectBackOffMultiplier;
+	}
+
+
+	public long getConnectTimeout() {
+		return connectTimeout;
+	}
+
+
+	public void setConnectTimeout(long connectTimeout) {
+		this.connectTimeout = connectTimeout;
 	}
 	
 	

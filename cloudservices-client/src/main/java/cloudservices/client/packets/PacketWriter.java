@@ -46,7 +46,7 @@ public class PacketWriter {
             try {
                 while (!queue.isEmpty()) {
                     Packet packet = queue.remove();
-                    //writer.write(packet.toXML());
+                    client.getActualClient().send(packet);
                 }
                 //writer.flush();
             }
@@ -75,6 +75,7 @@ public class PacketWriter {
             }
         }
         catch (Exception ioe) {
+        	ioe.printStackTrace();
             // The exception can be ignored if the the connection is 'done'
             // or if the it was caused because the socket got closed
         	/*

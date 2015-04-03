@@ -1,5 +1,7 @@
 package cloudservices.client.packets;
 
+import java.nio.ByteBuffer;
+
 public class Packet {
 	
 	protected int packetType;
@@ -14,6 +16,16 @@ public class Packet {
 		this.packetType = packet.packetType;
 		this.bytes = packet.bytes;
 	}*/
+	
+	public static Packet parse(ByteBuffer buffer) {
+		Packet packet = new Packet();
+		int type = buffer.getInt();
+		packet.setPacketType(type);
+		byte[] remain = new byte[buffer.remaining()];
+		buffer.get(remain);
+		packet.setBytes(remain);
+		return packet;
+	}
 	
 	public void setBytes(byte[] bytes) {
 		this.bytes = bytes;
@@ -41,5 +53,26 @@ public class Packet {
 	
 	public byte[] toByteArray() {
 		return null;
+	}
+	
+	private String decodeType(int packetType) {
+		switch (packetType) {
+		case 0:
+			return "TEXT"; 
+		case 1:
+			return "FILE";
+		case 2:
+			return "HTTP";
+		case 3: 
+			return "ACK";
+		default: 
+			return "UNDEFINED";
+		}
+	
+	}
+	
+	@Override 
+	public String toString() {
+		return String.format("type: %s, content: %s", packetType, new String(bytes)).toString(); 
 	}
 }

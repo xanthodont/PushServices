@@ -72,6 +72,7 @@ public class ClientService {
 	
 	public void config(ClientConfiguration config) throws ConfigException {
 		/** 根据配置信息初始化相应的类 */
+		this.config = config;
 		switch (config.getConnectType()) {
 		case 1: // 短连接
 			httpClient.config(config);

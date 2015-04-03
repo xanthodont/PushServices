@@ -99,6 +99,8 @@ public class PacketReader {
     public void putPacket(Packet packet) {
     	if (!done) {
             try {
+            	// packet_log 接收到消息
+            	System.out.printf("Packet: %s\n", packet);
                 queue.put(packet);
             }
             catch (InterruptedException ie) {

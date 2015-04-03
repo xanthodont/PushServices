@@ -183,7 +183,7 @@ public class MQTTCallbackClient {
 					tp.setMessageId((short) 101);
 					tp.setBytes("vvv".getBytes());
 					
-					callbackConnection.publish("china/shenzhen", tp.toArrayBytes(),
+					callbackConnection.publish("china/shenzhen", tp.toByteArray(),
 							QoS.EXACTLY_ONCE, true, new Callback<Void>() {
 								public void onSuccess(Void v) {
 									System.out.println("===========消息发布成功============");
@@ -203,7 +203,7 @@ public class MQTTCallbackClient {
 				tp.setMessageId((short) 101);
 				tp.setBytes("vvv".getBytes());
 				//callbackConnection.
-				callbackConnection.publish("common", tp.toArrayBytes(), QoS.AT_LEAST_ONCE, false, null);
+				callbackConnection.publish("common", tp.toByteArray(), QoS.AT_LEAST_ONCE, false, null);
 				Thread.sleep(3000);
             }  
 

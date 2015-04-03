@@ -47,7 +47,7 @@ public class MQTTClientService implements ISender {
 	private volatile boolean done = false;
 	
 	private Topic[] subscribeTopics;
-	private String publicTopic;
+	private String publicTopic = "common";
 	
 	CountDownLatch connLatch = new CountDownLatch(2);
 	volatile boolean connected = false;
@@ -91,11 +91,15 @@ public class MQTTClientService implements ISender {
         mqtt.setUserName(config.getUsername());
         mqtt.setPassword(config.getPassword());
         
+        
         if (StringUtil.isEmpty(config.getTopic())) throw new ConfigException("未配置主题信息");
         subscribeTopics = new Topic[2];
         subscribeTopics[0] = new Topic(config.getTopic(), QoS.AT_LEAST_ONCE);
         subscribeTopics[1] = new Topic(String.format("%s/%s", config.getTopic(), config.getUsername()), QoS.AT_LEAST_ONCE);
-        
+        publicTopic = String.format("%s/admin", config.getTopic());
+        // 设置遗嘱消息
+        mqtt.setWillTopic(publicTopic);
+        mqtt.setWillMessage("xxx");
         
         mqtt.setTracer(new MqttTracer(this));
         
@@ -143,7 +147,7 @@ public class MQTTClientService implements ISender {
 			@Override
 			public void onSuccess(Void value) {
 				// TODO Auto-generated method stub
-				System.out.println("connect success");
+				//System.out.println("connect success");
 				connected = true;
 				connLatch.countDown();
 				// 开始订阅主题
@@ -177,19 +181,23 @@ public class MQTTClientService implements ISender {
 		});
 		
 		try {
-			connLatch.await(10L, TimeUnit.SECONDS);  // 等待10秒
-			if (!connected) throw new ConnectException("连接服务器失败");
-			if (!subscribed) throw new ConnectException("订阅主题失败");
-			
+			connLatch.await(clientService.getConfiguration().getConnectTimeout(), TimeUnit.SECONDS);  // 连接等待10秒
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}  
+		} finally {
+			if (!connected) throw new ConnectException("连接服务器失败");
+			if (!subscribed) throw new ConnectException("订阅主题失败");
+		}
 	}
-	
 	
 	@Override
 	public void send(Packet packet) {
+		// TODO Auto-generated method stub
+		send(packet, publicTopic);
+	}
+	
+	public void send(Packet packet, String publicTopic) {
 		// TODO Auto-generated method stub
 		connection.publish(publicTopic, packet.toByteArray(), QoS.AT_LEAST_ONCE, false, null);
 	}

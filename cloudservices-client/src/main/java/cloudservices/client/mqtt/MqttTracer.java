@@ -40,13 +40,7 @@ public class MqttTracer extends Tracer{
 	private Packet parsePacketByPublish(PUBLISH publish) {
 		// TODO Auto-generated method stub
 		ByteBuffer buffer = publish.payload().toByteBuffer();
-		int type = buffer.getInt();
-		Packet packet = new Packet();
-		//packet.setMessageId(publish.messageId());
-		packet.setPacketType(type);
-		byte[] remain = new byte[buffer.remaining()];
-		buffer.get(remain);
-		packet.setBytes(remain);
+		Packet packet = Packet.parse(buffer);
 		return packet;
 	}
 
