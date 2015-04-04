@@ -143,7 +143,7 @@ public class MQTTLoggingFilter extends LoggingFilter {
                 log.info(message, param);
                 return;
             case WARN:
-                log.warn(message, param);
+                //log.warn(message, param);
                 return;
             case ERROR:
                 log.error(message, param);
