@@ -1,0 +1,22 @@
+/* Add additional stylesheets below
+-------------------------------------------------- */
+/* fixed brand */
+.navbar .brand {
+  display: block;
+  float: left;
+  padding: 10px 20px 10px;
+  margin-left: -20px;
+  _margin-left: -10px;
+  font-size: 20px;
+  font-weight: 200;
+  color: #777777;
+  text-shadow: 0 1px 0 #ffffff;
+}
+
+.navbar .brand:hover {
+  text-decoration: none;
+}
+
+.navbar .container-fluid .brand {
+  _margin-left: -10px;
+}

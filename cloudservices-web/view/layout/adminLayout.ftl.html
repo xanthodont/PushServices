@@ -1,0 +1,150 @@
+<#function i18n key>
+	<#return '${key}'> 
+</#function> 
+<#macro header title='cloudservices'>
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf-8">
+    <title>
+		${title} -
+    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <base href="/cloudservices-web/" />  
+  	<!-- Bootstrap -->
+    <!-- <link href="assets/bootstrap/css/bootstrap.css" rel="stylesheet"> -->
+	<link href="assets/bootstrap/css/bootstrap-theme.min.css" rel="stylesheet">
+	<link href="assets/media/css/glyphicons.css" rel="stylesheet" />
+	<!-- begin media core -->
+	<link href="assets/media/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+	<link href="assets/media/css/bootstrap-responsive.min.css" rel="stylesheet" type="text/css"/>
+	<link href="assets/media/css/bootstrap-fileupload.css" rel="stylesheet" type="text/css" />
+	<link href="assets/media/css/jquery-ui.css" rel="stylesheet" type="text/css"/>
+	<link href="assets/media/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
+	<link href="assets/media/css/style-metro.css" rel="stylesheet" type="text/css"/>
+	<link href="assets/media/css/style.css" rel="stylesheet" type="text/css"/>
+	<link href="assets/media/css/style-responsive.css" rel="stylesheet" type="text/css"/>
+	<link href="assets/media/css/default.css" rel="stylesheet" type="text/css" id="style_color"/>
+	<link href="assets/media/css/uniform.default.css" rel="stylesheet" type="text/css"/>
+	<!-- end media core -->
+	
+	<!--[if lte IE 6]>
+  	<link rel="stylesheet" type="text/css" href="assets/bsie/css/bootstrap-ie6.css">
+  	<![endif]-->
+  	<!--[if lte IE 7]>
+  	<link rel="stylesheet" type="text/css" href="assets/bsie/css/ie.css">
+  	<![endif]-->
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="assets/bsie/js/html5shiv.min.js"></script>
+      <script src="assets/media/js/respond.min.js"></script>
+      <script src="assets/media/js/excanvas.min.js"></script>
+    <![endif]-->
+    
+    <!-- BEGIN PAGE LEVEL STYLES --> 
+	<link href="assets/media/css/jquery.gritter.css" rel="stylesheet" type="text/css"/>
+	<link href="assets/media/css/daterangepicker.css" rel="stylesheet" type="text/css" />
+	<link href="assets/media/css/fullcalendar.css" rel="stylesheet" type="text/css"/>
+	<link href="assets/media/css/jqvmap.css" rel="stylesheet" type="text/css" media="screen"/>
+	<link href="assets/media/css/jquery.easy-pie-chart.css" rel="stylesheet" type="text/css" media="screen"/>
+	
+    <link type="text/css" href="assets/media/css/select2_metro.css" rel="stylesheet" />
+	<link type="text/css" href="assets/media/css/chosen.css" rel="stylesheet" />
+	<!-- END PAGE LEVEL STYLES --> 
+	<#nested/>
+  </head>
+</#macro>	
+
+<#macro content htitle='' hdescription=''>
+<body class="page-header-fixed">
+	
+    <#include "header.ftl.html"/> 
+    
+    <div class="page-container">
+    	<#include "navigation.ftl.html"/> 
+	    
+		<div class="page-content">
+			<div class="container-fluid">
+				<div class="row-fluid">
+					<div class="span12">
+						<h3 class="page-title">
+							<small></small> 
+						</h3>
+					</div>
+					
+					<#nested/>
+					
+				</div>
+			</div>
+		</div>
+    </div>
+
+    <#include "footer.ftl.html"/>
+</#macro>	    
+
+<#macro footer>  
+	<script type="text/javascript" src="assets/js/jquery.min.js"></script>
+    <!-- <script type="text/javascript" src="assets/bootstrap/js/bootstrap.min.js"></script> -->
+    <!--[if lte IE 6]>
+  	<script type="text/javascript" src="assets/bsie/js/bootstrap-ie.js"></script>
+  	<![endif]-->
+  	<script src="assets/media/js/jquery-migrate-1.2.1.min.js" type="text/javascript"></script>
+	<!-- IMPORTANT! Load jquery-ui-1.10.1.custom.min.js before bootstrap.min.js to fix bootstrap tooltip conflict with jquery ui tooltip -->
+	<script src="assets/media/js/jquery-ui-1.10.1.custom.min.js" type="text/javascript"></script>   
+	<script src="assets/media/js/bootstrap.min.js" type="text/javascript"></script>
+	   
+	<script src="assets/media/js/jquery.slimscroll.min.js" type="text/javascript"></script>
+	<script src="assets/media/js/jquery.blockui.min.js" type="text/javascript"></script>  
+	<script src="assets/media/js/jquery.cookie.min.js" type="text/javascript"></script>
+	<script src="assets/media/js/jquery.uniform.min.js" type="text/javascript" ></script>
+	<script src="assets/media/js/jquery.form.js" type="text/javascript"></script>   
+	<!-- BEGIN PAGE LEVEL PLUGINS -->
+	<script src="assets/media/js/jquery.vmap.js" type="text/javascript"></script>   
+	<script src="assets/media/js/jquery.vmap.russia.js" type="text/javascript"></script>
+	<script src="assets/media/js/jquery.vmap.world.js" type="text/javascript"></script>
+	<script src="assets/media/js/jquery.vmap.europe.js" type="text/javascript"></script>
+	<script src="assets/media/js/jquery.vmap.germany.js" type="text/javascript"></script>
+	<script src="assets/media/js/jquery.vmap.usa.js" type="text/javascript"></script>
+	<script src="assets/media/js/jquery.vmap.sampledata.js" type="text/javascript"></script>  
+	<script src="assets/media/js/jquery.flot.js" type="text/javascript"></script>
+	<script src="assets/media/js/jquery.flot.resize.js" type="text/javascript"></script>
+	<script src="assets/media/js/jquery.pulsate.min.js" type="text/javascript"></script>
+	<!-- BEGIN The File Upload file processing plugin -->
+	<script src="assets/media/js/bootstrap-fileupload.js" type="text/javascript" ></script>
+	<!-- END The File Upload -->
+	<script src="assets/media/js/select2.min.js" type="text/javascript"></script>
+	<script src="assets/media/js/date.js" type="text/javascript"></script>
+	<script src="assets/media/js/daterangepicker.js" type="text/javascript"></script>     
+	<script src="assets/media/js/jquery.gritter.js" type="text/javascript"></script>
+	<script src="assets/media/js/jquery.dataTables.min.js" type="text/javascript"></script>
+	<script src="assets/media/js/DT_bootstrap.js" type="text/javascript"></script>
+	<script src="assets/media/js/fullcalendar.min.js" type="text/javascript"></script>
+	<script src="assets/media/js/jquery.easy-pie-chart.js" type="text/javascript"></script>
+	<script src="assets/media/js/jquery.sparkline.min.js" type="text/javascript"></script>  
+	<script src="assets/media/js/jquery.validate.min.js" type="text/javascript"></script>  
+	<script src="assets/media/js/additional-methods.min.js" type="text/javascript"></script>
+	
+	<script src="assets/media/js/chosen.jquery.min.js" type="text/javascript"></script>
+	<!-- END PAGE LEVEL PLUGINS -->
+	<script src="assets/js/common.js" type="text/javascript"></script>    
+	<script src="assets/js/utils.js" type="text/javascript"></script>    
+	<script src="assets/js/navigation.js" type="text/javascript"></script> 
+	<!-- BEGIN PAGE LEVEL SCRIPTS -->
+	<script src="assets/media/js/app.js" type="text/javascript"></script>
+	
+	
+	<script>
+		jQuery(document).ready(function() {    
+		   App.init(); // initlayout and core plugins
+		   Navigation.init();
+		});
+	</script>
+	 
+	<#nested/>
+</body>
+</html>
+</#macro>
