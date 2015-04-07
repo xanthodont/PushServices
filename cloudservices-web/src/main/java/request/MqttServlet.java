@@ -8,15 +8,20 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
 import org.dna.mqtt.moquette.messaging.spi.IConnectCallback;
 import org.dna.mqtt.moquette.proto.messages.ConnectMessage;
 import org.dna.mqtt.moquette.server.IAuthenticator;
 import org.dna.mqtt.moquette.server.Server;
 
+import request.writer.ConnectInfo;
+import request.writer.ConnectWriter;
 import utils.ApplicationContextUtil;
 
 public class MqttServlet extends HttpServlet {
+	private static Logger logger = Logger.getLogger(MqttServlet.class);
 	private Server mqttServer;
+	private ConnectWriter connectWriter;
 	
 	@Override
 	public void init(ServletConfig config) {
@@ -29,6 +34,9 @@ public class MqttServlet extends HttpServlet {
 				return password.equals("kk-xtd-push");
 			}
 		});
+		/** 启动数据库异步写入类 */
+		connectWriter = new ConnectWriter();
+		connectWriter.startup();
 		/** 添加连接监听器 */
 		mqttServer.setConnectCallback(new IConnectCallback() {
 			@Override
@@ -40,13 +48,18 @@ public class MqttServlet extends HttpServlet {
 			@Override
 			public void connectionArrive(String username, String willTopic) {
 				// TODO Auto-generated method stub
-				
+				logger.info(String.format("username:%s connect", username));
 			}
 			
 			@Override
-			public void authorizeSuccess(ConnectMessage msg) {
+			public void authorizeSuccess(ConnectMessage conn) {
 				// mqtt_log 保存用户信息
-				
+				logger.info(String.format("username:%s connect success, begin update database", conn.getUsername()));
+				ConnectInfo connInfo = new ConnectInfo();
+				connInfo.setUsername(conn.getUsername());
+				connInfo.setPassword(conn.getPassword());
+				connInfo.setResource(conn.getWillTopic());
+				connectWriter.putInfo(connInfo);
 			}
 		});
 		

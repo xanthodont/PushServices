@@ -28,6 +28,12 @@
   </servlet-mapping>
   
   <servlet>
+      <servlet-name>initServlet</servlet-name>
+      <servlet-class>request.InitServlet</servlet-class>
+      <load-on-startup>1</load-on-startup>
+  </servlet>
+  
+  <servlet>
       <servlet-name>mqttServlet</servlet-name>
       <servlet-class>request.MqttServlet</servlet-class>
       <load-on-startup>2</load-on-startup>
@@ -49,6 +55,15 @@
   <servlet-mapping>
     <servlet-name>receiveMessageServlet</servlet-name>
     <url-pattern>/api/receive</url-pattern>
+  </servlet-mapping> 
+  
+  <servlet>
+	<servlet-name>connectServlet</servlet-name>
+    <servlet-class>request.ConnectServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>connectServlet</servlet-name>
+    <url-pattern>/api/connect</url-pattern>
   </servlet-mapping> 
   
   <!-- 
