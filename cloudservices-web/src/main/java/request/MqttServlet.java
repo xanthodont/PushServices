@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.dna.mqtt.moquette.messaging.spi.IConnectCallback;
 import org.dna.mqtt.moquette.proto.messages.ConnectMessage;
+import org.dna.mqtt.moquette.proto.messages.PublishMessage;
 import org.dna.mqtt.moquette.server.IAuthenticator;
 import org.dna.mqtt.moquette.server.Server;
 
@@ -34,25 +35,24 @@ public class MqttServlet extends HttpServlet {
 				return password.equals("kk-xtd-push");
 			}
 		});
-		/** 启动数据库异步写入类 */
-		connectWriter = new ConnectWriter();
-		connectWriter.startup();
+		/** 数据库异步写入类 */
+		connectWriter = ConnectWriter.getInstance();
 		/** 添加连接监听器 */
 		mqttServer.setConnectCallback(new IConnectCallback() {
 			@Override
-			public void subscribeSuccess() {
+			public void onSubscribeSuccess() {
 				// TODO Auto-generated method stub
 				
 			}
 			
 			@Override
-			public void connectionArrive(String username, String willTopic) {
+			public void onConnectionArrive(String username, String willTopic) {
 				// TODO Auto-generated method stub
 				logger.info(String.format("username:%s connect", username));
 			}
 			
 			@Override
-			public void authorizeSuccess(ConnectMessage conn) {
+			public void onAuthorizeSuccess(ConnectMessage conn) {
 				// mqtt_log 保存用户信息
 				logger.info(String.format("username:%s connect success, begin update database", conn.getUsername()));
 				ConnectInfo connInfo = new ConnectInfo();
@@ -60,6 +60,18 @@ public class MqttServlet extends HttpServlet {
 				connInfo.setPassword(conn.getPassword());
 				connInfo.setResource(conn.getWillTopic());
 				connectWriter.putInfo(connInfo);
+			}
+
+			@Override
+			public void onSendMessageSuccess(PublishMessage pubMessage) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onSendMessageTimeout() {
+				// TODO Auto-generated method stub
+				
 			}
 		});
 		

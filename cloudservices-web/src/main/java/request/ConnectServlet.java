@@ -12,6 +12,7 @@ import org.apache.log4j.Logger;
 
 import request.writer.ConnectInfo;
 import request.writer.ConnectWriter;
+import utils.StringUtil;
 
 public class ConnectServlet extends HttpServlet {
 	private static Logger logger = Logger.getLogger(ConnectServlet.class);
@@ -20,8 +21,7 @@ public class ConnectServlet extends HttpServlet {
 	@Override
 	public void init(ServletConfig config) {
 		/** 启动数据库异步写入类 */
-		connectWriter = new ConnectWriter();
-		connectWriter.startup();
+		connectWriter = ConnectWriter.getInstance();
 	}
 	
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
@@ -32,10 +32,22 @@ public class ConnectServlet extends HttpServlet {
 	 */
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
 		logger.info("Param - username:" + request.getParameter("username"));
+		
+		// 验证参数有效性
+		String username = request.getParameter("username");
+		String password = request.getParameter("password");
+		String resource = request.getParameter("resource");
+		if (StringUtil.isEmpty(username) || StringUtil.isEmpty(password) || StringUtil.isEmpty(resource)) {
+			response.getWriter().write("connect fail");
+			response.flushBuffer();
+			return;
+		}
+		
+		// 将消息存储数据库写入器
 		ConnectInfo connInfo = new ConnectInfo();
-		connInfo.setUsername(request.getParameter("username"));
-		connInfo.setPassword(request.getParameter("password"));
-		connInfo.setResource(request.getParameter("resource"));
+		connInfo.setUsername(username);
+		connInfo.setPassword(password);
+		connInfo.setResource(resource);
 		connectWriter.putInfo(connInfo);
 		response.getWriter().write("connect success");
 		response.flushBuffer();

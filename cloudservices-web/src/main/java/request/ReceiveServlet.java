@@ -1,6 +1,7 @@
 package request;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -23,8 +24,10 @@ public class ReceiveServlet  extends HttpServlet {
 	 */
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
 		ServletOutputStream out = response.getOutputStream();
-		out.print(1);
-		out.print("test");
+		ByteBuffer buffer = ByteBuffer.allocate(8);
+		buffer.putInt(1);
+		buffer.put("test".getBytes());
+		out.write(buffer.array());
 		response.flushBuffer();
 	}
 }

@@ -74,8 +74,6 @@
     <bean id="applicationContextUtil" class="utils.ApplicationContextUtil"></bean>
     <!-- MQTT服务器类 -->
 	<bean id="mqttServer" class="org.dna.mqtt.moquette.server.Server"></bean>
-	<!-- 数据库异步存储写入类 
-	<bean id="connectWriter" class="request.writer.ConnectWriter"></bean>-->
-	
+	<bean id="mqttClient" class="cloudservices.ClientService"></bean>
 	
 </beans>

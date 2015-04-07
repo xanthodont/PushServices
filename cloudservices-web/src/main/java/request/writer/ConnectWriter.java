@@ -5,10 +5,18 @@ import java.sql.SQLException;
 
 
 
-public class ConnectWriter extends DBWriter<ConnectInfo>{
+public class ConnectWriter extends DBWriter<ConnectInfo> {
+	// 单例形式
+	public static ConnectWriter getInstance() {
+		return InstanceHolder.instance;
+	}
+	static class InstanceHolder {
+		static ConnectWriter instance = new ConnectWriter();
+	}
+	
 	private final static String SQL_STATEMENT = "call pro_update_pushuser(?, ?, ?, ?, ?);"; 
 
-	public ConnectWriter() {
+	private ConnectWriter() {
 		super(SQL_STATEMENT);
 	}
 
