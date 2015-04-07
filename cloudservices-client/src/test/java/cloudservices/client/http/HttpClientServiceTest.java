@@ -6,14 +6,64 @@ import java.net.URL;
 
 
 
+
 import org.junit.Test;
 
+import cloudservices.client.ClientConfiguration;
+import cloudservices.client.ClientService;
+import cloudservices.client.ConfigException;
+import cloudservices.client.ConnectException;
 import cloudservices.client.http.async.AsyncHttpConnection;
 import cloudservices.client.http.async.StringResponseHandler;
 import cloudservices.client.http.async.support.ParamsWrapper;
+import cloudservices.client.packets.TextPacket;
 
 public class HttpClientServiceTest {
 	private AsyncHttpConnection http = AsyncHttpConnection.getInstance();
+	
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		ClientConfiguration config = new ClientConfiguration("172.21.4.64", 1883);
+		config.setResourceName("android");
+		config.setUsername("http-client");
+		config.setPassword("kk-xtd-push");
+		config.setTopic("common");
+		config.setSendUrl("http://172.21.4.64:8080/cloudservices-web/api/send");
+		config.setReceiveUrl("http://172.21.4.64:8080/cloudservices-web/api/receive");
+		config.setConnectUrl("http://172.21.4.64:8080/cloudservices-web/api/connect");
+		config.setConnectType(1);
+		
+		ClientService client = ClientService.getInstance();
+		try {
+			client.config(config);
+			client.startup();
+			client.connect();
+		} catch (ConfigException e1) {
+			// TODO Auto-generated catch block
+			//e1.printStackTrace();
+			System.out.println(e1.getMessage());
+		} catch (ConnectException e) {
+			// TODO Auto-generated catch block
+			//e.printStackTrace();
+			System.out.println(e.getMessage());
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		
+		while(true) {
+			//client.sendPacket(new Packet());
+			try {
+				Thread.sleep(2000);
+				TextPacket t = new TextPacket();
+				t.setText("123123");
+				//client.sendPacket(t);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
 	
 	@Test
 	public void sendUrlTest() {

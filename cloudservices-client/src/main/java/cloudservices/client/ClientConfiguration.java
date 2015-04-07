@@ -46,6 +46,7 @@ public class ClientConfiguration {
 	/** http接口地址 */
 	private String sendUrl;
 	private String receiveUrl;
+	private String connectUrl;
 	/** 重连机制 */
 	
 	/** Http轮询周期 */
@@ -260,6 +261,16 @@ public class ClientConfiguration {
 
 	public void setConnectTimeout(long connectTimeout) {
 		this.connectTimeout = connectTimeout;
+	}
+
+
+	public String getConnectUrl() {
+		return connectUrl;
+	}
+
+
+	public void setConnectUrl(String connectUrl) {
+		this.connectUrl = connectUrl;
 	}
 	
 	

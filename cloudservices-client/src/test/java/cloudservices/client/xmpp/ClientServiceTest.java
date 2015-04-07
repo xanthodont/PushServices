@@ -44,7 +44,7 @@ public class ClientServiceTest {
 				Thread.sleep(2000);
 				TextPacket t = new TextPacket();
 				t.setText("123123");
-				client.sendPacket(t);
+				//client.sendPacket(t);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

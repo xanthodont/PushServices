@@ -15,6 +15,7 @@ import cloudservices.client.ConnectException;
 import cloudservices.client.ISender;
 import cloudservices.client.http.async.AsyncHttpConnection;
 import cloudservices.client.http.async.BinaryResponseHandler;
+import cloudservices.client.http.async.StringResponseHandler;
 import cloudservices.client.http.async.support.ParamsWrapper;
 import cloudservices.client.http.async.support.RequestInvokerFactory;
 import cloudservices.client.packets.Packet;
@@ -25,6 +26,7 @@ public class HTTPClientService implements ISender {
 	private AsyncHttpConnection http;
 	private String sendUrl = "";
 	private String receiveUrl = "";
+	private String connectUrl = "";
 	/** 轮询时间，单位：秒 */
 	private long scheduleDelay = 30; 
 	/** 接收消息定时器 */
@@ -58,9 +60,10 @@ public class HTTPClientService implements ISender {
         }
     };
 	
-	CountDownLatch connLatch = new CountDownLatch(2);
+	CountDownLatch connLatch = new CountDownLatch(3);
 	volatile boolean sendInteface = false;
 	volatile boolean receiveInteface = false;
+	volatile boolean connectInteface = false;
 
 	public HTTPClientService(ClientService clientService) {
 		// TODO Auto-generated constructor stub
@@ -75,6 +78,8 @@ public class HTTPClientService implements ISender {
 		sendUrl = config.getSendUrl();
 		if (StringUtil.isEmpty(config.getReceiveUrl())) throw new ConfigException("未设置Http接收消息的接口地址");
 		receiveUrl = config.getReceiveUrl();
+		if (StringUtil.isEmpty(config.getConnectUrl())) throw new ConfigException("未设置Http连接Connect的接口地址");
+		connectUrl = config.getConnectUrl();
 	}
 
 	@Override
@@ -88,6 +93,7 @@ public class HTTPClientService implements ISender {
 	@Override
 	public void connect() throws ConnectException {
 		// TODO Auto-generated method stub
+		// 发送消息接口验证
 		http.get(sendUrl, new BinaryResponseHandler() {
 			@Override
 			public void onSubmit(URL url, ParamsWrapper params) {}
@@ -112,7 +118,8 @@ public class HTTPClientService implements ISender {
 				connLatch.countDown();
 			}
 		});
-		http.get(sendUrl, new BinaryResponseHandler() {
+		// 接收消息接口验证
+		http.get(receiveUrl, new BinaryResponseHandler() {
 			@Override
 			public void onSubmit(URL url, ParamsWrapper params) {}
 			
@@ -135,7 +142,38 @@ public class HTTPClientService implements ISender {
 				connLatch.countDown();
 			}
 		});
-		
+		// 连接接口验证
+		ParamsWrapper params = new ParamsWrapper();
+		params.put("username", clientService.getConfiguration().getUsername());
+		params.put("password", clientService.getConfiguration().getPassword());
+		params.put("resource", String.format("%s/admin", clientService.getConfiguration().getTopic()));
+		http.get(connectUrl, params, new StringResponseHandler() {
+			@Override
+			public void onSubmit(URL url, ParamsWrapper params) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void onStreamError(IOException exp) {
+				// TODO Auto-generated method stub
+				connLatch.countDown();
+			}
+			
+			@Override
+			public void onConnectError(IOException exp) {
+				// TODO Auto-generated method stub
+				connLatch.countDown();
+			}
+			
+			@Override
+			protected void onResponse(String content, URL url) {
+				// TODO Auto-generated method stub
+				System.out.println("send response:" + content);
+				connectInteface = true;
+				connLatch.countDown();
+			}
+		});
 		try {
 			connLatch.await(clientService.getConfiguration().getConnectTimeout(), TimeUnit.SECONDS);
 		} catch (InterruptedException e) {
@@ -147,9 +185,10 @@ public class HTTPClientService implements ISender {
 		} finally {
 			if (!sendInteface) throw new ConnectException("发送消息接口验证失败");
 			if (!receiveInteface) throw new ConnectException("接收消息接口验证失败");
+			if (!connectInteface) throw new ConnectException("连接接口验证失败");
 		} 
 		// http_log 连接成功，开启定时获取消息
-		System.out.printf("连接成功，开启轮询");
+		System.out.printf("连接成功，开启轮询\n");
 		receiveScheduler.scheduleWithFixedDelay(receiveDeamon, scheduleDelay, scheduleDelay, TimeUnit.SECONDS);
 	}
 
