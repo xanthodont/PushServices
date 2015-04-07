@@ -252,7 +252,7 @@ public class SimpleMessaging implements IMessaging, EventHandler<ValueEvent> {
         m_clientIDs.put(msg.getClientID(), connDescr);
         
         // xtd-add_callback
-        connCallback.connectionArrive(msg.getUsername(), msg.getWillTopic());
+        connCallback.onConnectionArrive(msg.getUsername(), msg.getWillTopic());
 
         int keepAlive = msg.getKeepAlive();
         LOG.debug(String.format("Connect with keepAlive %d s",  keepAlive));
@@ -286,7 +286,7 @@ public class SimpleMessaging implements IMessaging, EventHandler<ValueEvent> {
         }
 
         subscriptions.activate(msg.getClientID());
-        connCallback.authorizeSuccess(msg);
+        connCallback.onAuthorizeSuccess(msg);
 
         //handle clean session flag
         if (msg.isCleanSession()) {
@@ -518,6 +518,8 @@ public class SimpleMessaging implements IMessaging, EventHandler<ValueEvent> {
             assert m_clientIDs.get(clientId) != null;
             LOG.debug("Session for clientId " + clientId + " is " + m_clientIDs.get(clientId).getSession());
             m_clientIDs.get(clientId).getSession().write(pubMessage);
+            // xtd-log-callback
+            connCallback.onSendMessageSuccess(pubMessage);
         }catch(Throwable t) {
             LOG.error(null, t);
         }

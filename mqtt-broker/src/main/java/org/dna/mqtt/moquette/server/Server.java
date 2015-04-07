@@ -44,19 +44,31 @@ public class Server {
         mqttserver.setConnectCallback(new IConnectCallback() {
 			
 			@Override
-			public void subscribeSuccess() {
+			public void onSubscribeSuccess() {
 				// TODO Auto-generated method stub
 				
 			}
 			
 			@Override
-			public void connectionArrive(String username, String willTopic) {
+			public void onConnectionArrive(String username, String willTopic) {
 				// TODO Auto-generated method stub
 				
 			}
 			
 			@Override
-			public void authorizeSuccess(ConnectMessage msg) {
+			public void onAuthorizeSuccess(ConnectMessage msg) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onSendMessageSuccess(PublishMessage pubMessage) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onSendMessageTimeout() {
 				// TODO Auto-generated method stub
 				
 			}
