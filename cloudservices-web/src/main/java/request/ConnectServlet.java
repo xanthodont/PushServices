@@ -31,7 +31,7 @@ public class ConnectServlet extends HttpServlet {
 	 * 注：多线程环境下运行
 	 */
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
-		logger.info("Param - username:" + request.getParameter("username"));
+		logger.info("connect Param - username:" + request.getParameter("username"));
 		
 		// 验证参数有效性
 		String username = request.getParameter("username");

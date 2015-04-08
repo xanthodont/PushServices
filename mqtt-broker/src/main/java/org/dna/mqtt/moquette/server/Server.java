@@ -14,7 +14,9 @@ import org.apache.mina.filter.codec.demux.DemuxingProtocolEncoder;
 import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
 import org.dna.mqtt.commons.Constants;
 import org.dna.mqtt.moquette.messaging.spi.IConnectCallback;
+import org.dna.mqtt.moquette.messaging.spi.IStorageService;
 import org.dna.mqtt.moquette.messaging.spi.impl.SimpleMessaging;
+import org.dna.mqtt.moquette.messaging.spi.impl.events.PublishEvent;
 import org.dna.mqtt.moquette.proto.*;
 import org.dna.mqtt.moquette.proto.messages.*;
 import org.slf4j.Logger;
@@ -69,6 +71,12 @@ public class Server {
 
 			@Override
 			public void onSendMessageTimeout() {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onStoreOfflineMessage(PublishEvent newPublishEvt) {
 				// TODO Auto-generated method stub
 				
 			}
@@ -173,5 +181,13 @@ public class Server {
     
     public void setConnectCallback(IConnectCallback connCallback) {
     	messaging.setConnCallback(connCallback);
+    }
+    
+    public IStorageService getStorageService() {
+        return messaging.getStorageService();
+	}
+    
+    public SimpleMessaging getMessaging() {
+    	return messaging;
     }
 }

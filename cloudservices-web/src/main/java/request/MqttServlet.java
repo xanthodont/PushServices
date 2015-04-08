@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.dna.mqtt.moquette.messaging.spi.IConnectCallback;
+import org.dna.mqtt.moquette.messaging.spi.impl.events.PublishEvent;
 import org.dna.mqtt.moquette.proto.messages.ConnectMessage;
 import org.dna.mqtt.moquette.proto.messages.PublishMessage;
 import org.dna.mqtt.moquette.server.IAuthenticator;
@@ -72,6 +73,12 @@ public class MqttServlet extends HttpServlet {
 			public void onSendMessageTimeout() {
 				// TODO Auto-generated method stub
 				
+			}
+
+			@Override
+			public void onStoreOfflineMessage(PublishEvent newPublishEvt) {
+				// TODO Auto-generated method stub
+				logger.info(String.format("store offline message:%s", newPublishEvt));
 			}
 		});
 		

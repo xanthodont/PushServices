@@ -28,13 +28,16 @@ public class HTTPClientService implements ISender {
 	private String receiveUrl = "";
 	private String connectUrl = "";
 	/** 轮询时间，单位：秒 */
-	private long scheduleDelay = 30; 
+	private long scheduleDelay = 5; 
 	/** 接收消息定时器 */
 	private ScheduledExecutorService receiveScheduler;
 	final Runnable receiveDeamon = new Runnable() {
         public void run() {
             // http_log 轮询读取消息
-            http.post(receiveUrl, null, new BinaryResponseHandler() {
+        	ParamsWrapper params = new ParamsWrapper();
+    		params.put("username", clientService.getConfiguration().getUsername());
+    		//params.put("topic", String.format("%s/admin", clientService.getConfiguration().getTopic()));
+            http.post(receiveUrl, params, new BinaryResponseHandler() {
 				@Override
 				public void onSubmit(URL url, ParamsWrapper params) {
 					// TODO Auto-generated method stub
@@ -86,8 +89,36 @@ public class HTTPClientService implements ISender {
 	public void send(Packet packet) {
 		// TODO Auto-generated method stub
 		// http_log 发送消息
+		ParamsWrapper params = new ParamsWrapper();
+		params.put("username", clientService.getConfiguration().getUsername());
+		params.put("topic", String.format("%s/admin", clientService.getConfiguration().getTopic()));
+		params.put("messageId", "101");
+		params.put("packet", new String(packet.toByteArray()));
 		
-		//http.post(sendUrl, null, null);
+		http.post(sendUrl, params, new StringResponseHandler() {
+			@Override
+			public void onSubmit(URL url, ParamsWrapper params) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onConnectError(IOException exp) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onStreamError(IOException exp) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			protected void onResponse(String content, URL url) {
+				// xtd-log Htpp log
+				System.out.printf("send response：%s\n", content);
+			}});
 	}
 
 	@Override

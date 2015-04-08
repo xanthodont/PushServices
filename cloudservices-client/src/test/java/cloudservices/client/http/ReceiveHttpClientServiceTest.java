@@ -18,14 +18,14 @@ import cloudservices.client.http.async.StringResponseHandler;
 import cloudservices.client.http.async.support.ParamsWrapper;
 import cloudservices.client.packets.TextPacket;
 
-public class HttpClientServiceTest {
+public class ReceiveHttpClientServiceTest {
 	private AsyncHttpConnection http = AsyncHttpConnection.getInstance();
 	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		ClientConfiguration config = new ClientConfiguration("172.21.4.64", 1883);
 		config.setResourceName("android");
-		config.setUsername("http-client");
+		config.setUsername("publishService2");
 		config.setPassword("kk-xtd-push");
 		config.setTopic("common");
 		config.setSendUrl("http://172.21.4.64:8080/cloudservices-web/api/send");
@@ -56,10 +56,10 @@ public class HttpClientServiceTest {
 		while(true) {
 			//client.sendPacket(new Packet());
 			try {
-				Thread.sleep(10000);
+				Thread.sleep(4000);
 				TextPacket t = new TextPacket();
 				t.setText("123123");
-				client.sendPacket(t);
+				//client.sendPacket(t);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

@@ -362,7 +362,7 @@ public class SimpleMessaging implements IMessaging, EventHandler<ValueEvent> {
     /**
      * Flood the subscribers with the message to notify. MessageID is optional and should only used for QoS 1 and 2
      * */
-    private void publish2Subscribers(String topic, QOSType qos, byte[] message, boolean retain, Integer messageID) {
+    public void publish2Subscribers(String topic, QOSType qos, byte[] message, boolean retain, Integer messageID) {
         for (final Subscription sub : subscriptions.matches(topic)) {
             if (qos == QOSType.MOST_ONE) {
                 //QoS 0
@@ -374,6 +374,7 @@ public class SimpleMessaging implements IMessaging, EventHandler<ValueEvent> {
                     //clone the event with matching clientID
                     PublishEvent newPublishEvt = new PublishEvent(topic, qos, message, retain, sub.getClientId(), messageID, null);
                     m_storageService.storePublishForFuture(newPublishEvt);
+                    connCallback.onStoreOfflineMessage(newPublishEvt);
                 } else  {
                     //if QoS 2 then store it in temp memory
                     if (qos ==QOSType.EXACTLY_ONCE) {
@@ -567,5 +568,13 @@ public class SimpleMessaging implements IMessaging, EventHandler<ValueEvent> {
 	public void setConnCallback(IConnectCallback connCallback) {
 		// TODO Auto-generated method stub
 		this.connCallback = connCallback;
+	}
+	
+	public Map<String, ConnectionDescriptor> getCliendIds() {
+		return m_clientIDs;
+	}
+	
+	public IStorageService getStorageService() {
+        return m_storageService;
 	}
 }

@@ -43,7 +43,8 @@ public class MQTTFutureClient {
                 mqtt.setKeepAlive(KEEP_ALIVE);  
                 //设置缓冲的大小  
                 mqtt.setSendBufferSize(SEND_BUFFER_SIZE);  
-                  
+                mqtt.setUserName(CLIENT_ID);
+                mqtt.setPassword("kk-xtd-push");
                 //获取mqtt的连接对象BlockingConnection  
                 final FutureConnection connection= mqtt.futureConnection();  
                 Future<Void> c = connection.connect();

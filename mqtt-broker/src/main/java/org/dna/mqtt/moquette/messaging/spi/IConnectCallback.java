@@ -1,5 +1,6 @@
 package org.dna.mqtt.moquette.messaging.spi;
 
+import org.dna.mqtt.moquette.messaging.spi.impl.events.PublishEvent;
 import org.dna.mqtt.moquette.proto.messages.ConnectMessage;
 import org.dna.mqtt.moquette.proto.messages.PublishMessage;
 
@@ -25,7 +26,11 @@ public interface IConnectCallback {
 	 */
 	void onSendMessageSuccess(PublishMessage pubMessage);
 	/**
-	 * 消息发送超时
+	 * 离线消息存储-内存
+	 */
+	void onStoreOfflineMessage(PublishEvent newPublishEvt);
+	/**
+	 * 离线消息超时
 	 */
 	void onSendMessageTimeout();
 }
