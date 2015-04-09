@@ -179,6 +179,9 @@ public class Server {
     public void setAuthenticator(IAuthenticator authenticator) {
     	messaging.setAuthenticator(authenticator);
     }
+    public IAuthenticator getAuthenticator() {
+    	return messaging.getAuthenticator();
+    }
     
     public void setConnectCallback(IConnectCallback connCallback) {
     	messaging.setConnCallback(connCallback);

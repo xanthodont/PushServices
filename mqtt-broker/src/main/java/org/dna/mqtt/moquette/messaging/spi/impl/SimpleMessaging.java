@@ -130,7 +130,7 @@ public class SimpleMessaging implements IMessaging, EventHandler<ValueEvent> {
     /**
      * NOT SAFE Method, to be removed because used only in tests
      */
-    protected SubscriptionsStore getSubscriptions() {
+    public SubscriptionsStore getSubscriptions() {
         return subscriptions;
     }
 
@@ -248,7 +248,7 @@ public class SimpleMessaging implements IMessaging, EventHandler<ValueEvent> {
         }
 
         
-        ConnectionDescriptor connDescr = new ConnectionDescriptor(msg.getClientID(), session, msg.isCleanSession());
+        ConnectionDescriptor connDescr = new ConnectionDescriptor(msg.getClientID(), session, msg.isCleanSession()); 
         m_clientIDs.put(msg.getClientID(), connDescr);
         
         // xtd-add_callback
@@ -566,6 +566,9 @@ public class SimpleMessaging implements IMessaging, EventHandler<ValueEvent> {
     public void setAuthenticator(IAuthenticator authenticator) {
     	this.m_authenticator = authenticator;
     }
+    public IAuthenticator getAuthenticator() {
+    	return m_authenticator;
+    }
 
 	public void setConnCallback(IConnectCallback connCallback) {
 		// TODO Auto-generated method stub
@@ -579,4 +582,5 @@ public class SimpleMessaging implements IMessaging, EventHandler<ValueEvent> {
 	public IStorageService getStorageService() {
         return m_storageService;
 	}
+	
 }
