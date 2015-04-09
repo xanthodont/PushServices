@@ -79,6 +79,7 @@ public class Server {
 			public void onStoreOfflineMessage(PublishEvent newPublishEvt) {
 				// TODO Auto-generated method stub
 				
+				System.out.printf("store offline message\n");
 			}
 		});
         mqttserver.startServer();

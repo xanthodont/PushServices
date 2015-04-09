@@ -13,8 +13,8 @@ import org.slf4j.LoggerFactory;
 
 public class MQTTFutureClient {
 	private static final Logger LOG = LoggerFactory.getLogger(MQTTFutureClient.class);  
-    private final static String CONNECTION_STRING = "tcp://172.21.4.64:1883";  
-    private final static boolean CLEAN_START = true;  
+    private final static String CONNECTION_STRING = "tcp://127.0.0.1:1883";  
+    private final static boolean CLEAN_START = false;  
     private final static short KEEP_ALIVE = 30;// 低耗网络，但是又需要及时获取数据，心跳30s  
     private final static String CLIENT_ID = "publishService2";  
     public  static Topic[] topics = {  
@@ -46,11 +46,13 @@ public class MQTTFutureClient {
                 mqtt.setUserName(CLIENT_ID);
                 mqtt.setPassword("kk-xtd-push");
                 //获取mqtt的连接对象BlockingConnection  
+                mqtt.setClientId(CLIENT_ID);
                 final FutureConnection connection= mqtt.futureConnection();  
                 Future<Void> c = connection.connect();
                 
                 connection.subscribe(topics);
                 
+                int i = 0;
                 while(true){  
                 	
                     Future<Message> futrueMessage=connection.receive();  
@@ -58,8 +60,12 @@ public class MQTTFutureClient {
                     //Future<Void> p = connection.publish("to", "bb".getBytes(), QoS.AT_LEAST_ONCE, false);
                     
                     
-                    System.out.println("MQTTFutureClient.Receive Message "+ "Topic Title :"+message.getTopic()+" context :"+new String(message.getPayloadBuffer().toByteArray()));  
+                    System.out.println("MQTTFutureClient.Receive Message "+ "Topic Title :"+message.getTopic()+" context :"+new String(message.getPayloadBuffer().toByteArray()));
+                    //break;
                 }  
+                
+                //Future<Void> dc = connection.disconnect();
+                //dc.await();
             } catch (URISyntaxException e) {  
                 // TODO Auto-generated catch block  
                 e.printStackTrace();  

@@ -53,12 +53,13 @@ public class HttpClientServiceTest {
 		//TextPacket t = new TextPacket();
 		//t.setText("123123");
 		//client.sendPacket(t);
+		int i = 0;
 		while(true) {
 			//client.sendPacket(new Packet());
 			try {
-				Thread.sleep(10000);
+				Thread.sleep(8000);
 				TextPacket t = new TextPacket();
-				t.setText("123123");
+				t.setText(String.valueOf(i++));
 				client.sendPacket(t);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block

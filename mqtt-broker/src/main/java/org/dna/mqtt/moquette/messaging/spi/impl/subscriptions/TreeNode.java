@@ -147,7 +147,7 @@ class TreeNode {
 
         //go deep
         for (TreeNode child : m_children) {
-            child.deactivate(clientID);
+            child.activate(clientID);
         }
 
     }

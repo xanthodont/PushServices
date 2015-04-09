@@ -499,6 +499,8 @@ public class SimpleMessaging implements IMessaging, EventHandler<ValueEvent> {
             notify(new NotifyEvent(pubEvt.getClientID(), pubEvt.getTopic(), pubEvt.getQos(),
                     pubEvt.getMessage(), false, pubEvt.getMessageID()));
         }
+        // 删除离线消息 
+        m_storageService.cleanPersistedPublishes(evt.getClientID());
     }
 
     private void notify(NotifyEvent evt) {

@@ -78,7 +78,7 @@ public class MqttServlet extends HttpServlet {
 			@Override
 			public void onStoreOfflineMessage(PublishEvent newPublishEvt) {
 				// TODO Auto-generated method stub
-				logger.info(String.format("store offline message:%s", newPublishEvt));
+				logger.info(String.format("store offline message:%s\n", newPublishEvt));
 			}
 		});
 		

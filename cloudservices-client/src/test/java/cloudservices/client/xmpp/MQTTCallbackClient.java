@@ -21,7 +21,7 @@ import org.fusesource.mqtt.codec.PUBLISH;
 import cloudservices.client.packets.TextPacket;
 
 public class MQTTCallbackClient {
-    private final static String CONNECTION_STRING = "tcp://172.21.4.64:1883";  
+    private final static String CONNECTION_STRING = "tcp://127.0.0.1:1883";  
     private final static boolean CLEAN_START = true;  
     private final static short KEEP_ALIVE = 30;// 低耗网络，但是又需要及时获取数据，心跳30s  
     private final static String CLIENT_ID = "publishService";  

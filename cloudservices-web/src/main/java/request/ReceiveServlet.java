@@ -53,6 +53,7 @@ public class ReceiveServlet  extends HttpServlet {
         	for (PublishEvent pubEvt : publishedEvents) {
         		rs += new String(pubEvt.getMessage());
         	}
+        	mqttServer.getStorageService().cleanPersistedPublishes(username);
         }
 		
 		

@@ -23,14 +23,14 @@ public class ReceiveHttpClientServiceTest {
 	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		ClientConfiguration config = new ClientConfiguration("172.21.4.64", 1883);
+		ClientConfiguration config = new ClientConfiguration("127.0.0.1", 1883);
 		config.setResourceName("android");
 		config.setUsername("publishService2");
 		config.setPassword("kk-xtd-push");
 		config.setTopic("common");
-		config.setSendUrl("http://172.21.4.64:8080/cloudservices-web/api/send");
-		config.setReceiveUrl("http://172.21.4.64:8080/cloudservices-web/api/receive");
-		config.setConnectUrl("http://172.21.4.64:8080/cloudservices-web/api/connect");
+		config.setSendUrl("http://127.0.0.1:8080/cloudservices-web/api/send");
+		config.setReceiveUrl("http://127.0.0.1:8080/cloudservices-web/api/receive");
+		config.setConnectUrl("http://127.0.0.1:8080/cloudservices-web/api/connect");
 		config.setConnectType(1);
 		
 		ClientService client = ClientService.getInstance();
@@ -69,7 +69,7 @@ public class ReceiveHttpClientServiceTest {
 	
 	@Test
 	public void sendUrlTest() {
-		http.get("http://172.21.4.64:8080/cloudservices-web/api/receive", null, new StringResponseHandler() {
+		http.get("http://127.0.0.1:8080/cloudservices-web/api/receive", null, new StringResponseHandler() {
 			@Override
 			public void onSubmit(URL url, ParamsWrapper params) {
 				// TODO Auto-generated method stub

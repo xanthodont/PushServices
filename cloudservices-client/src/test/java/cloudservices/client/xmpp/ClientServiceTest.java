@@ -16,8 +16,8 @@ public class ClientServiceTest {
 		config.setUsername("123456789012121");
 		config.setPassword("kk-xtd-push");
 		config.setTopic("common");
-		config.setSendUrl("http://172.21.4.64:8080/cloudservices-web/api/send");
-		config.setReceiveUrl("http://172.21.4.64:8080/cloudservices-web/api/receive");
+		config.setSendUrl("http://127.0.0.1:8080/cloudservices-web/api/send");
+		config.setReceiveUrl("http://127.0.0.1:8080/cloudservices-web/api/receive");
 		config.setConnectType(2);
 		
 		ClientService client = ClientService.getInstance();
@@ -45,6 +45,7 @@ public class ClientServiceTest {
 				TextPacket t = new TextPacket();
 				t.setText("123123");
 				client.sendPacket(t);
+				//break;
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
