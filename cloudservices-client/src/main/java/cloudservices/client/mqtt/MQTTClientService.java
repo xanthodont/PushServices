@@ -194,12 +194,34 @@ public class MQTTClientService implements ISender {
 	@Override
 	public void send(Packet packet) {
 		// TODO Auto-generated method stub
-		send(packet, publicTopic);
+		send(packet, packet.getPublic2Topic());
 	}
 	
 	public void send(Packet packet, String publicTopic) {
 		// TODO Auto-generated method stub
-		connection.publish(publicTopic, packet.toByteArray(), QoS.AT_LEAST_ONCE, false, null);
+		
+		try {
+			connection.publish(publicTopic, packet.toByteArray(), QoS.AT_LEAST_ONCE, false, new Callback<Void>() {
+				
+				@Override
+				public void onSuccess(Void value) {
+					// TODO Auto-generated method stub
+					
+				}
+				
+				@Override
+				public void onFailure(Throwable value) {
+					// TODO Auto-generated method stub
+					System.out.printf("发消息异常");
+					value.printStackTrace();
+				}
+			});
+		} catch (Exception e) {
+			
+			System.out.printf("发消息异常-- packet:%s  length:%d", packet.toString(), packet.toByteArray().length);
+			e.printStackTrace();
+		}
+		//connection.publish(publicTopic, packet.toByteArray(), QoS.AT_LEAST_ONCE, false, null);
 	}
 
 }

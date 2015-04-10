@@ -7,31 +7,32 @@ import java.net.URL;
 
 
 
+
 import org.junit.Test;
 
 import cloudservices.client.ClientConfiguration;
 import cloudservices.client.ClientService;
 import cloudservices.client.ConfigException;
 import cloudservices.client.ConnectException;
+import cloudservices.client.TestBase;
 import cloudservices.client.http.async.AsyncHttpConnection;
 import cloudservices.client.http.async.StringResponseHandler;
 import cloudservices.client.http.async.support.ParamsWrapper;
 import cloudservices.client.packets.TextPacket;
 
-public class ReceiveHttpClientServiceTest {
+public class ReceiveHttpClientServiceTest extends TestBase {
 	private AsyncHttpConnection http = AsyncHttpConnection.getInstance();
 	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		ClientConfiguration config = new ClientConfiguration("127.0.0.1", 1883);
-		config.setResourceName("android");
-		config.setUsername("publishService2");
-		config.setPassword("kk-xtd-push");
-		config.setTopic("common");
-		config.setSendUrl("http://127.0.0.1:8080/cloudservices-web/api/send");
-		config.setReceiveUrl("http://127.0.0.1:8080/cloudservices-web/api/receive");
-		config.setConnectUrl("http://127.0.0.1:8080/cloudservices-web/api/connect");
-		config.setConnectType(1);
+		ClientConfiguration config = new ClientConfiguration(SERVER_IP, MQTT_PORT);
+		config.setUsername("http_receive");
+		config.setPassword(DEFAULT_PASSWORD);
+		config.setTopic(TOPIC);
+		config.setSendUrl(SEND_URL);
+		config.setReceiveUrl(RECEIVE_URL);
+		config.setConnectUrl(CONNECT_URL);
+		config.setConnectType(1);  // 短连接
 		
 		ClientService client = ClientService.getInstance();
 		try {

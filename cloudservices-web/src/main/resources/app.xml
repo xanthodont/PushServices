@@ -74,6 +74,7 @@
     <bean id="applicationContextUtil" class="utils.ApplicationContextUtil"></bean>
     <!-- MQTT服务器类 -->
 	<bean id="mqttServer" class="org.dna.mqtt.moquette.server.Server"></bean>
-	<bean id="mqttClient" class="cloudservices.client.ClientService"></bean>
+	<!-- 
+	<bean id="mqttClient" class="cloudservices.client.ClientService"></bean> -->
 	
 </beans>

@@ -91,7 +91,7 @@ public class HTTPClientService implements ISender {
 		// http_log 发送消息
 		ParamsWrapper params = new ParamsWrapper();
 		params.put("username", clientService.getConfiguration().getUsername());
-		params.put("topic", String.format("%s/admin", clientService.getConfiguration().getTopic()));
+		params.put("topic", packet.getPublic2Topic());
 		params.put("messageId", "101");
 		params.put("packet", new String(packet.toByteArray()));
 		
@@ -169,6 +169,7 @@ public class HTTPClientService implements ISender {
 			@Override
 			public void onResponse(byte[] data, URL url) {
 				// TODO Auto-generated method stub
+				System.out.println("receive response:" + new String(data));
 				receiveInteface = true;
 				connLatch.countDown();
 			}
@@ -177,7 +178,7 @@ public class HTTPClientService implements ISender {
 		ParamsWrapper params = new ParamsWrapper();
 		params.put("username", clientService.getConfiguration().getUsername());
 		params.put("password", clientService.getConfiguration().getPassword());
-		params.put("resource", String.format("%s/admin", clientService.getConfiguration().getTopic()));
+		params.put("resource", clientService.getConfiguration().getTopic());
 		http.get(connectUrl, params, new StringResponseHandler() {
 			@Override
 			public void onSubmit(URL url, ParamsWrapper params) {
@@ -200,7 +201,7 @@ public class HTTPClientService implements ISender {
 			@Override
 			protected void onResponse(String content, URL url) {
 				// TODO Auto-generated method stub
-				System.out.println("send response:" + content);
+				System.out.println("connect response:" + content);
 				connectInteface = true;
 				connLatch.countDown();
 			}

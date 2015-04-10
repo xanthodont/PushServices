@@ -23,18 +23,18 @@ public class MqttTracer extends Tracer{
 		if (frame.messageType() == PUBLISH.TYPE) {
 			try {
 				PUBLISH publish = new PUBLISH().decode(frame);
-				System.out.println(Thread.currentThread().getName() + "recv Publish: " + publish);
+				//System.out.println(Thread.currentThread().getName() + "recv Publish: " + publish);
 				Packet packet = parsePacketByPublish(publish);
 				client.getClientService().getPacketReader().putPacket(packet);
 			} catch (ProtocolException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} 
-			System.out.println("recv Publish: " + frame);
+			//System.out.println("recv Publish: " + frame);
 			
 		}
-		else 
-			System.out.println(Thread.currentThread().getName() + "recv: " + frame);
+		else {}
+		//System.out.println(Thread.currentThread().getName() + "recv: " + frame);
 	}
 
 	private Packet parsePacketByPublish(PUBLISH publish) {

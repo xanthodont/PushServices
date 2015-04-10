@@ -6,6 +6,8 @@ public class Packet {
 	
 	protected int packetType;
 	
+	protected String public2Topic;
+	
 	protected short messageId;
 	
 	protected byte[] bytes;
@@ -42,6 +44,14 @@ public class Packet {
 	}
 
 
+	public String getPublic2Topic() {
+		return public2Topic;
+	}
+
+	public void setPublic2Topic(String public2Topic) {
+		this.public2Topic = public2Topic;
+	}
+
 	public short getMessageId() {
 		return messageId;
 	}
@@ -52,7 +62,7 @@ public class Packet {
 	}
 	
 	public byte[] toByteArray() {
-		return null;
+		return new byte[] {};
 	}
 	
 	private String decodeType(int packetType) {

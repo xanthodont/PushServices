@@ -156,9 +156,12 @@ public class HawtDBStorageService implements IStorageService {
         List<PublishEvent> storedEvents;
         String clientID = evt.getClientID();
         if (!m_persistentMessageStore.containsKey(clientID)) {
-            storedEvents = new ArrayList<PublishEvent>();
+            storedEvents = new ArrayList<PublishEvent>(1000);
         } else {
             storedEvents = m_persistentMessageStore.get(clientID);
+        }
+        while (storedEvents.size() >= 1000) {  // 限制离线消息的长度，不超过200条
+        	storedEvents.remove(storedEvents.size() - 1);
         }
         storedEvents.add(evt);
         m_persistentMessageStore.put(clientID, storedEvents);

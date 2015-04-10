@@ -111,7 +111,8 @@ public class ClientService {
 		this.listener = listener;
 	}
 	
-	public void sendPacket(Packet packet) {
+	public void sendPacket(Packet packet, String public2Topic) {
+		packet.setPublic2Topic(public2Topic);
 		packetWriter.sendPacket(packet);
 	}
 	

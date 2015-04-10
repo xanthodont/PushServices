@@ -4,21 +4,21 @@ import cloudservices.client.ClientConfiguration;
 import cloudservices.client.ClientService;
 import cloudservices.client.ConfigException;
 import cloudservices.client.ConnectException;
-import cloudservices.client.packets.Packet;
+import cloudservices.client.TestBase;
 import cloudservices.client.packets.TextPacket;
 
-public class ClientServiceTest {
+public class ReceiveMqttClientTest extends TestBase {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		ClientConfiguration config = new ClientConfiguration("172.21.4.64", 1883);
-		config.setResourceName("android");
-		config.setUsername("123456789012121");
-		config.setPassword("kk-xtd-push");
-		config.setTopic("common");
-		config.setSendUrl("http://127.0.0.1:8080/cloudservices-web/api/send");
-		config.setReceiveUrl("http://127.0.0.1:8080/cloudservices-web/api/receive");
-		config.setConnectType(2);
+		ClientConfiguration config = new ClientConfiguration(SERVER_IP, MQTT_PORT);
+		config.setUsername("mqtt_receive");
+		config.setPassword(DEFAULT_PASSWORD);
+		config.setTopic(TOPIC);
+		config.setSendUrl(SEND_URL);
+		config.setReceiveUrl(RECEIVE_URL);
+		config.setConnectUrl(CONNECT_URL);
+		config.setConnectType(2);  // 长连接
 		
 		ClientService client = ClientService.getInstance();
 		try {
@@ -37,15 +37,16 @@ public class ClientServiceTest {
 			// TODO: handle exception
 			e.printStackTrace();
 		}
-		
+		//TextPacket t = new TextPacket();
+		//t.setText("123123");
+		//client.sendPacket(t);
 		while(true) {
 			//client.sendPacket(new Packet());
 			try {
-				Thread.sleep(2000);
+				Thread.sleep(4000);
 				TextPacket t = new TextPacket();
-				t.setText("123123");
-				client.sendPacket(t, "beidou/http_admin");
-				//break;
+				t.setText("");
+				//client.sendPacket(t);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

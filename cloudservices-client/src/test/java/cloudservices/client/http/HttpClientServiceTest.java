@@ -7,30 +7,31 @@ import java.net.URL;
 
 
 
+
 import org.junit.Test;
 
 import cloudservices.client.ClientConfiguration;
 import cloudservices.client.ClientService;
 import cloudservices.client.ConfigException;
 import cloudservices.client.ConnectException;
+import cloudservices.client.TestBase;
 import cloudservices.client.http.async.AsyncHttpConnection;
 import cloudservices.client.http.async.StringResponseHandler;
 import cloudservices.client.http.async.support.ParamsWrapper;
 import cloudservices.client.packets.TextPacket;
 
-public class HttpClientServiceTest {
+public class HttpClientServiceTest extends TestBase {
 	private AsyncHttpConnection http = AsyncHttpConnection.getInstance();
 	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		ClientConfiguration config = new ClientConfiguration("172.21.4.64", 1883);
-		config.setResourceName("android");
-		config.setUsername("http-client");
-		config.setPassword("kk-xtd-push");
-		config.setTopic("common");
-		config.setSendUrl("http://172.21.4.64:8080/cloudservices-web/api/send");
-		config.setReceiveUrl("http://172.21.4.64:8080/cloudservices-web/api/receive");
-		config.setConnectUrl("http://172.21.4.64:8080/cloudservices-web/api/connect");
+		ClientConfiguration config = new ClientConfiguration(SERVER_IP, MQTT_PORT);
+		config.setUsername("http_admin");
+		config.setPassword(DEFAULT_PASSWORD);
+		config.setTopic(TOPIC);
+		config.setSendUrl(SEND_URL);
+		config.setReceiveUrl(RECEIVE_URL);
+		config.setConnectUrl(CONNECT_URL);
 		config.setConnectType(1);
 		
 		ClientService client = ClientService.getInstance();
@@ -60,7 +61,7 @@ public class HttpClientServiceTest {
 				Thread.sleep(8000);
 				TextPacket t = new TextPacket();
 				t.setText(String.valueOf(i++));
-				client.sendPacket(t);
+				client.sendPacket(t, "213");
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -70,7 +71,7 @@ public class HttpClientServiceTest {
 	
 	@Test
 	public void sendUrlTest() {
-		http.get("http://172.21.4.64:8080/cloudservices-web/api/receive", null, new StringResponseHandler() {
+		http.get(SEND_URL, null, new StringResponseHandler() {
 			@Override
 			public void onSubmit(URL url, ParamsWrapper params) {
 				// TODO Auto-generated method stub

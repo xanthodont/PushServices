@@ -51,11 +51,11 @@ public class PacketReader {
     private void parsePackets(Thread thread) {
     	do {
     		Packet packet = nextPacket();
-    		System.out.printf("Reader: has packet -- %s\n", packet);
+    		//System.out.printf("Reader: has packet -- %s\n", packet);
     		switch (packet.getPacketType()) {
 	    		case 0: // text
 	    			TextPacket tp = new TextPacket(packet); 
-	    			System.out.printf("Packet Reader:%s\n", tp);
+	    			//System.out.printf("Packet Reader:%s\n", tp);
 	    			break;
 	    		case 1: // file
 	    			

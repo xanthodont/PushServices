@@ -56,37 +56,9 @@ public class PacketWriter {
 
             // Delete the queue contents (hopefully nothing is left).
             queue.clear();
-
-            // Close the stream.
-            try {
-                //writer.write("</stream:stream>");
-                //writer.flush();
-            }
-            catch (Exception e) {
-                // Do nothing
-            }
-            finally {
-                try {
-                    //writer.close();
-                }
-                catch (Exception e) {
-                    // Do nothing
-                }
-            }
         }
         catch (Exception ioe) {
         	ioe.printStackTrace();
-            // The exception can be ignored if the the connection is 'done'
-            // or if the it was caused because the socket got closed
-        	/*
-            if (!(done || connection.isSocketClosed())) {
-                done = true;
-                // packetReader could be set to null by an concurrent disconnect() call.
-                // Therefore Prevent NPE exceptions by checking packetReader.
-                if (connection.packetReader != null) {
-                        connection.notifyConnectionError(ioe);
-                }
-            }*/
         }
     }
     

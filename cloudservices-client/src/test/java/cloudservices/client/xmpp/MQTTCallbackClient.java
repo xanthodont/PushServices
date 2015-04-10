@@ -197,14 +197,14 @@ public class MQTTCallbackClient {
 
 				}
 			});
-
+			int i = 0;
 			while(true){  
 				TextPacket tp = new TextPacket();
 				tp.setMessageId((short) 101);
-				tp.setBytes("vvv".getBytes());
+				tp.setText("callback--" + i++);
 				//callbackConnection.
-				callbackConnection.publish("common", tp.toByteArray(), QoS.AT_LEAST_ONCE, false, null);
-				Thread.sleep(3000);
+				callbackConnection.publish("beidou/mqtt_receive", tp.toByteArray(), QoS.AT_LEAST_ONCE, false, null);
+				Thread.sleep(100);
             }  
 
 		} catch (Exception e) {
