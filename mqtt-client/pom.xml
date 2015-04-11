@@ -1,0 +1,122 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.xtd</groupId>
+    <artifactId>cloudservice</artifactId>
+    <version>${project.version}</version>
+  </parent>
+  <artifactId>mqtt-client</artifactId>
+  
+  <properties>
+    <forge-project-id>mqtt-client</forge-project-id>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    
+    <junit-version>4.7</junit-version>
+    <slf4j-version>1.6.1</slf4j-version>
+    <hawtbuf-version>1.10</hawtbuf-version>
+    <hawtdispatch-version>1.20</hawtdispatch-version> 
+    <mvnplugins-version>1.15</mvnplugins-version>
+    <osgi-version>4.2.0</osgi-version>
+    <asm-version>3.1</asm-version>
+
+    <apollo-version>1.6</apollo-version>
+  </properties>
+  
+  <dependencies>
+
+    <dependency>
+      <groupId>org.fusesource.hawtdispatch</groupId>
+      <artifactId>hawtdispatch-transport</artifactId>
+      <version>${hawtdispatch-version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.fusesource.hawtbuf</groupId>
+      <artifactId>hawtbuf</artifactId>
+      <version>${hawtbuf-version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.core</artifactId>
+      <version>${osgi-version}</version>
+      <optional>true</optional>
+    </dependency>
+
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.compendium</artifactId>
+      <version>${osgi-version}</version>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>asm</groupId>
+      <artifactId>asm-tree</artifactId>
+      <version>${asm-version}</version>
+      <optional>true</optional>
+    </dependency>
+    
+    <!-- Testing Dependencies -->
+    <dependency>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>apollo-broker</artifactId>
+      <scope>test</scope>
+      <version>${apollo-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>apollo-mqtt</artifactId>
+      <version>${apollo-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>apollo-leveldb</artifactId>
+      <version>${apollo-version}</version>
+      <scope>test</scope>
+    </dependency>
+	<dependency>
+		<groupId>org.apache.activemq</groupId>
+		<artifactId>activemq-jaas</artifactId>
+		<version>5.11.1</version>
+	</dependency>
+	<dependency>
+		<groupId>org.apache.geronimo.specs</groupId>
+		<artifactId>geronimo-jta_1.1_spec</artifactId>
+		<version>1.0</version>
+	</dependency> 
+	    
+    <!-- to enable the webconsole in the apollo broker -->
+    <dependency>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>apollo-web</artifactId>
+      <version>${apollo-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.jetty.aggregate</groupId>
+      <artifactId>jetty-all-server</artifactId>
+      <version>7.1.6.v20100715</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+      <version>${junit-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>${slf4j-version}</version>
+      <scope>test</scope>
+    </dependency> 
+
+    
+  </dependencies>
+
+  <build>
+    
+  </build>
+  
+</project>
