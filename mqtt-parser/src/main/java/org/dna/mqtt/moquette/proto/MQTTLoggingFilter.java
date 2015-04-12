@@ -68,6 +68,10 @@ public class MQTTLoggingFilter extends LoggingFilter {
         if (remainingLength != -1) {
             sb.append(", remainingLen: ").append(remainingLength);
         }
+        
+        if (messageType == PUBLISH) {
+        	
+        }
 
         in.rewind();
         return sb.toString();

@@ -54,9 +54,15 @@ public class MQTTHandler extends IoHandlerAdapter {
             //TODO send a notification to messaging part to remove the bining clientID-ConnConfig
         }
     }
+    
+    @Override 
+    public void exceptionCaught(IoSession session, Throwable throwable) {
+    	session.close(false);
+    }
 
     public void setMessaging(IMessaging messaging) {
         m_messaging = messaging;
     }
 
+    
 }

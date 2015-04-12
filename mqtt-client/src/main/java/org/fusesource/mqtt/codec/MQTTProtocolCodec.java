@@ -67,6 +67,7 @@ public class MQTTProtocolCodec extends AbstractProtocolCodec {
             nextWriteBuffer.write(digit);
         } while (remaining > 0);
         for(Buffer buffer : frame.buffers) {
+        	//System.out.printf("%s , data.length=%d off=%d len=%d, writer=%s\n", frame,buffer.data.length, buffer.offset, buffer.length, nextWriteBuffer);
             nextWriteBuffer.write(buffer.data, buffer.offset, buffer.length);
         }
     }

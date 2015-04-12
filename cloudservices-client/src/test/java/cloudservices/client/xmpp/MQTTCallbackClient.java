@@ -2,6 +2,7 @@ package cloudservices.client.xmpp;
 
 import java.net.ProtocolException;
 
+import org.apache.log4j.Logger;
 import org.fusesource.hawtbuf.Buffer;
 import org.fusesource.hawtbuf.UTF8Buffer;
 import org.fusesource.hawtdispatch.Dispatch;
@@ -16,11 +17,15 @@ import org.fusesource.mqtt.client.QoS;
 import org.fusesource.mqtt.client.Topic;
 import org.fusesource.mqtt.client.Tracer;
 import org.fusesource.mqtt.codec.MQTTFrame;
+import org.fusesource.mqtt.codec.PUBACK;
 import org.fusesource.mqtt.codec.PUBLISH;
 
+import cloudservices.client.packets.Packet;
 import cloudservices.client.packets.TextPacket;
 
 public class MQTTCallbackClient {
+	private static Logger logger = Logger.getLogger(MQTTCallbackClient.class);
+	
     private final static String CONNECTION_STRING = "tcp://127.0.0.1:1883";  
     private final static boolean CLEAN_START = true;  
     private final static short KEEP_ALIVE = 30;// 低耗网络，但是又需要及时获取数据，心跳30s  
@@ -97,20 +102,37 @@ public class MQTTCallbackClient {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
-						System.out.println("recv Publish: " + frame);
+						logger.info("recv Publish: " + frame);
 					}
-					else 
-						System.out.println("recv: " + frame);
+					else if (frame.messageType() == PUBACK.TYPE) {
+						PUBACK ack;
+						try {
+							ack = new PUBACK().decode(frame);
+							logger.info("recv: " + ack);
+						} catch (ProtocolException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
 				}
 
 				@Override
 				public void onSend(MQTTFrame frame) {
-					System.out.println("send: " + frame);
+					if (frame.messageType() == PUBLISH.TYPE) {
+						try {
+							PUBLISH publish = new PUBLISH().decode(frame);
+							logger.info("send: -- mesageId:" + publish.messageId());
+						} catch (ProtocolException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} 
+						//logger.info("send: " + frame);
+					}
 				}
 
 				@Override
 				public void debug(String message, Object... args) {
-					System.out.println(String.format("debug: " + message, args));
+					logger.info(String.format("debug: " + message, args));
 				}
 			});
 
@@ -148,7 +170,8 @@ public class MQTTCallbackClient {
 					// TODO Auto-generated method stub
 					System.out.println("=============receive msg================"
 									+ new String(payload.toByteArray()));
-					// onComplete.run();
+					ack.run();
+					
 				}
 			});
 
@@ -181,7 +204,7 @@ public class MQTTCallbackClient {
 					// 发布消息
 					TextPacket tp = new TextPacket();
 					tp.setMessageId((short) 101);
-					tp.setBytes("vvv".getBytes());
+					tp.setText("subscribe");
 					
 					callbackConnection.publish("china/shenzhen", tp.toByteArray(),
 							QoS.EXACTLY_ONCE, true, new Callback<Void>() {
@@ -200,12 +223,22 @@ public class MQTTCallbackClient {
 			int i = 0;
 			while(true){  
 				TextPacket tp = new TextPacket();
-				tp.setMessageId((short) 101);
 				tp.setText("callback--" + i++);
+				TextPacket tp2 = new TextPacket();
+				tp2.setText("tp2--" + i);
 				//callbackConnection.
 				callbackConnection.publish("beidou/mqtt_receive", tp.toByteArray(), QoS.AT_LEAST_ONCE, false, null);
+				callbackConnection.publish("beidou/http_receive", tp2.toByteArray(), QoS.AT_LEAST_ONCE, false, null);
 				Thread.sleep(100);
             }  
+			/** 
+			 * 上面的测试结果：运行一段时间时间后，客户端会出错。如果把while的间隔时间改短，出错更快
+			 * 原因：在CallbackConnection这个类的send(Request)方法中，先transport.offer，然后在requests.put()
+			 * 		如果消息响应得快，那在completeRequest中处理request.remove(messageId)就会出错。原因很明显：在做remove之前，并没有put
+			 * 解决方法：可以限制两条消息发送之间的时间间隔，将间隔时间设置在1秒以上，但这并不是最好方法。
+			 * 最新：我有罪，去看了一下Github上的org.fusesource.mqtt.client.CallcackConnection实现，已经修复了这个问题，更新mqtt.client的jar包可以解决这个问题了。
+			 * 		好吧，mqtt.client的jar包pom上最新的是1.10版本，但是这个版本的jar并未修复了上面的问题，需要拷贝mqtt.client工程下来，不要通过
+			 */
 
 		} catch (Exception e) {
 			e.printStackTrace();

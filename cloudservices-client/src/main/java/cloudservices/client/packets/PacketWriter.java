@@ -37,6 +37,7 @@ public class PacketWriter {
             while (!done && (writerThread == thisThread)) {
                 Packet packet = nextPacket();
                 if (packet != null) {
+                	if (!queue.isEmpty())	Thread.sleep(100); // 两条消息发送间缓冲100毫秒
                     client.getActualClient().send(packet);
                 }
             }

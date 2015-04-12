@@ -16,6 +16,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.log4j.Logger;
 import org.fusesource.hawtbuf.Buffer;
 import org.fusesource.hawtbuf.UTF8Buffer;
 import org.fusesource.hawtdispatch.Task;
@@ -41,6 +42,7 @@ import cloudservices.client.packets.Packet;
 import cloudservices.utils.StringUtil;
 
 public class MQTTClientService implements ISender {
+	private static Logger logger = Logger.getLogger(MQTTClientService.class);
 	private ClientService clientService;
 	private MQTT mqtt;
 	private CallbackConnection connection;
@@ -111,25 +113,28 @@ public class MQTTClientService implements ISender {
         	public void onConnected() {
         		// TODO Auto-generated method stub
         		// mqtt_log 连接成功
+        		logger.info("connect success\n");
         	}
         	
         	@Override
         	public void onDisconnected() {
         		// TODO Auto-generated method stub
         		// mqtt_log 断开连接完毕
+        		logger.info("disconnect \n");
         		connected = false;
         	}
         	
 			@Override
 			public void onPublish(UTF8Buffer topic, Buffer body, Runnable ack) {
 				// TODO Auto-generated method stub
-				
+				ack.run();
 			}
 			
 			@Override
 			public void onFailure(Throwable value) {
 				// TODO Auto-generated method stub
 				// mqtt_log 连接异常
+				logger.info("connect fail\n");
 			}
 		});
 	}
@@ -172,7 +177,7 @@ public class MQTTClientService implements ISender {
 				// TODO Auto-generated method stub
 				// mqtt_log 连接失败
 				// print value.getMessage();
-				System.out.println("connect fail");
+				logger.info("connect fail");
 				connLatch.countDown();
 				connLatch.countDown();
 				// mqtt_log 关闭连接
@@ -199,7 +204,7 @@ public class MQTTClientService implements ISender {
 	
 	public void send(Packet packet, String publicTopic) {
 		// TODO Auto-generated method stub
-		
+		/*
 		try {
 			connection.publish(publicTopic, packet.toByteArray(), QoS.AT_LEAST_ONCE, false, new Callback<Void>() {
 				
@@ -212,16 +217,16 @@ public class MQTTClientService implements ISender {
 				@Override
 				public void onFailure(Throwable value) {
 					// TODO Auto-generated method stub
-					System.out.printf("发消息异常");
+					logger.info("发消息异常");
 					value.printStackTrace();
 				}
 			});
 		} catch (Exception e) {
 			
-			System.out.printf("发消息异常-- packet:%s  length:%d", packet.toString(), packet.toByteArray().length);
+			logger.info(String.format("发消息异常-- packet:%s  length:%d", packet.toString(), packet.toByteArray().length));
 			e.printStackTrace();
-		}
-		//connection.publish(publicTopic, packet.toByteArray(), QoS.AT_LEAST_ONCE, false, null);
+		}*/
+		connection.publish(publicTopic, packet.toByteArray(), QoS.AT_LEAST_ONCE, false, null);
 	}
 
 }
