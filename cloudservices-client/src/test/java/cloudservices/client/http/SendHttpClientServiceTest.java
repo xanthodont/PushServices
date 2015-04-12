@@ -47,7 +47,7 @@ public class SendHttpClientServiceTest extends TestBase {
 				client.sendPacket(t1, "beidou/http_receive");
 				TextPacket t2 = new TextPacket();
 				t2.setText(String.format("to_mqtt %s -- %d", config.getUsername(), i));
-				client.sendPacket(t2, "beidou/mqtt_receive");
+				client.sendPacket(t2, "beidou/mqtt_send");
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
