@@ -21,7 +21,12 @@ public interface IStorageService {
     void storeRetained(String topic, byte[] message, AbstractMessage.QOSType qos);
 
     Collection<StoredMessage> searchMatching(IMatchingCondition condition);
-
+    
+    /**
+     * 存储离线消息
+     * 离线消息同时也是作为http轮询的存储中介
+     * @param evt
+     */
     void storePublishForFuture(PublishEvent evt);
 
     List<PublishEvent> retrivePersistedPublishes(String clientID);

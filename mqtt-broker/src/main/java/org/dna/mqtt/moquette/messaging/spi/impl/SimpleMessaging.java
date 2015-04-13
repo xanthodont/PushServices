@@ -211,7 +211,7 @@ public class SimpleMessaging implements IMessaging, EventHandler<ValueEvent> {
     }
 
     private void processInit() {
-        m_storageService = new HawtDBStorageService();
+        m_storageService = new RedisDBStroageService();
         m_storageService.initStore();
 
         subscriptions.init(m_storageService);
