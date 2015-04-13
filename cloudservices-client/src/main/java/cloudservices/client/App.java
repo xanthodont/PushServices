@@ -1,8 +1,11 @@
 package cloudservices.client;
 
+import org.apache.log4j.Logger;
+
 import cloudservices.client.packets.TextPacket;
 
 public class App {
+	private static Logger logger = Logger.getLogger(App.class);
 	protected static final String SERVER_IP = "127.0.0.1";
 	protected static final int MQTT_PORT = 1883;
 	protected static final String SERVER_URL = "http://127.0.0.1:8080/cloudservices-web";
@@ -26,15 +29,18 @@ public class App {
 		if (args.length != 4) {
 			return;
 		}
+		int circle = Integer.parseInt(args[3]);
 		ClientConfiguration config = new ClientConfiguration(SERVER_IP, MQTT_PORT);
-		config.setUsername(args[0]);
+		config.setUsername(args[1]);
 		config.setPassword(DEFAULT_PASSWORD);
 		config.setTopic(TOPIC);
 		config.setSendUrl(SEND_URL);
 		config.setReceiveUrl(RECEIVE_URL);
 		config.setConnectUrl(CONNECT_URL);
 		config.setConnectType(Integer.parseInt(args[0]));
-
+		config.setHttpCircle(circle);
+		
+		
 		ClientService client = ClientService.getInstance();
 		try {
 			client.config(config);
@@ -52,18 +58,18 @@ public class App {
 			// TODO: handle exception
 			e.printStackTrace();
 		}
-		int i = 0, circle = 1000;
-		circle = Integer.parseInt(args[3]);
+		int i = 0;
+		
 		while (true) {
 			// client.sendPacket(new Packet());
 			try {
-				Thread.sleep(circle);
+				Thread.sleep(circle*1000);
 				TextPacket t = new TextPacket();
 				t.setText(String.format("From[%s] to[%s] -- msg:%d", config.getUsername(), args[2], i++));
 				client.sendPacket(t, "beidou/"+args[2]);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error("发送消息异常", e);
 			}
 		}
 	}

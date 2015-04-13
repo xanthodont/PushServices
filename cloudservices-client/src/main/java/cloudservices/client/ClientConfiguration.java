@@ -50,7 +50,7 @@ public class ClientConfiguration {
 	/** 重连机制 */
 	
 	/** Http轮询周期 */
-	private int httpCircle;
+	private int httpCircle = 30;
 	
 	/** 用户名 */
 	private String username;

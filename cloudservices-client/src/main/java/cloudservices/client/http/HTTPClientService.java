@@ -8,6 +8,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.log4j.Logger;
+
 import cloudservices.client.ClientConfiguration;
 import cloudservices.client.ClientService;
 import cloudservices.client.ConfigException;
@@ -19,9 +21,12 @@ import cloudservices.client.http.async.StringResponseHandler;
 import cloudservices.client.http.async.support.ParamsWrapper;
 import cloudservices.client.http.async.support.RequestInvokerFactory;
 import cloudservices.client.packets.Packet;
+import cloudservices.client.xmpp.MQTTCallbackClient;
 import cloudservices.utils.StringUtil;
 
 public class HTTPClientService implements ISender {
+	private static Logger logger = Logger.getLogger(HTTPClientService.class);
+	
 	private ClientService clientService;
 	private AsyncHttpConnection http;
 	private String sendUrl = "";
@@ -46,12 +51,12 @@ public class HTTPClientService implements ISender {
 				@Override
 				public void onConnectError(IOException exp) {
 					// http_log 请求连接失败
-					
+					logger.error("接收消息连接异常", exp);
 				}
 				@Override
 				public void onStreamError(IOException exp) {
 					// TODO Auto-generated method stub
-					
+					logger.error("接收消息流异常", exp);
 				}
 				@Override
 				public void onResponse(byte[] data, URL url) {
@@ -83,6 +88,7 @@ public class HTTPClientService implements ISender {
 		receiveUrl = config.getReceiveUrl();
 		if (StringUtil.isEmpty(config.getConnectUrl())) throw new ConfigException("未设置Http连接Connect的接口地址");
 		connectUrl = config.getConnectUrl();
+		scheduleDelay = config.getHttpCircle();
 	}
 
 	@Override
@@ -105,13 +111,13 @@ public class HTTPClientService implements ISender {
 			@Override
 			public void onConnectError(IOException exp) {
 				// TODO Auto-generated method stub
-				
+				logger.error("发送消息连接异常", exp);
 			}
 
 			@Override
 			public void onStreamError(IOException exp) {
 				// TODO Auto-generated method stub
-				
+				logger.error("发送消息流异常", exp);
 			}
 
 			@Override

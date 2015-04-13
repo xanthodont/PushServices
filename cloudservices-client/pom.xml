@@ -67,7 +67,7 @@
 					</descriptorRefs>
 					<archive>
 						<manifest>
-							
+							<mainClass>cloudservices.client.App</mainClass> 
 						</manifest>
 					</archive>
 					<encoding>UTF-8</encoding>

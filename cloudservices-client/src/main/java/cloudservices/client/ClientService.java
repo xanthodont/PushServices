@@ -31,10 +31,10 @@ public class ClientService {
 	private static class ProviderHolder {
 		static ClientService instance = new ClientService();
 	}
-	/** 接口调用顺序 
-	 * 											|--> sendPacket()   -->|
-	 * 	config() --> startup() --> connect() -->|					   |--> shutdown()
-	 * 										    |<-- receivePacket()<--|
+	/** 接口调用顺序<br/>
+	 * 											|--> sendPacket()   -->|<br/>
+	 * 	config() --> startup() --> connect() -->|					   |--> shutdown()<br/>
+	 * 										    |<-- receivePacket()<--|<br/>
 	 * @return
 	 */
 	public static ClientService getInstance() {
