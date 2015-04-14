@@ -131,7 +131,7 @@ public class MQTTClientServiceFuture implements ISender{
 		packet.setPacketType(type);
 		byte[] remain = new byte[buffer.remaining()];
 		buffer.get(remain);
-		packet.setBytes(remain);
+		packet.setRemainBytes(remain);
 		return packet;
 	}
 

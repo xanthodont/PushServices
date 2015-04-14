@@ -3,14 +3,30 @@ package cloudservices.client.packets;
 import java.nio.ByteBuffer;
 
 public class Packet {
-	
+	public static final int TEXT = 1;
+	public static final int HTTP = 2;
+	public static final int ACK  = 3;
+	public static final int FILE = 4; 
+	/**
+	 * 消息类型：<br/>
+	 * 1 -- 文本消息<br/>
+	 * 2 -- Http消息<br/>
+	 * 3 -- 回执消息<br/>
+	 * 4 -- 文件消息<br/>
+	 */
 	protected int packetType;
 	
+	/** 是否需要回执 */
+	protected boolean ack;
+	/** 发送消息的用户 */
+	protected String username;
+	
+	/** 发送的主题 */
 	protected String public2Topic;
 	
-	protected short messageId;
+	protected int messageId;
 	
-	protected byte[] bytes;
+	protected byte[] remainBytes;
 	
 	/*
 	public Packet(Packet packet) {
@@ -21,21 +37,31 @@ public class Packet {
 	
 	public static Packet parse(ByteBuffer buffer) {
 		Packet packet = new Packet();
-		int type = buffer.getInt();
+		byte header = buffer.get();
+		int type = header >> 4;
+		boolean ack = (header & 0x01) == 0x01;
 		packet.setPacketType(type);
+		packet.setAck(ack);
+		if (ack) { // 消息需要回执, 读取发送消息的用户信息
+			short s = buffer.getShort();
+			byte[] fu = new byte[s]; 
+			buffer.get(fu);
+			packet.setUsername(new String(fu));
+		}
 		byte[] remain = new byte[buffer.remaining()];
 		buffer.get(remain);
-		packet.setBytes(remain);
+		packet.setRemainBytes(remain);
 		return packet;
 	}
-	
-	public void setBytes(byte[] bytes) {
-		this.bytes = bytes;
+
+	public byte[] getRemainBytes() {
+		return remainBytes;
 	}
-	public byte[] getBytes() {
-		return bytes;
+
+	public void setRemainBytes(byte[] remainBytes) {
+		this.remainBytes = remainBytes;
 	}
-	
+
 	public void setPacketType(int packetType) {
 		this.packetType = packetType;
 	}
@@ -52,28 +78,53 @@ public class Packet {
 		this.public2Topic = public2Topic;
 	}
 
-	public short getMessageId() {
+	public int getMessageId() {
 		return messageId;
 	}
 
-
-	public void setMessageId(short messageId) {
+	private void setMessageId(int messageId) {
 		this.messageId = messageId;
 	}
-	
+
+	public boolean isAck() {
+		return ack;
+	}
+
+	public void setAck(boolean ack) {
+		this.ack = ack;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
 	public byte[] toByteArray() {
-		return new byte[] {};
+		if (isAck()) {
+			ByteBuffer header = ByteBuffer.allocate(3 + getUsername().length());
+			header.put(getHeader());
+			header.putShort((short)getUsername().length());
+			header.put(getUsername().getBytes());
+			return header.array();
+		} else {
+			ByteBuffer header = ByteBuffer.allocate(1);
+			header.put(getHeader());
+			return header.array();
+		}
 	}
 	
 	private String decodeType(int packetType) {
 		switch (packetType) {
-		case 0:
+		case Packet.TEXT:
 			return "TEXT"; 
-		case 1:
+		case Packet.FILE:
 			return "FILE";
-		case 2:
+		case Packet.HTTP:
 			return "HTTP";
-		case 3: 
+		case Packet.ACK: 
 			return "ACK";
 		default: 
 			return "UNDEFINED";
@@ -81,8 +132,14 @@ public class Packet {
 	
 	}
 	
+	protected byte getHeader() {
+		byte b = (byte) (packetType << 4);
+		if (isAck()) b = (byte) (b | 0x01);
+		return b;
+	}
+	
 	@Override 
 	public String toString() {
-		return String.format("type: %s, content: %s", packetType, new String(bytes)).toString(); 
+		return String.format("type: %s, isAck: %b, user: %s, mId: %d", decodeType(packetType), isAck(), getUsername(), getMessageId()); 
 	}
 }

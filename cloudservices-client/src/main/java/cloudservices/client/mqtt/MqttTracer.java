@@ -51,7 +51,7 @@ public class MqttTracer extends Tracer{
 		if (frame.messageType() == PUBLISH.TYPE) {
 			try {
 				PUBLISH publish = new PUBLISH().decode(frame);
-				logger.info("send: -- mesageId:" + publish.messageId());
+				//logger.info("send: -- mesageId:" + publish.messageId());
 			} catch (ProtocolException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

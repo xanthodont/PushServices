@@ -76,6 +76,7 @@ public class App {
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				logger.error("发送消息异常", e);
+				break;
 			}
 		}
 	}

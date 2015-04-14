@@ -226,6 +226,7 @@ public class MQTTClientService implements ISender {
 			logger.info(String.format("发消息异常-- packet:%s  length:%d", packet.toString(), packet.toByteArray().length));
 			e.printStackTrace();
 		}*/
+		//packet.setUsername(getConfiguration().getUsername());
 		connection.publish(publicTopic, packet.toByteArray(), QoS.AT_LEAST_ONCE, false, null);
 	}
 

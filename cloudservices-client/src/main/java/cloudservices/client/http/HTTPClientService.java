@@ -123,13 +123,14 @@ public class HTTPClientService implements ISender {
 			@Override
 			protected void onResponse(String content, URL url) {
 				// xtd-log Htpp log
+				//client.getClientService().getPacketReader().putPacket(packet);
 				System.out.printf("send response：%s\n", content);
 			}});
 	}
 
 	@Override
 	public void connect() throws ConnectException {
-		// TODO Auto-generated method stub
+		// TODO Auto-generated method stub	
 		// 发送消息接口验证
 		http.get(sendUrl, new BinaryResponseHandler() {
 			@Override

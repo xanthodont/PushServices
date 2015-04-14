@@ -113,6 +113,7 @@ public class ClientService {
 	
 	public void sendPacket(Packet packet, String public2Topic) {
 		packet.setPublic2Topic(public2Topic);
+		packet.setUsername(config.getUsername());
 		packetWriter.sendPacket(packet);
 	}
 	

@@ -31,12 +31,25 @@ public class PacketWriter {
         writerThread.setDaemon(true);
     }
     
+    int nextMessageId = 1;
+    private int getNextMessageId() {
+    	int rc = nextMessageId;
+        nextMessageId++;
+        if(nextMessageId==0) {
+            nextMessageId=1;
+        }
+        return rc;
+    }
+    
     private void writePackets(Thread thisThread) {
     	try {
             // Write out packets from the queue.
             while (!done && (writerThread == thisThread)) {
                 Packet packet = nextPacket();
                 if (packet != null) {
+                	// xtd_log 单线程执行，不用担心多线程问题
+                	packet.messageId = getNextMessageId();
+                	System.out.println("Send:" + packet);
                 	if (!queue.isEmpty())	Thread.sleep(100); // 两条消息发送间缓冲100毫秒
                     client.getActualClient().send(packet);
                 }
@@ -66,6 +79,7 @@ public class PacketWriter {
     public void sendPacket(Packet packet) {
     	if (!done) {
             try {
+            	
                 queue.put(packet);
             }
             catch (InterruptedException ie) {
@@ -77,6 +91,8 @@ public class PacketWriter {
             }
         }
     }
+    
+    
     
     public void startup() {
         writerThread.start();

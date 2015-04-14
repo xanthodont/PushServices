@@ -203,7 +203,6 @@ public class MQTTCallbackClient {
 
 					// 发布消息
 					TextPacket tp = new TextPacket();
-					tp.setMessageId((short) 101);
 					tp.setText("subscribe");
 					
 					callbackConnection.publish("china/shenzhen", tp.toByteArray(),

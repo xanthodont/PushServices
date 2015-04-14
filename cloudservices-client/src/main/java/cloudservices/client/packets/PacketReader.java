@@ -51,13 +51,25 @@ public class PacketReader {
     private void parsePackets(Thread thread) {
     	do {
     		Packet packet = nextPacket();
-    		//System.out.printf("Reader: has packet -- %s\n", packet);
+    		//System.out.printf("receive: %s\n", packet);
+    		if (packet.isAck()) {
+    			// 回发Ack回执消息
+    			AckPacket ack = new AckPacket();
+    			ack.setAckId(packet.getMessageId()); // 回发原消息Id
+    			client.sendPacket(ack, "beidou/"+packet.getUsername());
+    		}
     		switch (packet.getPacketType()) {
-	    		case 0: // text
+	    		case Packet.TEXT: // text
 	    			TextPacket tp = new TextPacket(packet); 
-	    			//System.out.printf("Packet Reader:%s\n", tp);
+	    			System.out.printf("Receive:%s\n", tp);
 	    			break;
-	    		case 1: // file
+	    		case Packet.HTTP:
+	    			break;
+	    		case Packet.ACK:
+	    			//AckPacket tp = new TextPacket(packet); 
+	    			System.out.printf("Receive: ack %s\n", packet);
+	    			break;
+	    		case Packet.FILE: // file
 	    			
 	    			break;
 	    		default: 
@@ -100,7 +112,7 @@ public class PacketReader {
     	if (!done) {
             try {
             	// packet_log 接收到消息
-            	System.out.printf("Packet: %s\n", packet);
+            	//System.out.printf("Packet: %s\n", packet);
                 queue.put(packet);
             }
             catch (InterruptedException ie) {
