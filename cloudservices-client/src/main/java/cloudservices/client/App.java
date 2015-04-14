@@ -59,14 +59,20 @@ public class App {
 			e.printStackTrace();
 		}
 		int i = 0;
+		String[] tos = {};
+		if (!args[2].equals("null"))
+			tos = args[2].split(",");
 		
 		while (true) {
 			// client.sendPacket(new Packet());
 			try {
+				i++;
 				Thread.sleep(circle*1000);
-				TextPacket t = new TextPacket();
-				t.setText(String.format("From[%s] to[%s] -- msg:%d", config.getUsername(), args[2], i++));
-				client.sendPacket(t, "beidou/"+args[2]);
+				for (int j = 0; j < tos.length; j++) {
+					TextPacket t = new TextPacket();
+					t.setText(String.format("From [%s] To [%s] -- msg:%d", config.getUsername(), tos[j], i));
+					client.sendPacket(t, "beidou/"+tos[j]);
+				}
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				logger.error("发送消息异常", e);
