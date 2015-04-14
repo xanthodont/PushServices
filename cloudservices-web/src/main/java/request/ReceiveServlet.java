@@ -43,7 +43,7 @@ public class ReceiveServlet  extends HttpServlet {
 			response.flushBuffer();
 			return;
 		}
-		String rs = "recevie:";
+		String rs = "receive msg:";
 		List<PublishEvent> publishedEvents = mqttServer.getStorageService().retrivePersistedPublishes(username);
         if (publishedEvents == null) {
             //LOG.debug("processRepublish, no stored publish events");
@@ -51,7 +51,8 @@ public class ReceiveServlet  extends HttpServlet {
             //return;
         } else {
         	for (PublishEvent pubEvt : publishedEvents) {
-        		rs += new String(pubEvt.getMessage());
+        		rs += String.format("\n %s", new String(pubEvt.getMessage()));
+        		
         	}
         }
 		
