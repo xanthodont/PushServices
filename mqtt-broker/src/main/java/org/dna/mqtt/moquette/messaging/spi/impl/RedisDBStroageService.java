@@ -15,12 +15,22 @@ import org.dna.mqtt.moquette.messaging.spi.impl.subscriptions.Subscription;
 import org.dna.mqtt.moquette.proto.messages.AbstractMessage.QOSType;
 
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPoolConfig;
 
 public class RedisDBStroageService implements IStorageService {
-	
-	private Jedis jedis = new Jedis("127.0.0.1");
+	private JedisPoolConfig config;
+	private JedisPool jedisPool;
 	/** 离线消息存储 */
 	private Map<String, List<PublishEvent>> persistentMessageStore;
+	
+	public RedisDBStroageService() {
+		// TODO Auto-generated constructor stub
+		config = new JedisPoolConfig();
+		config.setMaxIdle(100);
+		config.setMaxTotal(500);
+		jedisPool = new JedisPool(config, "127.0.0.1");  
+	}
 
 	@Override
 	public void initStore() {
@@ -37,13 +47,22 @@ public class RedisDBStroageService implements IStorageService {
 	@Override
 	public Collection<StoredMessage> searchMatching(IMatchingCondition condition) {
 		// TODO Auto-generated method stub
-		return null;
+		List<StoredMessage> results = new ArrayList<StoredMessage>();
+		return results;
 	}
 
 	@Override
 	public void storePublishForFuture(PublishEvent evt) {
 		// TODO Auto-generated method stub
-		jedis.lpush(evt.getClientID().getBytes(), SerializationUtil.serialize(evt));
+		Jedis jedis = jedisPool.getResource();
+		try {
+			jedis.lpush(evt.getClientID().getBytes(), SerializationUtil.serialize(evt));
+		} catch (Exception e) {
+			// TODO: handle exception
+		} finally {
+			jedisPool.returnResourceObject(jedis);
+		}
+		
 	}
 
 	@Override
@@ -51,9 +70,16 @@ public class RedisDBStroageService implements IStorageService {
 		// TODO Auto-generated method stub
 		List<PublishEvent> evts = new ArrayList<PublishEvent>();
 		byte[] clientKey = clientID.getBytes();
-		while (jedis.llen(clientKey) > 0L) {
-			byte[] value = jedis.rpop(clientKey);
-			evts.add((PublishEvent) SerializationUtil.deserialize(value));
+		byte[] value = null;
+		Jedis jedis = jedisPool.getResource();
+		try {
+			while ((value = jedis.rpop(clientKey)) != null) {
+				evts.add((PublishEvent) SerializationUtil.deserialize(value));
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		} finally {
+			jedisPool.returnResourceObject(jedis);
 		}
 		return evts;
 	}
