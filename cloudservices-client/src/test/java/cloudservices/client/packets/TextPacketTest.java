@@ -23,7 +23,7 @@ public class TextPacketTest extends TestBase{
 		config.setSendUrl(SEND_URL);
 		config.setReceiveUrl(RECEIVE_URL);
 		config.setConnectUrl(CONNECT_URL);
-		config.setConnectType(2);
+		config.setConnectType(1);
 
 		ClientService client = ClientService.getInstance();
 		try {

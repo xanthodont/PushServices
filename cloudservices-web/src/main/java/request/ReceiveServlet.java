@@ -45,23 +45,22 @@ public class ReceiveServlet  extends HttpServlet {
 		}
 		String rs = "receive msg:";
 		List<PublishEvent> publishedEvents = mqttServer.getStorageService().retrivePersistedPublishes(username);
+		ByteBuffer resultBuffer = ByteBuffer.allocate(4);
+		resultBuffer.putInt(publishedEvents.size());
         if (publishedEvents == null) {
-            //LOG.debug("processRepublish, no stored publish events");
-        	rs += "[]";
-            //return;
+        	
         } else {
         	for (PublishEvent pubEvt : publishedEvents) {
-        		rs += String.format("\n %s", new String(pubEvt.getMessage()));
-        		
+        		ByteBuffer oldBuffer = resultBuffer;
+        		resultBuffer = ByteBuffer.allocate(oldBuffer.capacity() + 4 + pubEvt.getMessage().length);
+        		resultBuffer.put(oldBuffer.array());
+        		resultBuffer.putInt(pubEvt.getMessage().length);
+        		resultBuffer.put(pubEvt.getMessage());
         	}
         }
 		
-		
 		ServletOutputStream out = response.getOutputStream();
-		ByteBuffer buffer = ByteBuffer.allocate(4+rs.length()*2);
-		buffer.putInt(1);
-		buffer.put(rs.getBytes());
-		out.write(buffer.array());
+		out.write(resultBuffer.array());
 		response.flushBuffer();
 	}
 }

@@ -62,8 +62,14 @@ public class HTTPClientService implements ISender {
 				public void onResponse(byte[] data, URL url) {
 					// TODO Auto-generated method stub
 					ByteBuffer buffer = ByteBuffer.wrap(data);
-					Packet packet = Packet.parse(buffer);
-					clientService.getPacketReader().putPacket(packet);
+					int packetSize = buffer.getInt();
+					for (int i = 0; i < packetSize; i++) {
+						int length = buffer.getInt();
+						byte[] packetData = new byte[length];
+						buffer.get(packetData);
+						Packet packet = Packet.parse(ByteBuffer.wrap(packetData));
+						clientService.getPacketReader().putPacket(packet);
+					}
 				}});
         }
     };
@@ -124,7 +130,7 @@ public class HTTPClientService implements ISender {
 			protected void onResponse(String content, URL url) {
 				// xtd-log Htpp log
 				//client.getClientService().getPacketReader().putPacket(packet);
-				System.out.printf("send response：%s\n", content);
+				//System.out.printf("send response：%s\n", content);
 			}});
 	}
 

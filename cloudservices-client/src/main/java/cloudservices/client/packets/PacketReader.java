@@ -52,7 +52,7 @@ public class PacketReader {
     private void parsePackets(Thread thread) {
     	do {
     		Packet packet = nextPacket();
-    		System.out.printf("Receive: %s\n", packet);
+    		//System.out.printf("Receive: %s\n", packet);
     		if (packet.isAck() && packet.getPacketType() != Packet.ACK) { 
     			// 回发Ack回执消息
     			AckPacket ack = new AckPacket();
@@ -66,15 +66,15 @@ public class PacketReader {
     		
     		switch (packet.getPacketType()) {
 	    		case Packet.TEXT: // text
-	    			//TextPacket tp = new TextPacket(packet); 
-	    			//System.out.printf("Receive:%s\n", tp);
+	    			TextPacket tp = new TextPacket(packet); 
+	    			System.out.printf("Receive:%s\n", tp);
 	    			break;
 	    		case Packet.HTTP:
 	    			break;
 	    		case Packet.ACK:
-	    			//AckPacket ack = new AckPacket(packet);
+	    			AckPacket ack = new AckPacket(packet);
 	    			
-	    			//System.out.printf("Receive:%s\n", ack);
+	    			System.out.printf("Receive:%s\n", ack);
 	    			break;
 	    		case Packet.FILE: // file
 	    			

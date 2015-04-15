@@ -204,7 +204,6 @@ public class MQTTClientService implements ISender {
 	
 	public void send(Packet packet, String publicTopic) {
 		// TODO Auto-generated method stub
-		/*
 		try {
 			connection.publish(publicTopic, packet.toByteArray(), QoS.AT_LEAST_ONCE, false, new Callback<Void>() {
 				
@@ -222,12 +221,11 @@ public class MQTTClientService implements ISender {
 				}
 			});
 		} catch (Exception e) {
-			
+			// xtd_log 发送消息异常，重新发送
+			clientService.sendPacket(packet, publicTopic);
 			logger.info(String.format("发消息异常-- packet:%s  length:%d", packet.toString(), packet.toByteArray().length));
 			e.printStackTrace();
-		}*/
-		//packet.setUsername(getConfiguration().getUsername());
-		connection.publish(publicTopic, packet.toByteArray(), QoS.AT_LEAST_ONCE, false, null);
+		}
 	}
 
 }

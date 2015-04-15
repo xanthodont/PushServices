@@ -24,6 +24,7 @@ public class AckListenerTest extends TestBase {
 		config.setReceiveUrl(RECEIVE_URL);
 		config.setConnectUrl(CONNECT_URL);
 		config.setConnectType(2);
+		config.setHttpCircle(10);
 
 		ClientService client = ClientService.getInstance();
 		try {
@@ -50,8 +51,8 @@ public class AckListenerTest extends TestBase {
 				t.setText(String.format("to_R %s -- %d", config.getUsername(), i++));
 				t.setAck(true);
 				PacketCollector collector = client.createPacketCollector(new PacketAckFilter(t.getMessageId()));
-				client.sendPacket(t, "beidou/R");
-				Packet r = collector.nextResult(10000); // 等待超时时间设置为10秒
+				client.sendPacket(t, "beidou/RH");
+				Packet r = collector.nextResult(20000); // 等待超时时间设置为10秒
 				collector.cancel();
 				// do your job
 				if (r != null) { 
