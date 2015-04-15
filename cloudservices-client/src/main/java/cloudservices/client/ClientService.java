@@ -1,13 +1,16 @@
 package cloudservices.client;
 
 
+import java.util.Collection;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.fusesource.mqtt.client.Listener;
 import org.fusesource.mqtt.client.MQTT;
 import org.fusesource.mqtt.codec.PUBLISH;
 
+import cloudservices.client.filters.PacketAckFilter;
 import cloudservices.client.http.HTTPClientService;
 import cloudservices.client.mqtt.MQTTClientService;
 import cloudservices.client.packets.Packet;
@@ -59,6 +62,8 @@ public class ClientService {
 	/** 消息包读取器 */
 	private PacketReader packetReader;
 	
+	protected final Collection<PacketCollector> collectors = new ConcurrentLinkedQueue<PacketCollector>();
+	
 	private ClientService() {
 		init();
 	}
@@ -87,7 +92,6 @@ public class ClientService {
 			httpClient.config(config);
 			break;
 		}
-		//status = STATUS_CONFIGED;
 	}
 	
 	
@@ -98,13 +102,11 @@ public class ClientService {
 	public void startup() {
 		packetWriter.startup();
 		packetReader.startup();
-		//status = STATUS_STARTUP; 
 	}
 	
 	
 	public void connect() throws ConnectException {
 		getActualClient().connect();
-		//status = STATUS_CONNECTED;
 	}
 	
 	public void setListener(Listener listener) {
@@ -127,37 +129,21 @@ public class ClientService {
 		return packetReader;
 	}
 	
-	/*
-	public void putPacket(Packet packet) {
-		try {
-			readerQueue.put(packet);
-        }
-        catch (InterruptedException ie) {
-            ie.printStackTrace();
-            return;
-        }
-        synchronized (readerQueue) {
-        	readerQueue.notifyAll();
-        }
-	}
-	
-	public Packet takePacket() {
-		Packet packet = null;
-		while ((packet = readerQueue.poll()) == null) {
-            try {
-                synchronized (readerQueue) {
-                	readerQueue.wait();
-                }
-            }
-            catch (InterruptedException ie) {
-                // Do nothing
-            }
-        }
-		
-		return packet; 
-	}*/
-	
 	BlockingQueue<Packet> getReaderQueue() {
 		return readerQueue;
+	}
+	public void removePacketCollector(PacketCollector packetCollector) {
+		// TODO Auto-generated method stub
+		
+	}
+	public PacketCollector createPacketCollector(PacketFilter packetFilter) {
+		PacketCollector collector = new PacketCollector(this, packetFilter);
+        // Add the collector to the list of active collectors.
+        collectors.add(collector);
+        return collector;
+	}
+	public Collection<PacketCollector> getPacketCollectors() {
+		// TODO Auto-generated method stub
+		return collectors;
 	}
 }

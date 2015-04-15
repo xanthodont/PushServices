@@ -34,7 +34,7 @@ public class TextPacket extends Packet {
 	
 	@Override
 	public String toString() {
-		return String.format("{%s, text: %s}", super.toString(), this.getText());
+		return String.format("{%s, mId: %s, text: %s}", super.toString(), this.getMessageId(), this.getText());
 	}
 
 	@Override

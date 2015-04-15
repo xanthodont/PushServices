@@ -7,6 +7,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 
 import cloudservices.client.ClientService;
+import cloudservices.client.PacketCollector;
 
 public class PacketReader {
 	private Thread readerThread;
@@ -51,23 +52,29 @@ public class PacketReader {
     private void parsePackets(Thread thread) {
     	do {
     		Packet packet = nextPacket();
-    		//System.out.printf("receive: %s\n", packet);
-    		if (packet.isAck()) {
+    		System.out.printf("Receive: %s\n", packet);
+    		if (packet.isAck() && packet.getPacketType() != Packet.ACK) { 
     			// 回发Ack回执消息
     			AckPacket ack = new AckPacket();
     			ack.setAckId(packet.getMessageId()); // 回发原消息Id
     			client.sendPacket(ack, "beidou/"+packet.getUsername());
     		}
+    		/** 收集器处理 */
+    		for (PacketCollector collector: client.getPacketCollectors()) {
+    			collector.processPacket(packet);
+    		}
+    		
     		switch (packet.getPacketType()) {
 	    		case Packet.TEXT: // text
-	    			TextPacket tp = new TextPacket(packet); 
-	    			System.out.printf("Receive:%s\n", tp);
+	    			//TextPacket tp = new TextPacket(packet); 
+	    			//System.out.printf("Receive:%s\n", tp);
 	    			break;
 	    		case Packet.HTTP:
 	    			break;
 	    		case Packet.ACK:
-	    			//AckPacket tp = new TextPacket(packet); 
-	    			System.out.printf("Receive: ack %s\n", packet);
+	    			//AckPacket ack = new AckPacket(packet);
+	    			
+	    			//System.out.printf("Receive:%s\n", ack);
 	    			break;
 	    		case Packet.FILE: // file
 	    			

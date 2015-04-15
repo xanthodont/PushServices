@@ -16,14 +16,16 @@ public class PacketTest {
 	
 	@Test
 	public void parseTest() {
-		ByteBuffer buffer = ByteBuffer.allocate(7);
+		ByteBuffer buffer = ByteBuffer.allocate(11);
 		buffer.put((byte) 0x11);
 		buffer.putShort((short) 4);
 		buffer.put("test".getBytes());
+		buffer.putInt(10);
 		buffer.flip();
 		Packet p = Packet.parse(buffer);
 		Assert.assertEquals(true, p.isAck());
 		Assert.assertEquals(Packet.TEXT, p.getPacketType());
+		Assert.assertEquals(10, p.getMessageId());
 		System.out.println(p);
 	}
 	
@@ -33,11 +35,13 @@ public class PacketTest {
 		p.setUsername("abc");
 		p.setAck(true);
 		p.setPacketType(1);
+		p.messageId = 10;
 		byte[] bs = p.toByteArray();
 		Packet r = Packet.parse(ByteBuffer.wrap(bs));
 		System.out.printf("%s", r);
 		Assert.assertEquals(p.getUsername(), r.getUsername());
 		Assert.assertEquals(p.isAck(), r.isAck());
 		Assert.assertEquals(p.getPacketType(), r.packetType);
+		Assert.assertEquals(p.getMessageId(), r.getMessageId());
 	}
 }

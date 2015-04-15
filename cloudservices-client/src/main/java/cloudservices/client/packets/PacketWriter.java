@@ -48,7 +48,7 @@ public class PacketWriter {
                 Packet packet = nextPacket();
                 if (packet != null) {
                 	// xtd_log 单线程执行，不用担心多线程问题
-                	packet.messageId = getNextMessageId();
+                	//packet.messageId = getNextMessageId();
                 	System.out.println("Send:" + packet);
                 	if (!queue.isEmpty())	Thread.sleep(100); // 两条消息发送间缓冲100毫秒
                     client.getActualClient().send(packet);
@@ -79,7 +79,6 @@ public class PacketWriter {
     public void sendPacket(Packet packet) {
     	if (!done) {
             try {
-            	
                 queue.put(packet);
             }
             catch (InterruptedException ie) {

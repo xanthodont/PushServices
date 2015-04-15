@@ -23,11 +23,11 @@ public class AckPacket extends Packet {
 	}
 	
 	public AckPacket(Packet packet) {
-		this.packetType = Packet.TEXT;
+		this.packetType = Packet.ACK;
 		this.username = packet.getUsername();
 		this.ack = false; // 回执消息不能再设置是否回执的标识位为true，不然会死循环的
-		if (this.remainBytes.length != 4) { // 验证回执消息内容是否正确
-			this.ackId = Bits.getInt(remainBytes, 0, true); // 大端字节序 
+		if (packet.getRemainBytes().length == 4) { // 验证回执消息内容是否正确
+			this.ackId = Bits.getInt(packet.getRemainBytes(), 0, true); // 大端字节序 
 		}
 	}
 

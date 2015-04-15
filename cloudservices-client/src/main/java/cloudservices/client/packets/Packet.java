@@ -28,12 +28,13 @@ public class Packet {
 	
 	protected byte[] remainBytes;
 	
-	/*
-	public Packet(Packet packet) {
-		this.messageId = packet.messageId;
-		this.packetType = packet.packetType;
-		this.bytes = packet.bytes;
-	}*/
+	static int nextMessageId = 1;
+    private synchronized static int getNextMessageId() {
+        return nextMessageId++;
+    }
+	public Packet() {
+		//this.messageId = getNextMessageId();
+	}
 	
 	public static Packet parse(ByteBuffer buffer) {
 		Packet packet = new Packet();
@@ -47,6 +48,7 @@ public class Packet {
 			byte[] fu = new byte[s]; 
 			buffer.get(fu);
 			packet.setUsername(new String(fu));
+			packet.setMessageId(buffer.getInt());
 		}
 		byte[] remain = new byte[buffer.remaining()];
 		buffer.get(remain);
@@ -79,6 +81,9 @@ public class Packet {
 	}
 
 	public int getMessageId() {
+		if (messageId < 1) {
+			messageId = getNextMessageId();
+		} 
 		return messageId;
 	}
 
@@ -104,10 +109,11 @@ public class Packet {
 
 	public byte[] toByteArray() {
 		if (isAck()) {
-			ByteBuffer header = ByteBuffer.allocate(3 + getUsername().length());
+			ByteBuffer header = ByteBuffer.allocate(7 + getUsername().length());
 			header.put(getHeader());
 			header.putShort((short)getUsername().length());
 			header.put(getUsername().getBytes());
+			header.putInt(getMessageId());
 			return header.array();
 		} else {
 			ByteBuffer header = ByteBuffer.allocate(1);
@@ -140,6 +146,6 @@ public class Packet {
 	
 	@Override 
 	public String toString() {
-		return String.format("type: %s, isAck: %b, user: %s, mId: %d", decodeType(packetType), isAck(), getUsername(), getMessageId()); 
+		return String.format("type: %s, isAck: %b, user: %s", decodeType(packetType), isAck(), getUsername()); 
 	}
 }
