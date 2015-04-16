@@ -1,31 +1,25 @@
-package cloudservices.client;
+package cloudservices.client.packets;
 
+import cloudservices.client.ClientConfiguration;
+import cloudservices.client.ClientService;
+import cloudservices.client.ConfigException;
+import cloudservices.client.ConnectException;
+import cloudservices.client.TestBase;
+import cloudservices.client.http.async.support.ParamsWrapper;
 
-import cloudservices.client.packets.AckPacket;
-import cloudservices.client.packets.Packet;
-import cloudservices.client.packets.PacketCollector;
-import cloudservices.client.packets.TextPacket;
-import cloudservices.client.packets.filters.PacketAckFilter;
-
-/**
- * 消息回执测试
- * @author xanthodont
- *
- */
-public class AckListenerTest extends TestBase {
+public class HttpPacketTest extends TestBase {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		ClientConfiguration config = new ClientConfiguration(SERVER_IP,
 				MQTT_PORT);
-		config.setUsername("send");
+		config.setUsername("Text_send");
 		config.setPassword(DEFAULT_PASSWORD);
 		config.setTopic(TOPIC);
 		config.setSendUrl(SEND_URL);
 		config.setReceiveUrl(RECEIVE_URL);
 		config.setConnectUrl(CONNECT_URL);
-		config.setConnectType(2);
-		config.setHttpCircle(10);
+		config.setConnectType(1);
 
 		ClientService client = ClientService.getInstance();
 		try {
@@ -48,21 +42,15 @@ public class AckListenerTest extends TestBase {
 		while (true) {
 			// client.sendPacket(new Packet());
 			try {
-				TextPacket t = new TextPacket();
-				t.setText(String.format("to_R %s -- %d", config.getUsername(), i++));
-				t.setAck(true);
-				PacketCollector collector = client.createPacketCollector(new PacketAckFilter(t.getMessageId()));
-				client.sendPacket(t, "beidou/R");
-				Packet r = collector.nextResult(20000); // 等待超时时间设置为10秒
-				collector.cancel();
-				// do your job
-				if (r != null) { 
-					AckPacket ack = AckPacket.encode(r);
-					System.out.printf("ack=%s\n", ack);
-				}
+				i++;
 				
-				Thread.sleep(1000);
-				//break;
+				HttpPacket t = new HttpPacket();
+				t.setAck(true);
+				t.setUrl("");
+				ParamsWrapper params = new ParamsWrapper();
+				t.setParams(params);
+				client.sendPacket(t, "beidou/R");
+				Thread.sleep(10000);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

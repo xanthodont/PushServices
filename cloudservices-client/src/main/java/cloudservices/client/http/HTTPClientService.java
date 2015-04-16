@@ -130,7 +130,7 @@ public class HTTPClientService implements ISender {
 			protected void onResponse(String content, URL url) {
 				// xtd-log Htpp log
 				//client.getClientService().getPacketReader().putPacket(packet);
-				//System.out.printf("send response：%s\n", content);
+				System.out.printf("send response：%s\n", content);
 			}});
 	}
 

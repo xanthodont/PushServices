@@ -7,7 +7,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 
 import cloudservices.client.ClientService;
-import cloudservices.client.PacketCollector;
 
 public class PacketReader {
 	private Thread readerThread;
@@ -37,7 +36,7 @@ public class PacketReader {
         listenerExecutor = Executors.newSingleThreadExecutor(new ThreadFactory() {
             public Thread newThread(Runnable runnable) {
                 Thread thread = new Thread(runnable,
-                        "Smack Listener Processor");
+                        "Listener Processor");
                 thread.setDaemon(true);
                 return thread;
             }
@@ -53,17 +52,13 @@ public class PacketReader {
     	do {
     		Packet packet = nextPacket();
     		//System.out.printf("Receive: %s\n", packet);
+    		/*
     		if (packet.isAck() && packet.getPacketType() != Packet.ACK) { 
     			// 回发Ack回执消息
     			AckPacket ack = new AckPacket();
     			ack.setAckId(packet.getMessageId()); // 回发原消息Id
     			client.sendPacket(ack, "beidou/"+packet.getUsername());
-    		}
-    		/** 收集器处理 */
-    		for (PacketCollector collector: client.getPacketCollectors()) {
-    			collector.processPacket(packet);
-    		}
-    		
+    		}*/
     		switch (packet.getPacketType()) {
 	    		case Packet.TEXT: // text
 	    			TextPacket tp = new TextPacket(packet); 
@@ -82,6 +77,8 @@ public class PacketReader {
 	    		default: 
 	    			break;
     		}
+    		// 处理消息
+    		processPacket(packet);
     	} while (!done && thread == readerThread);
     }
     
@@ -95,10 +92,9 @@ public class PacketReader {
         }
 
         // 遍历所有的收集器，选择其中合适的进行处理。
-        /*
-        for (PacketCollector collector: connection.getPacketCollectors()) {
-            collector.processPacket(packet);
-        }*/
+		for (PacketCollector collector: client.getPacketCollectors()) {
+			collector.processPacket(packet);
+		}
 
         // 将进来的packet投递给监听器
         listenerExecutor.submit(new ListenerNotification(packet));
@@ -157,15 +153,14 @@ public class PacketReader {
         }
 
         public void run() {
-        	/*
-            for (ListenerWrapper listenerWrapper : connection.recvListeners.values()) {
+            for (ListenerWrapper listenerWrapper : client.getPacketListeners().values()) {
                 try {
                     listenerWrapper.notifyListener(packet);
                 } catch (Exception e) {
                     System.err.println("Exception in packet listener: " + e);
                     e.printStackTrace();
                 }
-            }*/
+            }
         }
     }
 }

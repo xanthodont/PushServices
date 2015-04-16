@@ -222,7 +222,7 @@ public class MQTTClientService implements ISender {
 			});
 		} catch (Exception e) {
 			// xtd_log 发送消息异常，重新发送
-			clientService.sendPacket(packet, publicTopic);
+			//clientService.sendPacket(packet, publicTopic);
 			logger.info(String.format("发消息异常-- packet:%s  length:%d", packet.toString(), packet.toByteArray().length));
 			e.printStackTrace();
 		}

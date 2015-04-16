@@ -144,8 +144,25 @@ public class Packet {
 		return b;
 	}
 	
+	/** 
+	 * 往buffer中输入str字符串
+	 * 	先插入串长度，再插入串内容
+	 * @param buffer
+	 * @param str
+	 */
+	protected void putString(ByteBuffer buffer, String str) {
+		buffer.putInt(str.length());
+		buffer.put(str.getBytes());
+	}
+	protected String getString(ByteBuffer buffer) {
+		int length = buffer.getInt();
+		byte[] data = new byte[length];
+		buffer.get(data);
+		return new String(data);
+	}
+	
 	@Override 
 	public String toString() {
-		return String.format("type: %s, isAck: %b, user: %s", decodeType(packetType), isAck(), getUsername()); 
+		return String.format("type: %s, isAck: %b, user: %s, topic: %s", decodeType(packetType), isAck(), getUsername(), getPublic2Topic()); 
 	}
 }
