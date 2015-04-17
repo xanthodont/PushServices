@@ -39,16 +39,14 @@ public class SendServlet extends HttpServlet {
 		String username = request.getParameter("username");
 		String topic = request.getParameter("topic");
 		String packet = request.getParameter("packet");
-		String messageIdStr = request.getParameter("messageId");
 		int messageId = 0;
-		if (StringUtil.isEmpty(username) || StringUtil.isEmpty(topic) || StringUtil.isEmpty(packet) || StringUtil.isEmpty(messageIdStr)) {
+		if (StringUtil.isEmpty(username) || StringUtil.isEmpty(topic) || StringUtil.isEmpty(packet)) {
 			response.getWriter().write("send fail");
 			response.flushBuffer();
 			return;
 		}
-		messageId = Integer.parseInt(messageIdStr);
 		
-		mqttServer.getMessaging().publish2Subscribers(topic, QOSType.LEAST_ONE, packet.getBytes(), false, messageId);
+		mqttServer.getMessaging().publish2Subscribers(topic, QOSType.LEAST_ONE, packet.getBytes(), false, 0);
 		
 		response.getWriter().write("sned success");
 		response.flushBuffer();

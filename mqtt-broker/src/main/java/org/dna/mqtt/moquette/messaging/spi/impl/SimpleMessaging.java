@@ -499,8 +499,8 @@ public class SimpleMessaging implements IMessaging, EventHandler<ValueEvent> {
             notify(new NotifyEvent(pubEvt.getClientID(), pubEvt.getTopic(), pubEvt.getQos(),
                     pubEvt.getMessage(), false, pubEvt.getMessageID()));
         }
-        // 删除离线消息 
-        m_storageService.cleanPersistedPublishes(evt.getClientID());
+        // 删除离线消息 （不用删除了） 
+        //m_storageService.cleanPersistedPublishes(evt.getClientID());
     }
 
     private void notify(NotifyEvent evt) {
@@ -542,7 +542,7 @@ public class SimpleMessaging implements IMessaging, EventHandler<ValueEvent> {
             assert m_clientIDs.get(clientId) != null;
             LOG.debug("Session for clientId " + clientId + " is " + m_clientIDs.get(clientId).getSession());
             m_clientIDs.get(clientId).getSession().write(pubAckMessage);
-        }catch(Throwable t) {
+        } catch(Throwable t) {
             LOG.error(null, t);
         }
     }
