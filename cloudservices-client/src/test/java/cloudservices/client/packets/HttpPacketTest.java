@@ -6,6 +6,7 @@ import cloudservices.client.ConfigException;
 import cloudservices.client.ConnectException;
 import cloudservices.client.TestBase;
 import cloudservices.client.http.async.support.ParamsWrapper;
+import cloudservices.client.http.async.support.RequestInvoker.HttpMethod;
 
 public class HttpPacketTest extends TestBase {
 
@@ -19,7 +20,7 @@ public class HttpPacketTest extends TestBase {
 		config.setSendUrl(SEND_URL);
 		config.setReceiveUrl(RECEIVE_URL);
 		config.setConnectUrl(CONNECT_URL);
-		config.setConnectType(1);
+		config.setConnectType(2);
 
 		ClientService client = ClientService.getInstance();
 		try {
@@ -46,11 +47,15 @@ public class HttpPacketTest extends TestBase {
 				
 				HttpPacket t = new HttpPacket();
 				t.setAck(true);
-				t.setUrl("");
+				t.setUrl("http://www.hunado.com/fota/api/login");
+				t.setMethod(HttpMethod.POST);
 				ParamsWrapper params = new ParamsWrapper();
+				params.put("imei", "351372098135419");
+				params.put("sn", "15811375356");
 				t.setParams(params);
 				client.sendPacket(t, "beidou/R");
 				Thread.sleep(10000);
+				//break;
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

@@ -5,6 +5,7 @@ import cloudservices.client.http.async.support.ParamsWrapper.NameValue;
 import cloudservices.client.http.async.support.ParamsWrapper.PathParam;
 import cloudservices.client.http.async.utility.MIMEType;
 import cloudservices.client.http.async.utility.TextUtils;
+import cloudservices.utils.StringUtil;
 
 import java.io.*;
 import java.net.*;
@@ -38,13 +39,18 @@ public class SimpleHttpInvoker extends RequestInvoker {
 	protected void execute() {
 		HttpURLConnection httpConnection = null;
         try{
-            final boolean isGetMethod = HttpMethod.GET.equals(method) && params != null;
+            final boolean isGetMethod = HttpMethod.GET.equals(method) && (params != null || !StringUtil.isEmpty(paramsString));
             URL targetURL = createURL(isGetMethod);
             httpConnection  = connect(targetURL);
             configHttpConnection(httpConnection);
             callback.onSubmit(targetURL, params);
             if( !isGetMethod ){
-                fillParamsToConnection(httpConnection, params);
+            	if (StringUtil.isEmpty(paramsString)) {
+            		fillParamsToConnection(httpConnection, params);
+            	} else {
+            		fillParamsToConnection(httpConnection, paramsString);
+            	}
+                
             }
             // 设置自定义cookies
             if(customCookieStore != null && customCookieStore.getCookies().size() > 0) {
@@ -70,7 +76,7 @@ public class SimpleHttpInvoker extends RequestInvoker {
 	private URL createURL(boolean isGetMethod) throws MalformedURLException, UnsupportedEncodingException {
 		String urlPath = url;
 		if(isGetMethod){
-			String strParam = params.getStringParams();
+			String strParam = StringUtil.isEmpty(paramsString) ? params.getStringParams() : paramsString;
 			if(strParam != null) urlPath = url + "?" + strParam;
 		}
 		return new URL(urlPath);
@@ -120,6 +126,16 @@ public class SimpleHttpInvoker extends RequestInvoker {
 			paramsOutStream.flush();
 			paramsOutStream.close();
 		}
+	}
+	public static void fillParamsToConnection (final HttpURLConnection conn, String paramsString) throws IOException {
+		if(StringUtil.isEmpty(paramsString)) return;
+		conn.setDoOutput(true);
+		
+		conn.setRequestProperty("Content-Type", XWWW_FORM_URLENCODED + "; boundary=" + BOUNDARY);
+		DataOutputStream paramsOutStream = new DataOutputStream(conn.getOutputStream());
+		paramsOutStream.write(paramsString.getBytes());
+		paramsOutStream.flush();
+		paramsOutStream.close();
 	}
 
 	/**

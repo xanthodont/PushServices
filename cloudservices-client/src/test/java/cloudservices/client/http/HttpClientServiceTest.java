@@ -71,7 +71,7 @@ public class HttpClientServiceTest extends TestBase {
 	
 	@Test
 	public void sendUrlTest() {
-		http.get(SEND_URL, null, new StringResponseHandler() {
+		http.get(SEND_URL, new StringResponseHandler() {
 			@Override
 			public void onSubmit(URL url, ParamsWrapper params) {
 				// TODO Auto-generated method stub

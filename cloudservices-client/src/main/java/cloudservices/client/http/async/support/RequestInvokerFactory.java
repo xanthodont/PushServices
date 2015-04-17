@@ -28,6 +28,22 @@ public class RequestInvokerFactory {
 		return invoker;
 	}
 	
+	public static RequestInvoker obtain(HttpMethod method,String url,String paramsString,ResponseCallback callback){
+		RequestInvoker invoker;
+		if(!InvokerType.equals(SimpleHttpInvoker.class)){
+			try {
+				invoker = InvokerType.newInstance();
+			} catch (Exception exp) {
+				System.err.println(String.format("Cannot instance from %s, used default SimpleHttpInvoker.",InvokerType.getName()));
+				invoker = new SimpleHttpInvoker();
+			}
+		}else{
+			invoker = new SimpleHttpInvoker();
+		}
+		invoker.init(method, url, paramsString, callback);
+		return invoker;
+	}
+	
 	/**
 	 * 向工厂注册一个Invoker实现类
 	 * @param clazz 实现类的类对象

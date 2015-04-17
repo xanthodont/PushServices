@@ -13,6 +13,7 @@ public class AckPacketTest {
 		p.setAck(false);
 		p.setAckId(1);
 		p.messageId = 10;
+		p.setText("return text");
 		System.out.printf("%s\n", p);
 		byte[] bs = p.toByteArray();
 		System.out.printf("%h-%h%h%h%h -- %d\n", bs[0], bs[1], bs[2], bs[3], bs[4], bs.length);

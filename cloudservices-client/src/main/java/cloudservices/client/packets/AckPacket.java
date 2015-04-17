@@ -4,6 +4,7 @@ import java.nio.ByteBuffer;
 import java.util.BitSet;
 
 import cloudservices.utils.Bits;
+import cloudservices.utils.StringUtil;
 
 /**
  * 回执消息
@@ -12,6 +13,7 @@ import cloudservices.utils.Bits;
  */
 public class AckPacket extends Packet {
 	private int ackId = -1;
+	private String text;
 	
 	public static AckPacket encode(Packet packet) {
 		AckPacket ackPacket = new AckPacket(packet);
@@ -26,8 +28,12 @@ public class AckPacket extends Packet {
 		this.packetType = Packet.ACK;
 		this.username = packet.getUsername();
 		this.ack = false; // 回执消息不能再设置是否回执的标识位为true，不然会死循环的
-		if (packet.getRemainBytes().length == 4) { // 验证回执消息内容是否正确
-			this.ackId = Bits.getInt(packet.getRemainBytes(), 0, true); // 大端字节序 
+		ByteBuffer buffer = ByteBuffer.wrap(packet.getRemainBytes());
+		this.ackId = buffer.getInt();
+		if (buffer.remaining() > 0) {
+			byte[] tx = new byte[buffer.remaining()];
+			buffer.get(tx);
+			this.text = new String(tx);
 		}
 	}
 
@@ -39,17 +45,26 @@ public class AckPacket extends Packet {
 		this.ackId = ackId;
 	}
 	
+	public String getText() {
+		return text;
+	}
+
+	public void setText(String text) {
+		this.text = text;
+	}
+
 	@Override
 	public String toString() {
-		return String.format("{%s, ackId: %d}", super.toString(), this.getAckId());
+		return String.format("{%s, ackId: %d, text: %s}", super.toString(), this.getAckId(), this.getText());
 	}
 
 	@Override
 	public byte[] toByteArray() {
 		byte[] header = super.toByteArray();
-		ByteBuffer buffer = ByteBuffer.allocate(header.length + 4);
+		ByteBuffer buffer = ByteBuffer.allocate(header.length + 4 + text.length());
 		buffer.put(header);
 		buffer.putInt(ackId);
+		if (!StringUtil.isEmpty(text)) buffer.put(text.getBytes());
 		return buffer.array();
 	}
 }

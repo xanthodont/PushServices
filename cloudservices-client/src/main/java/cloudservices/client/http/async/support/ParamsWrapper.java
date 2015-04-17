@@ -1,5 +1,6 @@
 package cloudservices.client.http.async.support;
 
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -9,8 +10,12 @@ import java.util.ArrayList;
  * date   : 2012-10-23
  * A http connection parameters wrapper
  */
-public class ParamsWrapper {
+public class ParamsWrapper implements Serializable {
 
+	/**
+	 * 序列化Id
+	 */
+	private static final long serialVersionUID = 1L;
 	public final ArrayList<NameValue> nameValueArray = new ArrayList<NameValue>();
 	public final ArrayList<PathParam> pathParamArray = new ArrayList<PathParam>();
 	

@@ -26,6 +26,7 @@ public abstract class RequestInvoker implements Runnable{
 	protected HttpMethod method;
 	protected String url;
 	protected ParamsWrapper params;
+	protected String paramsString;
 	protected ResponseCallback callback;
 	protected Proxy httpProxy;
     protected CookieStore customCookieStore;
@@ -79,6 +80,12 @@ public abstract class RequestInvoker implements Runnable{
 		this.method = method;
 		this.url = url;
 		this.params = params;
+		this.callback = callback;
+	}
+	public void init (HttpMethod method, String url, String paramsString,ResponseCallback callback){
+		this.method = method;
+		this.url = url;
+		this.paramsString = paramsString;
 		this.callback = callback;
 	}
 

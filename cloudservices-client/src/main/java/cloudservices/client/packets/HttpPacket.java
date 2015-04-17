@@ -3,6 +3,7 @@ package cloudservices.client.packets;
 import java.nio.ByteBuffer;
 
 import cloudservices.client.http.async.support.ParamsWrapper;
+import cloudservices.client.http.async.support.RequestInvoker.HttpMethod;
 import cloudservices.utils.Bits;
 
 /**
@@ -13,9 +14,11 @@ import cloudservices.utils.Bits;
  *
  */
 public class HttpPacket extends Packet {
+	private HttpMethod method;
 	private String url;
 	
 	private ParamsWrapper params;
+	private String paramsString;
 	
 	public static HttpPacket encode(Packet packet) {
 		HttpPacket httpPacket = new HttpPacket(packet);
@@ -24,6 +27,7 @@ public class HttpPacket extends Packet {
 	
 	public HttpPacket() {
 		this.packetType = Packet.HTTP;
+		this.method = HttpMethod.GET;
 	}
 	
 	public HttpPacket(Packet packet) {
@@ -32,8 +36,8 @@ public class HttpPacket extends Packet {
 		this.messageId = packet.getMessageId();
 		this.ack = packet.isAck();
 		ByteBuffer remainBuffer = ByteBuffer.wrap(packet.getRemainBytes());
-		String url = this.getString(remainBuffer);
-		String params = this.getString(remainBuffer);
+		this.url = this.getString(remainBuffer);
+		this.paramsString = this.getString(remainBuffer);
 	}
 	
 	@Override
@@ -65,6 +69,22 @@ public class HttpPacket extends Packet {
 
 	public void setParams(ParamsWrapper params) {
 		this.params = params;
+	}
+
+	public HttpMethod getMethod() {
+		return method;
+	}
+
+	public void setMethod(HttpMethod method) {
+		this.method = method;
+	}
+
+	public String getParamsString() {
+		return paramsString;
+	}
+
+	public void setParamsString(String paramsString) {
+		this.paramsString = paramsString;
 	}
 	
 	

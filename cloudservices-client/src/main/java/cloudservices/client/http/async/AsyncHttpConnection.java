@@ -47,7 +47,7 @@ public class AsyncHttpConnection {
 	 * @param callback 响应回调
 	 */
 	public void get(String url,ResponseCallback callback){
-		get(url, null, callback);
+		get(url, "", callback);
 	}
 	
 	/**
@@ -63,12 +63,24 @@ public class AsyncHttpConnection {
 	}
 	
 	/**
+	 * 发送一个带参数的GET请求到指定URL
+	 * @param url 目标URL
+	 * @param params 请求参数
+	 * @param callback 响应回调
+	 *
+	 */
+	public void get(String url,String paramsString,ResponseCallback callback){
+		verifyUrl(url);
+		sendRequest(url, paramsString, HttpMethod.GET, callback);
+	}
+	
+	/**
 	 * 发送一个无参数的POST请求到指定URL
 	 * @param url 目标URL
 	 * @param callback 响应回调
 	 */
 	public void post(String url,ResponseCallback callback){
-		post(url, null, callback);
+		post(url, "", callback);
 	}
 	
 	/**
@@ -81,6 +93,10 @@ public class AsyncHttpConnection {
 	public void post(String url,ParamsWrapper params,ResponseCallback callback){
 		verifyUrl(url);
 		sendRequest(url, params, HttpMethod.POST, callback);
+	}
+	public void post(String url,String paramsString,ResponseCallback callback){
+		verifyUrl(url);
+		sendRequest(url, paramsString, HttpMethod.POST, callback);
 	}
 	
 	private void verifyUrl(String url){
@@ -102,4 +118,11 @@ public class AsyncHttpConnection {
 		THREAD_POOL.submit(invoker);
 	}
 
+	public void sendRequest(String url,String paramsString,HttpMethod method, ResponseCallback callback){
+		if(url == null) return;
+		RequestInvoker invoker = RequestInvokerFactory.obtain(method, url, paramsString, callback);
+        invoker.setCustomCookieStore(cookieStore);
+		if( requestInvokerFilter != null ) requestInvokerFilter.onRequestInvoke(invoker);
+		THREAD_POOL.submit(invoker);
+	}
 }

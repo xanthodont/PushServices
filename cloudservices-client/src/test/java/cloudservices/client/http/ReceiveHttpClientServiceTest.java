@@ -70,7 +70,7 @@ public class ReceiveHttpClientServiceTest extends TestBase {
 	
 	@Test
 	public void sendUrlTest() {
-		http.get("http://127.0.0.1:8080/cloudservices-web/api/receive", null, new StringResponseHandler() {
+		http.get("http://127.0.0.1:8080/cloudservices-web/api/receive", new StringResponseHandler() {
 			@Override
 			public void onSubmit(URL url, ParamsWrapper params) {
 				// TODO Auto-generated method stub

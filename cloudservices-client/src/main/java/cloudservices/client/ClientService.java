@@ -24,10 +24,14 @@ import org.fusesource.mqtt.codec.PUBLISH;
 
 
 
+
+
 import cloudservices.client.http.HTTPClientService;
 import cloudservices.client.http.async.AsyncHttpConnection;
 import cloudservices.client.http.async.StringResponseHandler;
 import cloudservices.client.http.async.support.ParamsWrapper;
+import cloudservices.client.listeners.AckPacketListener;
+import cloudservices.client.listeners.HttpPacketListener;
 import cloudservices.client.mqtt.MQTTClientService;
 import cloudservices.client.packets.AckPacket;
 import cloudservices.client.packets.HttpPacket;
@@ -124,18 +128,10 @@ public class ClientService {
 			@Override
 			public boolean accept(Packet packet) {
 				// TODO Auto-generated method stub
-				return packet.isAck() && packet.getPacketType() != Packet.ACK;
+				return packet.isAck() && packet.getPacketType() == Packet.TEXT;
 			}
 		};
-		this.addPacketListener(new PacketListener() {
-			@Override
-			public void processPacket(Packet packet) {
-	    		// 回发Ack回执消息
-	    		AckPacket ack = new AckPacket();
-	    		ack.setAckId(packet.getMessageId()); // 回发原消息Id
-	    		sendPacket(ack, config.getTopic()+"/"+packet.getUsername());
-			}
-		}, ackFilter);
+		this.addPacketListener(new AckPacketListener(this), ackFilter);
 		/** 配置Http消息监听器 */
 		PacketFilter httpFilter = new PacketFilter() {
 			@Override
@@ -144,32 +140,9 @@ public class ClientService {
 				return packet.getPacketType() == Packet.HTTP;
 			}
 		};
-		this.addPacketListener(new PacketListener() {
-			@Override
-			public void processPacket(final Packet packet) {
-	    		// 执行需要代理的Http请求
-				AsyncHttpConnection http = AsyncHttpConnection.getInstance();
-				HttpPacket httpPacket = HttpPacket.encode(packet);
-				http.post(httpPacket.getUrl(), httpPacket.getParams(), new StringResponseHandler() {
-					@Override
-					public void onSubmit(URL url, ParamsWrapper params) {}
-					
-					@Override
-					public void onStreamError(IOException exp) {}
-					
-					@Override
-					public void onConnectError(IOException exp) {}
-					
-					@Override
-					protected void onResponse(String content, URL url) {
-						// 将请求的结果回发给客户端
-						TextPacket tx = new TextPacket();
-						tx.setText(content);
-						sendPacket(tx, config.getTopic() + "/" + packet.getUsername());
-					}
-				});
-			}
-		}, httpFilter);
+		this.addPacketListener(new HttpPacketListener(this), httpFilter);
+		
+		
 	}
 	
 	
