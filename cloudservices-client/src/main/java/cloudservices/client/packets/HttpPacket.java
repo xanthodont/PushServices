@@ -20,39 +20,9 @@ public class HttpPacket extends Packet {
 	private ParamsWrapper params;
 	private String paramsString;
 	
-	public static HttpPacket encode(Packet packet) {
-		HttpPacket httpPacket = new HttpPacket(packet);
-		return httpPacket;
-	}
-	
 	public HttpPacket() {
 		this.packetType = Packet.HTTP;
 		this.method = HttpMethod.GET;
-	}
-	
-	public HttpPacket(Packet packet) {
-		this.packetType = Packet.HTTP;
-		this.username = packet.getUsername();
-		this.messageId = packet.getMessageId();
-		this.ack = packet.isAck();
-		ByteBuffer remainBuffer = ByteBuffer.wrap(packet.getRemainBytes());
-		this.url = this.getString(remainBuffer);
-		this.paramsString = this.getString(remainBuffer);
-	}
-	
-	@Override
-	public String toString() {
-		return String.format("{%s, url: %s, param: %s}", super.toString(), this.getUrl(), this.getParams());
-	}
-
-	@Override
-	public byte[] toByteArray() {
-		byte[] header = super.toByteArray();
-		ByteBuffer buffer = ByteBuffer.allocate(header.length + 8 +  getUrl().length() + getParams().toString().length());
-		buffer.put(header);
-		putString(buffer, getUrl());
-		putString(buffer, getParams().toString());
-		return buffer.array();
 	}
 
 	public String getUrl() {
@@ -85,6 +55,37 @@ public class HttpPacket extends Packet {
 
 	public void setParamsString(String paramsString) {
 		this.paramsString = paramsString;
+	}
+
+	@Override
+	public String toString() {
+		return String.format("{%s, url: %s, param: %s}", super.toString(), this.getUrl(), this.getParams());
+	}
+
+	@Override
+	public byte[] toByteArray() {
+		byte[] header = super.toByteArray();
+		ByteBuffer buffer = ByteBuffer.allocate(header.length + 8 +  getUrl().length() + getParams().toString().length());
+		buffer.put(header);
+		putString(buffer, getUrl());
+		putString(buffer, getParams().toString());
+		return buffer.array();
+	}
+	
+	@Override
+	protected byte[] processSubData() {
+		ByteBuffer buffer = ByteBuffer.allocate(8 +  getUrl().length() + getParams().toString().length());
+		putString(buffer, getUrl());
+		putString(buffer, getParams().toString());
+		return buffer.array();
+	}
+
+	@Override
+	protected void subDecode(byte[] remain) {
+		// TODO Auto-generated method stub
+		ByteBuffer remainBuffer = ByteBuffer.wrap(remain);
+		this.url = this.getString(remainBuffer);
+		this.paramsString = this.getString(remainBuffer);
 	}
 	
 	

@@ -20,8 +20,9 @@ import cloudservices.client.http.async.BinaryResponseHandler;
 import cloudservices.client.http.async.StringResponseHandler;
 import cloudservices.client.http.async.support.ParamsWrapper;
 import cloudservices.client.http.async.support.RequestInvokerFactory;
+import cloudservices.client.mqtt.MQTTCallbackClient;
 import cloudservices.client.packets.Packet;
-import cloudservices.client.xmpp.MQTTCallbackClient;
+import cloudservices.client.packets.PacketFactory;
 import cloudservices.utils.StringUtil;
 
 public class HTTPClientService implements ISender {
@@ -67,7 +68,7 @@ public class HTTPClientService implements ISender {
 						int length = buffer.getInt();
 						byte[] packetData = new byte[length];
 						buffer.get(packetData);
-						Packet packet = Packet.parse(ByteBuffer.wrap(packetData));
+						Packet packet = PacketFactory.getPacket(ByteBuffer.wrap(packetData));
 						clientService.getPacketReader().putPacket(packet);
 					}
 				}});
@@ -104,7 +105,6 @@ public class HTTPClientService implements ISender {
 		ParamsWrapper params = new ParamsWrapper();
 		params.put("username", clientService.getConfiguration().getUsername());
 		params.put("topic", packet.getPublic2Topic());
-		params.put("messageId", "101");
 		params.put("packet", new String(packet.toByteArray()));
 		
 		http.post(sendUrl, params, new StringResponseHandler() {

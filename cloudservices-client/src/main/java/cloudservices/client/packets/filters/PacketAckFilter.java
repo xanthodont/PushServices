@@ -16,7 +16,7 @@ public class PacketAckFilter implements PacketFilter {
 	public boolean accept(Packet packet) {
 		// TODO Auto-generated method stub
 		if (packet.getPacketType() != Packet.ACK) return false;
-		AckPacket ack = AckPacket.encode(packet);
+		AckPacket ack = (AckPacket)packet;
 		return messageId == ack.getAckId();
 	}
 

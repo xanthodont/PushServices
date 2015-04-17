@@ -2,9 +2,10 @@ package cloudservices.client.packets;
 
 import java.nio.ByteBuffer;
 
+import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
-import junit.framework.Assert;
 import cloudservices.client.ClientConfiguration;
 import cloudservices.client.ClientService;
 import cloudservices.client.ConfigException;
@@ -60,20 +61,42 @@ public class TextPacketTest extends TestBase{
 		}
 	}
 
+	private TextPacket packet;
+	@Before
+	public void init() {
+		packet = new TextPacket();
+	}
 	
 	@Test 
 	public void toByteArrayTest() {
-		TextPacket p = new TextPacket();
-		p.setUsername("abc");
-		p.setAck(true);
-		p.setPacketType(1);
-		p.setText("test");
-		byte[] bs = p.toByteArray();
-		TextPacket r = new TextPacket(Packet.parse(ByteBuffer.wrap(bs)));
-		System.out.printf("%s", r);
-		Assert.assertEquals(p.getUsername(), r.getUsername());
-		Assert.assertEquals(p.isAck(), r.isAck());
-		Assert.assertEquals(p.getPacketType(), r.packetType);
+		boolean ack = false;
+		boolean sub = false;
+		int mId = 10;
+		short total = 10;
+		short no = 4;
+		String username = "testUser";
+		packet.setAck(ack);
+		packet.setSub(sub);
+		packet.setMessageId(mId);
+		packet.setTotal(total);
+		packet.setNo(no);
+		packet.setUsername(username);
+		String text = "textString";
+		packet.setText(text);
+		System.out.printf("Packet:%s\n", packet);
+		
+		byte[] data = packet.toByteArray();
+		TextPacket result = (TextPacket) PacketFactory.getPacket(ByteBuffer.wrap(data));
+		
+		Assert.assertEquals(Packet.TEXT, result.getPacketType());
+		Assert.assertEquals(ack, result.isAck());
+		Assert.assertEquals(sub, result.isSub());
+		Assert.assertEquals(mId, result.getMessageId());
+		Assert.assertEquals(total, result.getTotal());
+		Assert.assertEquals(no, result.getNo());
+		Assert.assertEquals(username, result.getUsername());
+		Assert.assertEquals(text, result.getText());
+		System.out.printf("Result:%s\n", result);
 	}
 	
 }

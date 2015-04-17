@@ -2,7 +2,12 @@ package cloudservices.client.packets;
 
 import java.nio.ByteBuffer;
 
-public class Packet {
+/**
+ * 自定义消息基类
+ * @author xanthodont
+ *
+ */
+public abstract class Packet {
 	public static final int TEXT = 1;
 	public static final int HTTP = 2;
 	public static final int ACK  = 3;
@@ -16,6 +21,12 @@ public class Packet {
 	 */
 	protected int packetType;
 	
+	/** 是否是分段消息 */
+	protected boolean sub;
+	/** 消息总数 */
+	protected short total = 1;
+	/** 分段序号 */
+	protected short no = 1;
 	/** 是否需要回执 */
 	protected boolean ack;
 	/** 发送消息的用户 */
@@ -23,9 +34,9 @@ public class Packet {
 	
 	/** 发送的主题 */
 	protected String public2Topic;
-	
+	/** 消息Id */
 	protected int messageId;
-	
+	/** 除去自定义消息头之后，剩余的字节数组 */
 	protected byte[] remainBytes;
 	
 	static int nextMessageId = 1;
@@ -34,26 +45,6 @@ public class Packet {
     }
 	public Packet() {
 		//this.messageId = getNextMessageId();
-	}
-	
-	public static Packet parse(ByteBuffer buffer) {
-		Packet packet = new Packet();
-		byte header = buffer.get();
-		int type = header >> 4;
-		boolean ack = (header & 0x01) == 0x01;
-		packet.setPacketType(type);
-		packet.setAck(ack);
-		if (ack) { // 消息需要回执, 读取发送消息的用户信息
-			short s = buffer.getShort();
-			byte[] fu = new byte[s]; 
-			buffer.get(fu);
-			packet.setUsername(new String(fu));
-			packet.setMessageId(buffer.getInt());
-		}
-		byte[] remain = new byte[buffer.remaining()];
-		buffer.get(remain);
-		packet.setRemainBytes(remain);
-		return packet;
 	}
 
 	public byte[] getRemainBytes() {
@@ -87,7 +78,7 @@ public class Packet {
 		return messageId;
 	}
 
-	private void setMessageId(int messageId) {
+	void setMessageId(int messageId) {
 		this.messageId = messageId;
 	}
 
@@ -99,6 +90,24 @@ public class Packet {
 		this.ack = ack;
 	}
 
+	public boolean isSub() {
+		return sub;
+	}
+	public void setSub(boolean sub) {
+		this.sub = sub;
+	}
+	public short getTotal() {
+		return total;
+	}
+	public void setTotal(short total) {
+		this.total = total;
+	}
+	public short getNo() {
+		return no;
+	}
+	public void setNo(short no) {
+		this.no = no;
+	}
 	public String getUsername() {
 		return username;
 	}
@@ -106,21 +115,61 @@ public class Packet {
 	public void setUsername(String username) {
 		this.username = username;
 	}
+	
+	
 
+	/**
+	 * 消息编码
+	 * @return
+	 */
 	public byte[] toByteArray() {
-		if (isAck()) {
-			ByteBuffer header = ByteBuffer.allocate(7 + getUsername().length());
-			header.put(getHeader());
-			header.putShort((short)getUsername().length());
-			header.put(getUsername().getBytes());
-			header.putInt(getMessageId());
-			return header.array();
-		} else {
-			ByteBuffer header = ByteBuffer.allocate(1);
-			header.put(getHeader());
-			return header.array();
-		}
+		// 子类处理消息
+		byte[] data = processSubData();
+		ByteBuffer buffer = ByteBuffer.allocate(9 + 2 + getUsername().length() + data.length);
+		buffer.put(getHeader());
+		buffer.putInt(getMessageId());
+		buffer.putShort(getTotal());
+		buffer.putShort(no);
+		putString(buffer, getUsername());
+		buffer.put(data);
+		return buffer.array();
 	}
+	
+	/**
+	 * 子类编码自己的数据
+	 */
+	protected abstract byte[] processSubData();
+	
+	/**
+	 * 消息解码
+	 * @param buffer
+	 */
+	public void decode(ByteBuffer buffer) {
+		// 设置消息的基本信息
+		byte header = buffer.get();
+		int type = header >> 4;
+		
+		boolean ack = (header & 0x01) == 0x01;
+		boolean sub = (header & 0x02) == 0x02;
+		
+		this.setPacketType(type);
+		this.setAck(ack);
+		this.setSub(sub);
+		this.setMessageId(buffer.getInt());
+		this.total = buffer.getShort();
+		this.no = buffer.getShort();
+		
+		this.setUsername(getString(buffer));
+		byte[] remain = new byte[buffer.remaining()];
+		buffer.get(remain);
+		this.setRemainBytes(remain);
+		/** 子类解码自己的数据 */
+		subDecode(remain);
+	}
+	/** 
+	 * 子类解码自己的数据 
+	 */
+	protected abstract void subDecode(byte[] remain);
 	
 	private String decodeType(int packetType) {
 		switch (packetType) {
@@ -140,7 +189,8 @@ public class Packet {
 	
 	protected byte getHeader() {
 		byte b = (byte) (packetType << 4);
-		if (isAck()) b = (byte) (b | 0x01);
+		if (isAck()) b = (byte) (b | 0x01);  // 设置回执标识
+		if (isSub()) b = (byte) (b | 0x02);  // 设置分段标识
 		return b;
 	}
 	
@@ -151,11 +201,11 @@ public class Packet {
 	 * @param str
 	 */
 	protected void putString(ByteBuffer buffer, String str) {
-		buffer.putInt(str.length());
+		buffer.putShort((short) str.length());
 		buffer.put(str.getBytes());
 	}
 	protected String getString(ByteBuffer buffer) {
-		int length = buffer.getInt();
+		short length = buffer.getShort();
 		byte[] data = new byte[length];
 		buffer.get(data);
 		return new String(data);
@@ -164,5 +214,17 @@ public class Packet {
 	@Override 
 	public String toString() {
 		return String.format("type: %s, isAck: %b, user: %s, topic: %s", decodeType(packetType), isAck(), getUsername(), getPublic2Topic()); 
+	}
+	
+	/**
+	 * 消息分段
+	 * @param packet
+	 * @param size
+	 * @return
+	 */
+	public static Packet[] subsection(Packet packet, int size) {
+		//npacket 
+		Packet[] packets = new Packet[2];
+		return packets;
 	}
 }

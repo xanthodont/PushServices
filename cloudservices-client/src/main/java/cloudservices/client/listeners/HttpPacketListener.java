@@ -24,7 +24,7 @@ public class HttpPacketListener implements PacketListener{
 	public void processPacket(final Packet packet) {
 		// 执行需要代理的Http请求
 		AsyncHttpConnection http = AsyncHttpConnection.getInstance();
-		HttpPacket httpPacket = HttpPacket.encode(packet);
+		HttpPacket httpPacket = (HttpPacket)packet;
 		HttpResponseHandler httpResponseHandler = new HttpResponseHandler(httpPacket);
 		if (httpPacket.getMethod() != HttpMethod.GET)
 			http.post(httpPacket.getUrl(), httpPacket.getParamsString(), httpResponseHandler);

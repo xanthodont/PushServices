@@ -1,5 +1,11 @@
 package cloudservices.client.packets;
 
+import java.nio.ByteBuffer;
+
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+
 import cloudservices.client.ClientConfiguration;
 import cloudservices.client.ClientService;
 import cloudservices.client.ConfigException;
@@ -61,6 +67,48 @@ public class HttpPacketTest extends TestBase {
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	private HttpPacket packet;
+	@Before
+	public void init() {
+		packet = new HttpPacket();
+	}
+	
+	@Test 
+	public void toByteArrayTest() {
+		boolean ack = false;
+		boolean sub = false;
+		int mId = 10;
+		short total = 10;
+		short no = 4;
+		String username = "testUser";
+		packet.setAck(ack);
+		packet.setSub(sub);
+		packet.setMessageId(mId);
+		packet.setTotal(total);
+		packet.setNo(no);
+		packet.setUsername(username);
+		String url = "http://www.baidu.com";
+		ParamsWrapper params = new ParamsWrapper();
+		params.put("tt", "test");
+		packet.setUrl(url);
+		packet.setParams(params);
+		System.out.printf("Packet:%s\n", packet);
+		
+		byte[] data = packet.toByteArray();
+		HttpPacket result = (HttpPacket) PacketFactory.getPacket(ByteBuffer.wrap(data));
+		
+		Assert.assertEquals(Packet.HTTP, result.getPacketType());
+		Assert.assertEquals(ack, result.isAck());
+		Assert.assertEquals(sub, result.isSub());
+		Assert.assertEquals(mId, result.getMessageId());
+		Assert.assertEquals(total, result.getTotal());
+		Assert.assertEquals(no, result.getNo());
+		Assert.assertEquals(username, result.getUsername());
+		Assert.assertEquals(url, result.getUrl());
+		Assert.assertEquals(params.toString(), result.getParamsString());
+		System.out.printf("Result:%s\n", result);
 	}
 
 }

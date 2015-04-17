@@ -10,6 +10,7 @@ import org.fusesource.mqtt.codec.MQTTFrame;
 import org.fusesource.mqtt.codec.PUBLISH;
 
 import cloudservices.client.packets.Packet;
+import cloudservices.client.packets.PacketFactory;
 
 public class MqttTracer extends Tracer{
 	private static Logger logger = Logger.getLogger(MqttTracer.class);
@@ -26,7 +27,8 @@ public class MqttTracer extends Tracer{
 			try {
 				PUBLISH publish = new PUBLISH().decode(frame);
 				//System.out.println(Thread.currentThread().getName() + "recv Publish: " + publish);
-				Packet packet = parsePacketByPublish(publish);
+				ByteBuffer buffer = publish.payload().toByteBuffer();
+				Packet packet = PacketFactory.getPacket(buffer);
 				client.getClientService().getPacketReader().putPacket(packet);
 			} catch (ProtocolException e) {
 				// TODO Auto-generated catch block
@@ -37,13 +39,6 @@ public class MqttTracer extends Tracer{
 		}
 		else {}
 		//System.out.println(Thread.currentThread().getName() + "recv: " + frame);
-	}
-
-	private Packet parsePacketByPublish(PUBLISH publish) {
-		// TODO Auto-generated method stub
-		ByteBuffer buffer = publish.payload().toByteBuffer();
-		Packet packet = Packet.parse(buffer);
-		return packet;
 	}
 
 	@Override
