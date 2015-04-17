@@ -43,13 +43,9 @@ public class SendMqttClientTest extends TestBase {
 			// client.sendPacket(new Packet());
 			try {
 				Thread.sleep(4000);
-				TextPacket t1 = new TextPacket();
-				t1.setText(String.format("to_mqtt %s -- %d", config.getUsername(), i++));
-				client.sendPacket(t1, "beidou/mqtt_receive");
-				//Thread.sleep(100);
 				TextPacket t2 = new TextPacket();
 				t2.setText(String.format("to_http %s -- %d", config.getUsername(), i));
-				client.sendPacket(t2, "beidou/http_send");
+				client.sendPacket(t2, "beidou/R");
 				
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block

@@ -1,12 +1,18 @@
 package cloudservices.client;
 
 public class ClientConfiguration {
+	/** 基于HTTP协议的短连接轮询方式 */
+	public static final int SHORT_HTTP = 1;
+	/** 基于MQTT协议的长连接方式 */
+	public static final int LONG_MQTT = 2;
+	/** 长短连接共存方式 */
+	public static final int BOTH =3;
 	/** 连接方式
 	 * 1  --  短连接，采用Http轮询方式
 	 * 2  --  长连接，采用Mqtt连接方式
 	 * 3  --  默认方式，长短连接相结合
 	 */
-	private int connectType = 3;
+	private int connectType = BOTH;
 	
 	/*************************************
 	 * 客户端服务相关配置

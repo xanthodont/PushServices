@@ -70,7 +70,7 @@ public class App {
 				Thread.sleep(circle*1000);
 				for (int j = 0; j < tos.length; j++) {
 					TextPacket t = new TextPacket();
-					t.setText(String.format("From [%s] To [%s] -- msg:%d", config.getUsername(), tos[j], i));
+					t.setText(String.format("--%d--", config.getUsername(), tos[j], i));
 					client.sendPacket(t, "beidou/"+tos[j]);
 				}
 			} catch (InterruptedException e) {

@@ -18,13 +18,13 @@ public class TextPacketTest extends TestBase{
 		// TODO Auto-generated method stub
 		ClientConfiguration config = new ClientConfiguration(SERVER_IP,
 				MQTT_PORT);
-		config.setUsername("Text_send");
+		config.setUsername("TextSend");
 		config.setPassword(DEFAULT_PASSWORD);
 		config.setTopic(TOPIC);
 		config.setSendUrl(SEND_URL);
 		config.setReceiveUrl(RECEIVE_URL);
 		config.setConnectUrl(CONNECT_URL);
-		config.setConnectType(1);
+		config.setConnectType(2);
 
 		ClientService client = ClientService.getInstance();
 		try {
@@ -51,9 +51,10 @@ public class TextPacketTest extends TestBase{
 				
 				TextPacket t = new TextPacket();
 				t.setAck(true);
-				t.setText(String.format("msg -- %d", i));
+				t.setText(String.format("--%d--", i));
 				client.sendPacket(t, "beidou/R");
 				Thread.sleep(10000);
+				break;
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

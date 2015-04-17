@@ -13,7 +13,7 @@ import cloudservices.utils.StringUtil;
  */
 public class AckPacket extends Packet {
 	private int ackId = -1;
-	private String text;
+	private String text = "null";
 	
 	public AckPacket() {
 		this.packetType = Packet.ACK;

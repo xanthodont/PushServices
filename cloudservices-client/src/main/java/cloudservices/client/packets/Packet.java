@@ -146,6 +146,7 @@ public abstract class Packet {
 	 */
 	public void decode(ByteBuffer buffer) {
 		// 设置消息的基本信息
+
 		byte header = buffer.get();
 		int type = header >> 4;
 		

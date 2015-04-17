@@ -1,11 +1,13 @@
 package cloudservices.client.packets;
 
+import java.lang.reflect.Array;
 import java.nio.ByteBuffer;
 
 public class PacketFactory {
 
 	public static Packet getPacket(ByteBuffer buffer) {
 		// TODO Auto-generated method stub
+		buffer.mark();
 		byte header = buffer.get();
 		int type = header >> 4;
 		Packet packet = null;
@@ -37,7 +39,8 @@ public class PacketFactory {
 					}};
 				break;
 		}
-		packet.decode(ByteBuffer.wrap(buffer.array()));
+		buffer.reset();
+		packet.decode(buffer);
 		
 		return packet;
 	}
