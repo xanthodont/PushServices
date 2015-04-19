@@ -2,11 +2,14 @@ package cloudservices.client.packets;
 
 import java.io.File;
 import java.nio.ByteBuffer;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import cloudservices.utils.StringUtil;
 
 public class FilePacket extends Packet{
-	private File file;
+	private Map<String, File> files = new HashMap<String, File>();
 	
 	public FilePacket() {
 		this.packetType = Packet.FILE;
@@ -21,6 +24,10 @@ public class FilePacket extends Packet{
 	@Override
 	protected byte[] processSubData() {
 		// TODO Auto-generated method stub
+		for (String filename : files.keySet()) {
+			File file = files.get(filename);
+			
+		}
 		return null;
 	}
 

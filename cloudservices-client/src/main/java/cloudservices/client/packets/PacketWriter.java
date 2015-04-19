@@ -51,10 +51,7 @@ public class PacketWriter {
                 	//packet.messageId = getNextMessageId();
                 	System.out.println("Send:" + packet);
                 	if (!queue.isEmpty())	Thread.sleep(100); // 两条消息发送间缓冲100毫秒
-                	if (packet.toByteArray().length > 2*1024*1024) {  // 分段消息发送
-                		//Packet[] packets = Packet.subsection(packet, size);  // 将消息分段
-                	}
-                    client.getActualClient().send(packet);
+                	client.getActualClient().send(packet);
                 }
             }
             // Flush out the rest of the queue. If the queue is extremely large, it's possible

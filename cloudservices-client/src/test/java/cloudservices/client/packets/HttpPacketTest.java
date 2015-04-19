@@ -26,6 +26,7 @@ public class HttpPacketTest extends TestBase {
 		config.setSendUrl(SEND_URL);
 		config.setReceiveUrl(RECEIVE_URL);
 		config.setConnectUrl(CONNECT_URL);
+		config.setBufferSize(1000);
 		config.setConnectType(2);
 
 		ClientService client = ClientService.getInstance();
@@ -53,7 +54,7 @@ public class HttpPacketTest extends TestBase {
 				
 				HttpPacket t = new HttpPacket();
 				t.setAck(true);
-				t.setUrl("http://www.hunado.com/fota/api/login");
+				t.setUrl("http://www.baidu.com");
 				t.setMethod(HttpMethod.POST);
 				ParamsWrapper params = new ParamsWrapper();
 				params.put("imei", "351372098135419");
@@ -61,7 +62,7 @@ public class HttpPacketTest extends TestBase {
 				t.setParams(params);
 				client.sendPacket(t, "beidou/R");
 				Thread.sleep(10000);
-				//break;
+				break;
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

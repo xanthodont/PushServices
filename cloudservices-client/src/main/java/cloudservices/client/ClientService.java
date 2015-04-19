@@ -26,12 +26,14 @@ import org.fusesource.mqtt.codec.PUBLISH;
 
 
 
+
 import cloudservices.client.http.HTTPClientService;
 import cloudservices.client.http.async.AsyncHttpConnection;
 import cloudservices.client.http.async.StringResponseHandler;
 import cloudservices.client.http.async.support.ParamsWrapper;
 import cloudservices.client.listeners.AckPacketListener;
 import cloudservices.client.listeners.HttpPacketListener;
+import cloudservices.client.listeners.SubPacketListener;
 import cloudservices.client.mqtt.MQTTClientService;
 import cloudservices.client.packets.AckPacket;
 import cloudservices.client.packets.HttpPacket;
@@ -141,8 +143,15 @@ public class ClientService {
 			}
 		};
 		this.addPacketListener(new HttpPacketListener(this), httpFilter);
-		
-		
+		/** 分段消息处理监听器 */
+		PacketFilter subFilter = new PacketFilter() {
+			@Override
+			public boolean accept(Packet packet) {
+				// TODO Auto-generated method stub
+				return packet.isSub() && packet.getPacketType() == Packet.SUB;
+			}
+		};
+		this.addPacketListener(new SubPacketListener(this), subFilter);
 	}
 	
 	
@@ -167,7 +176,16 @@ public class ClientService {
 	public void sendPacket(Packet packet, String public2Topic) {
 		packet.setPublic2Topic(public2Topic);
 		packet.setUsername(config.getUsername());
-		packetWriter.sendPacket(packet);
+		int size = getConfiguration().getBufferSize();
+    	if (packet.toByteArray().length > size) {  // 分段消息发送
+    		Packet[] packets = Packet.subsection(packet, size);  // 将消息转换成分段消息
+    		for (int i = 0; i < packets.length; i++) {
+				Packet subPacket = packets[i];
+				packetWriter.sendPacket(subPacket);
+			}
+    	} else {
+    		packetWriter.sendPacket(packet);
+    	}
 	}
 	
 	public ISender getActualClient() {

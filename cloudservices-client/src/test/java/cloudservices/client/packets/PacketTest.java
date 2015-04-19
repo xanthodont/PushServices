@@ -94,4 +94,29 @@ public class PacketTest {
 		Assert.assertEquals(username, result.getUsername());
 		System.out.printf("Result:%s\n", result);
 	}
+	
+	@Test
+	public void subsectionTest() {
+		Packet p = new Packet() {
+			private byte[] datas = new byte[10000];;
+			@Override
+			protected void subDecode(byte[] remain) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			protected byte[] processSubData() {
+				// TODO Auto-generated method stub
+				return datas;
+			}
+		};
+		p.setUsername("test");
+		Packet[] ps = Packet.subsection(p, 1000);
+		System.out.printf("length: %d\n", ps.length);
+		Assert.assertEquals(11, ps.length);
+		for (int i = 0; i < ps.length; i++) {
+			System.out.printf("SubPacket:%s\n", ps[i]);
+		}
+	}
 }

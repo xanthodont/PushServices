@@ -43,9 +43,10 @@ public class AckPacket extends Packet {
 	
 	@Override
 	protected byte[] processSubData() {
-		ByteBuffer buffer = ByteBuffer.allocate(4 + text.length());
+		byte[] txDatas = text.getBytes();
+		ByteBuffer buffer = ByteBuffer.allocate(4 + txDatas.length);
 		buffer.putInt(ackId);
-		if (!StringUtil.isEmpty(text)) buffer.put(text.getBytes());
+		if (!StringUtil.isEmpty(text)) buffer.put(txDatas);
 		return buffer.array();
 	}
 

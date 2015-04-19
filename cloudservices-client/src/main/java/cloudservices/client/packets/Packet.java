@@ -1,5 +1,6 @@
 package cloudservices.client.packets;
 
+import java.lang.reflect.Array;
 import java.nio.ByteBuffer;
 
 /**
@@ -12,6 +13,7 @@ public abstract class Packet {
 	public static final int HTTP = 2;
 	public static final int ACK  = 3;
 	public static final int FILE = 4; 
+	public static final int SUB = 5;
 	/**
 	 * 消息类型：<br/>
 	 * 1 -- 文本消息<br/>
@@ -43,8 +45,15 @@ public abstract class Packet {
     private synchronized static int getNextMessageId() {
         return nextMessageId++;
     }
-	public Packet() {
+    
+    protected Packet() {}
+	public Packet(Packet packet) {
 		//this.messageId = getNextMessageId();
+		this.packetType = packet.getPacketType();
+		this.ack = packet.isAck();
+		this.messageId = packet.getMessageId();
+		this.username = packet.getUsername();
+		this.public2Topic = packet.getPublic2Topic();
 	}
 
 	public byte[] getRemainBytes() {
@@ -125,7 +134,9 @@ public abstract class Packet {
 	public byte[] toByteArray() {
 		// 子类处理消息
 		byte[] data = processSubData();
-		ByteBuffer buffer = ByteBuffer.allocate(9 + 2 + getUsername().length() + data.length);
+		this.setRemainBytes(data);
+		byte[] unDatas = getUsername().getBytes();
+		ByteBuffer buffer = ByteBuffer.allocate(9 + 2 + unDatas.length + data.length);
 		buffer.put(getHeader());
 		buffer.putInt(getMessageId());
 		buffer.putShort(getTotal());
@@ -182,6 +193,8 @@ public abstract class Packet {
 			return "HTTP";
 		case Packet.ACK: 
 			return "ACK";
+		case Packet.SUB: 
+			return "SUB";	
 		default: 
 			return "UNDEFINED";
 		}
@@ -202,7 +215,7 @@ public abstract class Packet {
 	 * @param str
 	 */
 	protected void putString(ByteBuffer buffer, String str) {
-		buffer.putShort((short) str.length());
+		buffer.putShort((short) str.getBytes().length);
 		buffer.put(str.getBytes());
 	}
 	protected String getString(ByteBuffer buffer) {
@@ -218,14 +231,28 @@ public abstract class Packet {
 	}
 	
 	/**
-	 * 消息分段
+	 * 消息划分成多段
 	 * @param packet
 	 * @param size
 	 * @return
 	 */
 	public static Packet[] subsection(Packet packet, int size) {
-		//npacket 
-		Packet[] packets = new Packet[2];
+		// 计算需要划分的段数
+		int packetLength = packet.toByteArray().length;
+		int count = packetLength / size;
+		if (packetLength % size > 0) count += 1;
+		
+		byte[] datas = packet.toByteArray();
+		Packet[] packets = new Packet[count];
+		for (int i = 0; i < packets.length; i++) {
+			byte[] subRemainDatas = new byte[size];
+			int copySize = i < (packets.length - 1) ? size : packetLength % size; 
+			System.arraycopy(datas, i*size, subRemainDatas, 0, copySize);
+			packets[i] = new SubPacket(packet);
+			packets[i].setRemainBytes(subRemainDatas);
+			packets[i].setTotal((short) count);
+			packets[i].setNo((short) (i));
+		}
 		return packets;
 	}
 }

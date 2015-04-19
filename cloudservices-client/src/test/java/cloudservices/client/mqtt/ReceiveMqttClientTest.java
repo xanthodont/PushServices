@@ -12,12 +12,13 @@ public class ReceiveMqttClientTest extends TestBase {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		ClientConfiguration config = new ClientConfiguration(SERVER_IP, MQTT_PORT);
-		config.setUsername("mqtt_receive");
+		config.setUsername("R");
 		config.setPassword(DEFAULT_PASSWORD);
 		config.setTopic(TOPIC);
 		config.setSendUrl(SEND_URL);
 		config.setReceiveUrl(RECEIVE_URL);
 		config.setConnectUrl(CONNECT_URL);
+		config.setBufferSize(1000);
 		config.setConnectType(2);  // 长连接
 		
 		ClientService client = ClientService.getInstance();
@@ -44,8 +45,8 @@ public class ReceiveMqttClientTest extends TestBase {
 			//client.sendPacket(new Packet());
 			try {
 				Thread.sleep(4000);
-				TextPacket t = new TextPacket();
-				t.setText("");
+				//TextPacket t = new TextPacket();
+				//t.setText("");
 				//client.sendPacket(t);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block

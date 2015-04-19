@@ -25,8 +25,9 @@ public class TextPacket extends Packet {
 	@Override
 	protected byte[] processSubData() {
 		// TODO Auto-generated method stub
-		ByteBuffer buffer = ByteBuffer.allocate(text.getBytes().length);
-		buffer.put(text.getBytes());
+		byte[] txDatas = text.getBytes();
+		ByteBuffer buffer = ByteBuffer.allocate(txDatas.length);
+		buffer.put(txDatas);
 		return buffer.array();
 	}
 
