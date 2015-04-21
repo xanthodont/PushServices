@@ -1,12 +1,18 @@
 package cloudservices.client.http;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 
 
 
 
 
+
+
+
+import java.net.URLDecoder;
+import java.nio.ByteBuffer;
 
 import org.junit.Test;
 
@@ -18,6 +24,7 @@ import cloudservices.client.TestBase;
 import cloudservices.client.http.async.AsyncHttpConnection;
 import cloudservices.client.http.async.StringResponseHandler;
 import cloudservices.client.http.async.support.ParamsWrapper;
+import cloudservices.client.packets.Packet;
 import cloudservices.client.packets.TextPacket;
 
 public class HttpClientServiceTest extends TestBase {
@@ -96,5 +103,67 @@ public class HttpClientServiceTest extends TestBase {
 				System.out.printf("response:%s\n", content);
 			}
 		});
+	}
+	
+	@Test
+	public void paramsTest() throws UnsupportedEncodingException {
+		String username = "username";
+		String topic = "beidou/MR";
+		
+		TextPacket t = new TextPacket();
+		t.setAck(true);
+		t.setText(String.format("中文--%d--", 1));
+		t.setUsername("username");
+		t.setPublic2Topic("beidou/MR");
+		
+		ParamsWrapper params = new ParamsWrapper();
+		byte[] usernameData = t.encodingString(username);
+		byte[] topicData = t.encodingString(topic);
+		byte[] packetData = t.toByteArray();
+		
+		ByteBuffer buffer = ByteBuffer.allocate(6 + usernameData.length + topicData.length + packetData.length);
+		putData(buffer, usernameData);
+		putData(buffer, topicData);
+		putData(buffer, packetData);
+		params.streamParams = buffer.array();
+		System.out.printf("length:%d", buffer.capacity());
+		//params.put("username", "username");
+		//params.put("topic", "topic");
+		//params.put("packet", new String(t.toByteArray(), "utf-8"));
+
+		//System.out.printf("params-%s\n", URLDecoder.decode(params.toString(), "utf-8"));
+		http.post(SEND_URL, params, new StringResponseHandler() {
+			
+			@Override
+			public void onSubmit(URL url, ParamsWrapper params) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void onStreamError(IOException exp) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void onConnectError(IOException exp) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			protected void onResponse(String content, URL url) {
+				// TODO Auto-generated method stub
+				System.out.printf("send response：%s\n", content);
+			}
+		});
+		
+	}
+
+	private void putData(ByteBuffer buffer, byte[] data) {
+		// TODO Auto-generated method stub
+		buffer.putShort((short) data.length);
+		buffer.put(data);
 	}
 }

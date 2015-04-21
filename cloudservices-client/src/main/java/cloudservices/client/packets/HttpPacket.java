@@ -63,20 +63,14 @@ public class HttpPacket extends Packet {
 	}
 
 	@Override
-	public byte[] toByteArray() {
-		byte[] header = super.toByteArray();
-		ByteBuffer buffer = ByteBuffer.allocate(header.length + 8 +  getUrl().length() + getParams().toString().length());
-		buffer.put(header);
-		putString(buffer, getUrl());
-		putString(buffer, getParams().toString());
-		return buffer.array();
-	}
-	
-	@Override
 	protected byte[] processSubData() {
-		ByteBuffer buffer = ByteBuffer.allocate(8 +  getUrl().length() + getParams().toString().length());
-		putString(buffer, getUrl());
-		putString(buffer, getParams().toString());
+		byte[] urlData = encodingString(url);
+		byte[] paramsData = encodingString(getParams().toString());
+		ByteBuffer buffer = ByteBuffer.allocate(2 +  urlData.length + 2 + paramsData.length);
+		buffer.putShort((short) urlData.length);
+		buffer.put(urlData);
+		buffer.putShort((short) paramsData.length);
+		buffer.put(paramsData);
 		return buffer.array();
 	}
 

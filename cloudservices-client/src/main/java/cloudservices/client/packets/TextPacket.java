@@ -25,15 +25,13 @@ public class TextPacket extends Packet {
 	@Override
 	protected byte[] processSubData() {
 		// TODO Auto-generated method stub
-		byte[] txDatas = text.getBytes();
-		ByteBuffer buffer = ByteBuffer.allocate(txDatas.length);
-		buffer.put(txDatas);
-		return buffer.array();
+		byte[] data = encodingString(text);
+		return data;
 	}
 
 	@Override
 	protected void subDecode(byte[] remain) {
 		// TODO Auto-generated method stub
-		this.text = new String(remain);
+		this.text = decodingString(remain);
 	}
 }

@@ -84,7 +84,7 @@ public class MQTTClientService implements ISender {
         mqtt.setKeepAlive(config.getKeepAlive());  
         // 设置缓冲的大小  
         mqtt.setSendBufferSize(config.getBufferSize());
-        mqtt.setReceiveBufferSize(config.getBufferSize());
+        mqtt.setReceiveBufferSize(config.getBufferSize() + 100); // 多出来的100字节用于分段消息头的存储
         
         // 设置用户名和密码
         if (StringUtil.isEmpty(config.getUsername())) throw new ConfigException("未配置用户名");

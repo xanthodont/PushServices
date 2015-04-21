@@ -130,7 +130,7 @@ public class ClientService {
 			@Override
 			public boolean accept(Packet packet) {
 				// TODO Auto-generated method stub
-				return packet.isAck() && packet.getPacketType() == Packet.TEXT;
+				return packet.isAck() && (packet.getPacketType() == Packet.TEXT || packet.getPacketType() == Packet.FILE);
 			}
 		};
 		this.addPacketListener(new AckPacketListener(this), ackFilter);

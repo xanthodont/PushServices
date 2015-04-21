@@ -26,14 +26,21 @@ public class PacketTest {
 		};
 	}
 	
-	@Test 
-	public void get2putStringTest() {
-		String testString = "test";
-		ByteBuffer buffer = ByteBuffer.allocate(2+testString.length());
-		packet.putString(buffer, testString);
+	@Test
+	public void encodingStringTest() {
+		String testSring = "中文123";
+		byte[] data = packet.encodingString(testSring);
+		String r1 = packet.decodingString(data);
+		
+		ByteBuffer buffer = ByteBuffer.allocate(2 + data.length);
+		buffer.putShort((short) data.length);
+		buffer.put(data);
 		buffer.flip();
-		String result = packet.getString(buffer);
-		Assert.assertEquals(testString, result);
+		String r2 = packet.getString(buffer);
+		
+		System.out.printf("encoding-decoding - r1:%s r2:%s\n", r1, r2);
+		Assert.assertEquals(testSring, r1);
+		Assert.assertEquals(testSring, r2);
 	}
 	
 	@Test

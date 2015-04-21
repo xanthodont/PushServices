@@ -26,8 +26,8 @@ public class HttpPacketTest extends TestBase {
 		config.setSendUrl(SEND_URL);
 		config.setReceiveUrl(RECEIVE_URL);
 		config.setConnectUrl(CONNECT_URL);
-		config.setBufferSize(1000);
-		config.setConnectType(2);
+		config.setBufferSize(2000);
+		config.setConnectType(1);
 
 		ClientService client = ClientService.getInstance();
 		try {
@@ -60,7 +60,7 @@ public class HttpPacketTest extends TestBase {
 				params.put("imei", "351372098135419");
 				params.put("sn", "15811375356");
 				t.setParams(params);
-				client.sendPacket(t, "beidou/R");
+				client.sendPacket(t, "beidou/MR");
 				Thread.sleep(10000);
 				break;
 			} catch (InterruptedException e) {
@@ -68,6 +68,7 @@ public class HttpPacketTest extends TestBase {
 				e.printStackTrace();
 			}
 		}
+		
 	}
 	
 	private HttpPacket packet;

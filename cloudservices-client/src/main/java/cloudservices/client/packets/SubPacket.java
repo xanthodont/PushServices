@@ -6,7 +6,10 @@ package cloudservices.client.packets;
  *
  */
 public class SubPacket extends Packet{
-
+	SubPacket() {
+		this.packetType = Packet.SUB;
+		this.setSub(true);
+	}
 	public SubPacket(Packet packet) {
 		// TODO Auto-generated constructor stub
 		super(packet);

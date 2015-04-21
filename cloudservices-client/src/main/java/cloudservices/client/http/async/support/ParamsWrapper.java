@@ -18,6 +18,7 @@ public class ParamsWrapper implements Serializable {
 	private static final long serialVersionUID = 1L;
 	public final ArrayList<NameValue> nameValueArray = new ArrayList<NameValue>();
 	public final ArrayList<PathParam> pathParamArray = new ArrayList<PathParam>();
+	public byte[] streamParams;
 	
 	public static class NameValue{
 		public final String name;

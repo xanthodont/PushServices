@@ -49,7 +49,7 @@ public class PacketWriter {
                 if (packet != null) {
                 	// xtd_log 单线程执行，不用担心多线程问题
                 	//packet.messageId = getNextMessageId();
-                	System.out.println("Send:" + packet);
+                	System.out.printf("Send: %s\n", packet);
                 	if (!queue.isEmpty())	Thread.sleep(100); // 两条消息发送间缓冲100毫秒
                 	client.getActualClient().send(packet);
                 }

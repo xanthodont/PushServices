@@ -27,6 +27,7 @@ public class SimpleHttpInvoker extends RequestInvoker {
 	private static final String END_MP_BLOCK = "\r\n\r\n";
 	private static final String MULTIPART_FORM_DATA = "multipart/form-data";
 	private static final String XWWW_FORM_URLENCODED = "application/x-www-form-urlencoded";
+	private static final String STREAM  = "application/octet-stream";
 
     private static final CookieManager COOKIE_MANAGER;
     static {
@@ -96,6 +97,7 @@ public class SimpleHttpInvoker extends RequestInvoker {
 		httpConnection.setRequestProperty("User-agent",DEFAULT_USER_AGENT);
 	}
 
+	
 	/**
 	 * 将参数填充到Http连接中
 	 * @param conn Http连接
@@ -105,7 +107,14 @@ public class SimpleHttpInvoker extends RequestInvoker {
 	public static void fillParamsToConnection (final HttpURLConnection conn, ParamsWrapper params) throws IOException {
 		if(params == null) return;
 		conn.setDoOutput(true);
-		if(params.pathParamArray.isEmpty()){
+		if (params.streamParams != null) {
+			conn.setRequestProperty("Content-Type", STREAM + "; boundary=" + BOUNDARY);
+			conn.setRequestProperty("Content-length", "" + params.streamParams.length);
+			DataOutputStream paramsOutStream = new DataOutputStream(conn.getOutputStream());
+			paramsOutStream.write(params.streamParams);
+			paramsOutStream.close();
+		}
+		else if(params.pathParamArray.isEmpty()){
 			conn.setRequestProperty("Content-Type", XWWW_FORM_URLENCODED + "; boundary=" + BOUNDARY);
 			DataOutputStream paramsOutStream = new DataOutputStream(conn.getOutputStream());
 			paramsOutStream.write(params.getStringParams().getBytes());
@@ -186,6 +195,10 @@ public class SimpleHttpInvoker extends RequestInvoker {
 				input.close();
 			}
 		}
+	}
+	
+	public static void fillStreamParamToConnection() {
+		
 	}
 	
 	private static String exportSuffix(String path){

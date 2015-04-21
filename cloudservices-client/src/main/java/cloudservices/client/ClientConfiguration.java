@@ -41,10 +41,11 @@ public class ClientConfiguration {
 	 *  默认为1，表示不使用回归指数
 	 */
 	private double reconnectBackOffMultiplier = 1;
-	/** 消息的最大缓冲大小
-	 *  默认值 2M 
+	/** 消息的最大缓冲大小，如果一条消息大于这个缓冲大小，那么这条消息将会被划分
+	 *  默认值 0.5M 
+	 *  注：因为系统有长短连接之分，短连接依赖于服务器Tomcat，Tomcat对消息大小有限制，所以这个缓冲大小应小于服务器设定的限定值
 	 */
-	private int bufferSize = 2*1024*1024;//发送最大缓冲为2M
+	private int bufferSize = 1*1024*1024/2;//发送最大缓冲为2M
 	/** 资源 */
 	private String resourceName;
 	/** 主题 */
@@ -57,6 +58,8 @@ public class ClientConfiguration {
 	
 	/** Http轮询周期 */
 	private int httpCircle = 30;
+	/** 文件接收保存文件夹 */
+	private int dirPath;
 	
 	/** 用户名 */
 	private String username;

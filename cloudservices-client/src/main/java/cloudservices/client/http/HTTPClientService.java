@@ -1,6 +1,7 @@
 package cloudservices.client.http;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.util.concurrent.CountDownLatch;
@@ -53,11 +54,13 @@ public class HTTPClientService implements ISender {
 				public void onConnectError(IOException exp) {
 					// http_log 请求连接失败
 					logger.error("接收消息连接异常", exp);
+					System.out.printf("connect error\n");
 				}
 				@Override
 				public void onStreamError(IOException exp) {
 					// TODO Auto-generated method stub
 					logger.error("接收消息流异常", exp);
+					System.out.printf("stream error\n");
 				}
 				@Override
 				public void onResponse(byte[] data, URL url) {
@@ -103,9 +106,27 @@ public class HTTPClientService implements ISender {
 		// TODO Auto-generated method stub
 		// http_log 发送消息
 		ParamsWrapper params = new ParamsWrapper();
+		byte[] usernameData = Packet.encodingString(clientService.getConfiguration().getUsername());
+		byte[] topicData = Packet.encodingString(packet.getPublic2Topic());
+		byte[] packetData = packet.toByteArray();
+		
+
+		ByteBuffer buffer = ByteBuffer.allocate(12 + usernameData.length + topicData.length + packetData.length);
+		putData(buffer, usernameData);
+		putData(buffer, topicData);
+		putData(buffer, packetData);
+		params.streamParams = buffer.array();
+		System.out.printf("length:%d", buffer.capacity());
+
+		/*
 		params.put("username", clientService.getConfiguration().getUsername());
 		params.put("topic", packet.getPublic2Topic());
-		params.put("packet", new String(packet.toByteArray()));
+		try {
+			params.put("packet", new String(packet.toByteArray(), "utf-8"));
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}*/
 		
 		http.post(sendUrl, params, new StringResponseHandler() {
 			@Override
@@ -138,7 +159,19 @@ public class HTTPClientService implements ISender {
 	public void connect() throws ConnectException {
 		// TODO Auto-generated method stub	
 		// 发送消息接口验证
-		http.get(sendUrl, new BinaryResponseHandler() {
+		ParamsWrapper sendParams = new ParamsWrapper();
+		byte[] usernameData = Packet.encodingString(clientService.getConfiguration().getUsername());
+		byte[] topicData = Packet.encodingString("test");
+		byte[] packetData = new byte[] {0x00};
+		
+		ByteBuffer buffer = ByteBuffer.allocate(12 + usernameData.length + topicData.length + packetData.length);
+		putData(buffer, usernameData);
+		putData(buffer, topicData);
+		putData(buffer, packetData);
+		sendParams.streamParams = buffer.array();
+		//System.out.printf("length:%d", buffer.capacity());
+		
+		http.post(sendUrl, sendParams, new BinaryResponseHandler() {
 			@Override
 			public void onSubmit(URL url, ParamsWrapper params) {}
 			
@@ -163,7 +196,10 @@ public class HTTPClientService implements ISender {
 			}
 		});
 		// 接收消息接口验证
-		http.get(receiveUrl, new BinaryResponseHandler() {
+		ParamsWrapper receiveParams = new ParamsWrapper();
+		receiveParams.put("type", "test");
+		receiveParams.put("username", clientService.getConfiguration().getUsername());
+		http.post(receiveUrl, new BinaryResponseHandler() {
 			@Override
 			public void onSubmit(URL url, ParamsWrapper params) {}
 			
@@ -192,7 +228,7 @@ public class HTTPClientService implements ISender {
 		params.put("username", clientService.getConfiguration().getUsername());
 		params.put("password", clientService.getConfiguration().getPassword());
 		params.put("resource", clientService.getConfiguration().getTopic());
-		http.get(connectUrl, params, new StringResponseHandler() {
+		http.post(connectUrl, params, new StringResponseHandler() {
 			@Override
 			public void onSubmit(URL url, ParamsWrapper params) {
 				// TODO Auto-generated method stub
@@ -237,5 +273,9 @@ public class HTTPClientService implements ISender {
 		receiveScheduler.scheduleWithFixedDelay(receiveDeamon, scheduleDelay, scheduleDelay, TimeUnit.SECONDS);
 	}
 
-	
+	private void putData(ByteBuffer buffer, byte[] data) {
+		// TODO Auto-generated method stub
+		buffer.putInt(data.length);
+		buffer.put(data);
+	}
 }

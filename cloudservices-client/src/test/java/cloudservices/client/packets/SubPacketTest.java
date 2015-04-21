@@ -22,11 +22,6 @@ public class SubPacketTest extends TestBase {
 		sendConfig.setConnectType(2);
 		sendConfig.setBufferSize(1000); // 测试
 		
-		ClientConfiguration receiveConfig = getInitConfig();
-		receiveConfig.setUsername("SubReceive");
-		receiveConfig.setConnectType(2);
-		receiveConfig.setBufferSize(1000);
-		
 		ClientService sendClient = ClientService.getInstance();
 		sendClient.config(sendConfig);
 		sendClient.startup();
@@ -61,7 +56,7 @@ public class SubPacketTest extends TestBase {
 						return datas;
 					}
 				};
-				sendClient.sendPacket(p, "beidou/R");
+				sendClient.sendPacket(p, "beidou/MR");
 				Thread.sleep(60000);
 				break;
 			} catch (InterruptedException e) {

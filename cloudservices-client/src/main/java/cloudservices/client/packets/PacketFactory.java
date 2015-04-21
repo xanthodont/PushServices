@@ -24,12 +24,15 @@ public class PacketFactory {
 			case Packet.ACK: 
 				packet = new AckPacket();
 				break;
+			case Packet.SUB:
+				packet = new SubPacket();
+				break;
 			default: 
 				packet = new Packet(){
 					@Override
 					protected byte[] processSubData() {
 						// TODO Auto-generated method stub
-						return new byte[]{};
+						return this.getRemainBytes();
 					}
 
 					@Override

@@ -23,6 +23,7 @@ public class App {
 	 * 	1 -- username 用户名<br/>
 	 * 	2 -- sendto 发送到的用户<br/>
 	 *  3 -- period 时间间隔,毫秒<br/>
+	 *  4 -- SERVER IP 服务器IP 
 	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -70,7 +71,7 @@ public class App {
 				Thread.sleep(circle*1000);
 				for (int j = 0; j < tos.length; j++) {
 					TextPacket t = new TextPacket();
-					t.setText(String.format("--%d--", config.getUsername(), tos[j], i));
+					t.setText(String.format("--%d--", i));
 					client.sendPacket(t, "beidou/"+tos[j]);
 				}
 			} catch (InterruptedException e) {

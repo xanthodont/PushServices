@@ -1,5 +1,6 @@
 package cloudservices.client.packets;
 
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
 import java.nio.ByteBuffer;
 
@@ -9,6 +10,7 @@ import java.nio.ByteBuffer;
  *
  */
 public abstract class Packet {
+	public static final String ENCODING = "utf-8";
 	public static final int TEXT = 1;
 	public static final int HTTP = 2;
 	public static final int ACK  = 3;
@@ -135,14 +137,18 @@ public abstract class Packet {
 		// 子类处理消息
 		byte[] data = processSubData();
 		this.setRemainBytes(data);
-		byte[] unDatas = getUsername().getBytes();
+		byte[] unDatas = encodingString(getUsername());
 		ByteBuffer buffer = ByteBuffer.allocate(9 + 2 + unDatas.length + data.length);
 		buffer.put(getHeader());
 		buffer.putInt(getMessageId());
 		buffer.putShort(getTotal());
 		buffer.putShort(no);
-		putString(buffer, getUsername());
+		
+		buffer.putShort((short) unDatas.length);
+		buffer.put(unDatas);
+		
 		buffer.put(data);
+		
 		return buffer.array();
 	}
 	
@@ -209,20 +215,76 @@ public abstract class Packet {
 	}
 	
 	/** 
-	 * 往buffer中输入str字符串
+	 * 往buffer中输入str字符串,该方法自动扩充Buffer的大小
 	 * 	先插入串长度，再插入串内容
-	 * @param buffer
+	 * @param buffer 必须填充满了
 	 * @param str
+	 * @return 
 	 */
-	protected void putString(ByteBuffer buffer, String str) {
-		buffer.putShort((short) str.getBytes().length);
-		buffer.put(str.getBytes());
+	protected ByteBuffer putString(ByteBuffer buffer, String str) {
+		ByteBuffer newBuffer = null;
+		try {
+			byte[] strDatas = str.getBytes(ENCODING);
+			newBuffer = ByteBuffer.allocate(buffer.capacity() + 2 + strDatas.length);
+			newBuffer.put(buffer);
+			newBuffer.putShort((short) strDatas.length);
+			newBuffer.put(strDatas);
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			newBuffer = ByteBuffer.allocate(buffer.capacity() + 2);
+			newBuffer.put(buffer);
+			newBuffer.putShort((short) 0);
+		}
+		return newBuffer;
 	}
+	public static byte[] encodingString(String value) {
+		byte[] strDatas = {};
+		try {
+			strDatas = value.getBytes(ENCODING);
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return strDatas;
+	}
+	protected  String decodingString(byte[] datas) {
+		String r = "";
+		try {
+			r = new String(datas, ENCODING);
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return r;
+	}
+	
 	protected String getString(ByteBuffer buffer) {
 		short length = buffer.getShort();
+		if (length <= 0) return "";
 		byte[] data = new byte[length];
 		buffer.get(data);
-		return new String(data);
+		String r = "";
+		try {
+			r = new String(data, ENCODING);
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return r;
+	}
+	
+	/**
+	 * 往buffer中插入字节数组，此方法会自动扩展buffer大小
+	 * @param buffer 必须填充满了
+	 * @param datas
+	 * @return
+	 */
+	protected ByteBuffer putData(ByteBuffer buffer, byte[] datas) {
+		ByteBuffer newBuffer = ByteBuffer.allocate(buffer.capacity() + datas.length);
+		newBuffer.put(buffer);
+		newBuffer.put(datas);
+		return newBuffer;
 	}
 	
 	@Override 
