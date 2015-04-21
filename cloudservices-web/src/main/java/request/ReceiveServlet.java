@@ -43,6 +43,14 @@ public class ReceiveServlet  extends HttpServlet {
 			response.flushBuffer();
 			return;
 		}
+		// 接口测试
+		String type = request.getParameter("type");
+		if ("test".equals(type)) {
+			response.getWriter().write("receive inteface test success");
+			response.flushBuffer();
+			return;
+		}
+		
 		String rs = "receive msg:";
 		List<PublishEvent> publishedEvents = mqttServer.getStorageService().retrivePersistedPublishes(username);
 		ByteBuffer resultBuffer = ByteBuffer.allocate(4);
