@@ -13,13 +13,13 @@
   	<project.compile.version>1.6</project.compile.version>
   	<project.compile.encoding>UTF-8</project.compile.encoding>
   	
-  	<!-- 设置变量:用于统一管理Library的版本 -->
+  	<!-- 设置变量:用于统一管理Library的版�? -->
 	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	<java-version>1.7</java-version>
 	<servlet-api.version>2.5</servlet-api.version>
 	<jsp-api.version>3.1.0</jsp-api.version>
 	<jstl.version>1.2</jstl.version>
-	<org.springframework-version>3.2.5.RELEASE</org.springframework-version>
+	<org.springframework-version>4.1.5.RELEASE</org.springframework-version>
 	<org.aspectj-version>1.7.4</org.aspectj-version>
 	<org.slf4j-version>1.7.5</org.slf4j-version>
   </properties>
@@ -27,8 +27,10 @@
   <modules>
   	<module>mqtt-parser</module>
     <module>mqtt-broker</module>
+    <module>mqtt-client</module>
   	<module>cloudservices-client</module>
     <module>cloudservices-web</module>
+    <module>cloudservices-android</module>
   </modules>
   
   <build>
