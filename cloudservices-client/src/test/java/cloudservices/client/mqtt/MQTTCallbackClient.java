@@ -5,8 +5,6 @@ import java.net.ProtocolException;
 import org.apache.log4j.Logger;
 import org.fusesource.hawtbuf.Buffer;
 import org.fusesource.hawtbuf.UTF8Buffer;
-import org.fusesource.hawtdispatch.Dispatch;
-import org.fusesource.hawtdispatch.DispatchQueue;
 import org.fusesource.mqtt.client.Callback;
 import org.fusesource.mqtt.client.Future;
 import org.fusesource.mqtt.client.Listener;
@@ -86,7 +84,7 @@ public class MQTTCallbackClient {
 			mqtt.setMaxWriteRate(0);// 设置连接的最大发送速率，单位为bytes/s。默认为0，即无限制
 */
 			// 选择消息分发队列
-			mqtt.setDispatchQueue(Dispatch.createQueue("foo"));// 若没有调用方法setDispatchQueue，客户端将为连接新建一个队列。如果想实现多个连接使用公用的队列，显式地指定队列是一个非常方便的实现方法
+			//mqtt.setDispatchQueue(Dispatch.createQueue("foo"));// 若没有调用方法setDispatchQueue，客户端将为连接新建一个队列。如果想实现多个连接使用公用的队列，显式地指定队列是一个非常方便的实现方法
 			//DispatchQueue queue = mqtt.getDispatchQueue();
 			
 			// 设置跟踪器

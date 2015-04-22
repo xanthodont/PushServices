@@ -4,7 +4,6 @@ import java.net.ProtocolException;
 import java.nio.ByteBuffer;
 
 import org.apache.log4j.Logger;
-import org.fusesource.hawtbuf.Buffer;
 import org.fusesource.mqtt.client.Tracer;
 import org.fusesource.mqtt.codec.MQTTFrame;
 import org.fusesource.mqtt.codec.PUBLISH;
