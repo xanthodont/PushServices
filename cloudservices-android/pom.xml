@@ -14,7 +14,7 @@
   		<artifactId>cloudservices-client</artifactId>
   		<version>${project.version}</version>
   	</dependency> 
-  </dependencies>
+  </dependencies> 
   
   <build>
     <sourceDirectory>src</sourceDirectory>
