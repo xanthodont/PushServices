@@ -27,6 +27,7 @@
   <modules>
   	<module>mqtt-parser</module>
     <module>mqtt-broker</module>
+    <module>mqtt-client</module>
   	<module>cloudservices-client</module>
     <module>cloudservices-web</module>
   </modules>
