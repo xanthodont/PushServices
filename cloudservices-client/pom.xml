@@ -14,49 +14,15 @@
 			<version>4.11</version>
 			<scope>test</scope>
 		</dependency>
-   <dependency>
-		<groupId>org.slf4j</groupId>
-		<artifactId>slf4j-api</artifactId>
-		<version>1.7.5</version>
-	</dependency>	
-	<dependency>
-		<groupId>org.slf4j</groupId>
-		<artifactId>slf4j-log4j12</artifactId>
-		<version>1.7.5</version>
-	</dependency>
-	<dependency>
-        <groupId>log4j</groupId>
-    	<artifactId>log4j</artifactId>
-        <version>1.2.17</version>
-        <exclusions>
-        	<exclusion>
-            	<groupId>javax.mail</groupId>
-                <artifactId>mail</artifactId>
-            </exclusion>
-            <exclusion>
-                <groupId>javax.jms</groupId>
-                <artifactId>jms</artifactId>
-            </exclusion>
-            <exclusion>
-                <groupId>com.sun.jdmk</groupId>
-                <artifactId>jmxtools</artifactId>
-            </exclusion>
-            <exclusion>
-                <groupId>com.sun.jmx</groupId>
-                <artifactId>jmxri</artifactId>
-            </exclusion>
-        </exclusions>
-      </dependency>
+   
+	
     <dependency>
 	  	<groupId>com.xtd</groupId>
 	  	<artifactId>mqtt-client</artifactId>
 	  	<version>${project.version}</version>
 	</dependency>
-	<dependency>
-	<groupId>org.fusesource.hawtbuf</groupId>
-	<artifactId>hawtbuf</artifactId>
-	<version>1.11</version>
-</dependency>
+	
+	
   </dependencies>
   
   

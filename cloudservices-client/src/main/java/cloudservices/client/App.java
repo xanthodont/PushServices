@@ -1,11 +1,11 @@
 package cloudservices.client;
 
-import org.apache.log4j.Logger;
+//import org.apache.log4j.Logger;
 
 import cloudservices.client.packets.TextPacket;
 
 public class App {
-	private static Logger logger = Logger.getLogger(App.class);
+	//private static Logger logger = Logger.getLogger(App.class);
 	protected static final String SERVER_IP = "127.0.0.1";
 	protected static final int MQTT_PORT = 1883;
 	protected static final String SERVER_URL = "http://127.0.0.1:8080/cloudservices-web";
@@ -76,7 +76,7 @@ public class App {
 				}
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
-				logger.error("发送消息异常", e);
+				//logger.error("发送消息异常", e);
 				break;
 			}
 		}

@@ -3,7 +3,7 @@ package cloudservices.client.mqtt;
 import java.net.ProtocolException;
 import java.nio.ByteBuffer;
 
-import org.apache.log4j.Logger;
+//import org.apache.log4j.Logger;
 import org.fusesource.mqtt.client.Tracer;
 import org.fusesource.mqtt.codec.MQTTFrame;
 import org.fusesource.mqtt.codec.PUBLISH;
@@ -12,7 +12,7 @@ import cloudservices.client.packets.Packet;
 import cloudservices.client.packets.PacketFactory;
 
 public class MqttTracer extends Tracer{
-	private static Logger logger = Logger.getLogger(MqttTracer.class);
+	//private static Logger logger = Logger.getLogger(MqttTracer.class);
 	private MQTTClientService client;
 
 	public MqttTracer(MQTTClientService client) {

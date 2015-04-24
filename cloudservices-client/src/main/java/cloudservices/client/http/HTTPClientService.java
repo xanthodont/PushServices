@@ -9,7 +9,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.log4j.Logger;
+//import org.apache.log4j.Logger;
 
 import cloudservices.client.ClientConfiguration;
 import cloudservices.client.ClientService;
@@ -27,7 +27,7 @@ import cloudservices.client.packets.PacketFactory;
 import cloudservices.utils.StringUtil;
 
 public class HTTPClientService implements ISender {
-	private static Logger logger = Logger.getLogger(HTTPClientService.class);
+	//private static Logger logger = Logger.getLogger(HTTPClientService.class);
 	
 	private ClientService clientService;
 	private AsyncHttpConnection http;
@@ -53,13 +53,13 @@ public class HTTPClientService implements ISender {
 				@Override
 				public void onConnectError(IOException exp) {
 					// http_log 请求连接失败
-					logger.error("接收消息连接异常", exp);
+					//logger.error("接收消息连接异常", exp);
 					System.out.printf("connect error\n");
 				}
 				@Override
 				public void onStreamError(IOException exp) {
 					// TODO Auto-generated method stub
-					logger.error("接收消息流异常", exp);
+					//logger.error("接收消息流异常", exp);
 					System.out.printf("stream error\n");
 				}
 				@Override
@@ -138,13 +138,13 @@ public class HTTPClientService implements ISender {
 			@Override
 			public void onConnectError(IOException exp) {
 				// TODO Auto-generated method stub
-				logger.error("发送消息连接异常", exp);
+				//logger.error("发送消息连接异常", exp);
 			}
 
 			@Override
 			public void onStreamError(IOException exp) {
 				// TODO Auto-generated method stub
-				logger.error("发送消息流异常", exp);
+//				logger.error("发送消息流异常", exp);
 			}
 
 			@Override

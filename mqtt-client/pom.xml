@@ -23,14 +23,16 @@
   </properties>
   
   <dependencies>
-
-    <!-- to enable the webconsole in the apollo broker -->
+	<dependency>
+		<groupId>org.fusesource.hawtbuf</groupId>
+		<artifactId>hawtbuf</artifactId>
+		<version>1.11</version>
+	</dependency>
     <dependency>
-      <groupId>org.apache.activemq</groupId>
-      <artifactId>apollo-web</artifactId>
-      <version>${apollo-version}</version>
-      <scope>test</scope>
-    </dependency>
+		<groupId>org.fusesource.hawtdispatch</groupId>
+		<artifactId>hawtdispatch-transport</artifactId>
+		<version>1.21</version>
+	</dependency>	
 
     
   </dependencies>

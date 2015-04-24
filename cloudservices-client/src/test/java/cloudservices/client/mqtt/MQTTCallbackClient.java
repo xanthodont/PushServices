@@ -2,7 +2,7 @@ package cloudservices.client.mqtt;
 
 import java.net.ProtocolException;
 
-import org.apache.log4j.Logger;
+//import org.apache.log4j.Logger;
 import org.fusesource.hawtbuf.Buffer;
 import org.fusesource.hawtbuf.UTF8Buffer;
 import org.fusesource.mqtt.client.Callback;
@@ -22,7 +22,7 @@ import cloudservices.client.packets.Packet;
 import cloudservices.client.packets.TextPacket;
 
 public class MQTTCallbackClient {
-	private static Logger logger = Logger.getLogger(MQTTCallbackClient.class);
+	//private static Logger logger = Logger.getLogger(MQTTCallbackClient.class);
 	
     private final static String CONNECTION_STRING = "tcp://127.0.0.1:1883";  
     private final static boolean CLEAN_START = true;  
@@ -100,13 +100,13 @@ public class MQTTCallbackClient {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
-						logger.info("recv Publish: " + frame);
+						//logger.info("recv Publish: " + frame);
 					}
 					else if (frame.messageType() == PUBACK.TYPE) {
 						PUBACK ack;
 						try {
 							ack = new PUBACK().decode(frame);
-							logger.info("recv: " + ack);
+							//logger.info("recv: " + ack);
 						} catch (ProtocolException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -119,7 +119,7 @@ public class MQTTCallbackClient {
 					if (frame.messageType() == PUBLISH.TYPE) {
 						try {
 							PUBLISH publish = new PUBLISH().decode(frame);
-							logger.info("send: -- mesageId:" + publish.messageId());
+							//logger.info("send: -- mesageId:" + publish.messageId());
 						} catch (ProtocolException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -130,7 +130,7 @@ public class MQTTCallbackClient {
 
 				@Override
 				public void debug(String message, Object... args) {
-					logger.info(String.format("debug: " + message, args));
+					//logger.info(String.format("debug: " + message, args));
 				}
 			});
 

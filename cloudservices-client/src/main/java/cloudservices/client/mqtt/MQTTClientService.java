@@ -16,7 +16,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.log4j.Logger;
+//import org.apache.log4j.Logger;
 import org.fusesource.hawtbuf.Buffer;
 import org.fusesource.hawtbuf.UTF8Buffer;
 import org.fusesource.mqtt.client.BlockingConnection;
@@ -41,7 +41,7 @@ import cloudservices.client.packets.Packet;
 import cloudservices.utils.StringUtil;
 
 public class MQTTClientService implements ISender {
-	private static Logger logger = Logger.getLogger(MQTTClientService.class);
+	//private static Logger logger = Logger.getLogger(MQTTClientService.class);
 	private ClientService clientService;
 	private MQTT mqtt;
 	private CallbackConnection connection;
@@ -112,14 +112,14 @@ public class MQTTClientService implements ISender {
         	public void onConnected() {
         		// TODO Auto-generated method stub
         		// mqtt_log 连接成功
-        		logger.info("connect success\n");
+        		//logger.info("connect success\n");
         	}
         	
         	@Override
         	public void onDisconnected() {
         		// TODO Auto-generated method stub
         		// mqtt_log 断开连接完毕
-        		logger.info("disconnect \n");
+        		//logger.info("disconnect \n");
         		connected = false;
         	}
         	
@@ -133,7 +133,7 @@ public class MQTTClientService implements ISender {
 			public void onFailure(Throwable value) {
 				// TODO Auto-generated method stub
 				// mqtt_log 连接异常
-				logger.info("connect fail\n");
+				//logger.info("connect fail\n");
 			}
 		});
 	}
@@ -176,7 +176,7 @@ public class MQTTClientService implements ISender {
 				// TODO Auto-generated method stub
 				// mqtt_log 连接失败
 				// print value.getMessage();
-				logger.info("connect fail");
+				//logger.info("connect fail");
 				connLatch.countDown();
 				connLatch.countDown();
 				// mqtt_log 关闭连接
@@ -215,14 +215,14 @@ public class MQTTClientService implements ISender {
 				@Override
 				public void onFailure(Throwable value) {
 					// TODO Auto-generated method stub
-					logger.info("发消息异常");
+					//logger.info("发消息异常");
 					value.printStackTrace();
 				}
 			});
 		} catch (Exception e) {
 			// xtd_log 发送消息异常，重新发送
 			//clientService.sendPacket(packet, publicTopic);
-			logger.info(String.format("发消息异常-- packet:%s  length:%d", packet.toString(), packet.toByteArray().length));
+			//logger.info(String.format("发消息异常-- packet:%s  length:%d", packet.toString(), packet.toByteArray().length));
 			e.printStackTrace();
 		}
 	}
