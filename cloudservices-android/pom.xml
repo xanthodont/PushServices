@@ -9,11 +9,7 @@
   <artifactId>cloudservices-android</artifactId>
   
   <dependencies>
-  	<dependency>
-  		<groupId>com.xtd</groupId>
-  		<artifactId>cloudservices-client</artifactId>
-  		<version>${project.version}</version>
-  	</dependency> 
+  	
   </dependencies> 
   
   <build>
