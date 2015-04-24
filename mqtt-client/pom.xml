@@ -5,6 +5,7 @@
     <artifactId>cloudservice</artifactId>
     <version>${project.version}</version>
   </parent>
+  <!-- 由于不兼容Android问题，此工程废弃 -->
   <artifactId>mqtt-client</artifactId>
   
   <properties>
