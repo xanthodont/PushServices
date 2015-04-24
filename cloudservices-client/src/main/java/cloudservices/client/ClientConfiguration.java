@@ -45,7 +45,7 @@ public class ClientConfiguration {
 	 *  默认值 0.5M 
 	 *  注：因为系统有长短连接之分，短连接依赖于服务器Tomcat，Tomcat对消息大小有限制，所以这个缓冲大小应小于服务器设定的限定值
 	 */
-	private int bufferSize = 1*1024*1024/2;//发送最大缓冲为2M
+	private int bufferSize = 1*1024*1024/2;//发送最大缓冲为0.5M
 	/** 资源 */
 	private String resourceName;
 	/** 主题 */
@@ -80,6 +80,7 @@ public class ClientConfiguration {
 	
 	private int numberOfSchedulerThread = 1;
 	
+	public ClientConfiguration() {}
 	public ClientConfiguration(String host, int port) {
 		this.host = host;
 		this.port = port;

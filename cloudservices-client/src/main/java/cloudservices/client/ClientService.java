@@ -10,9 +10,6 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import org.fusesource.mqtt.client.Listener;
-import org.fusesource.mqtt.client.MQTT;
-import org.fusesource.mqtt.codec.PUBLISH;
 
 
 
@@ -35,6 +32,7 @@ import cloudservices.client.listeners.AckPacketListener;
 import cloudservices.client.listeners.HttpPacketListener;
 import cloudservices.client.listeners.SubPacketListener;
 import cloudservices.client.mqtt.MQTTClientService;
+import cloudservices.client.mqtt.PahoMQTTClientService;
 import cloudservices.client.packets.AckPacket;
 import cloudservices.client.packets.HttpPacket;
 import cloudservices.client.packets.ListenerWrapper;
@@ -79,11 +77,9 @@ public class ClientService {
 	/** 配置状态 */
 	private int status = 0; 
 	/** mqtt客户端 */
-	private MQTTClientService mqttClient;
+	private PahoMQTTClientService mqttClient;
 	/** http客户端 */
 	private HTTPClientService httpClient;
-	/** 监听器集合 */
-	private Listener listener; 
 	
 	private BlockingQueue<Packet> readerQueue;
 	
@@ -101,7 +97,7 @@ public class ClientService {
 		init();
 	}
 	private void init() {
-		mqttClient = new MQTTClientService(this);
+		mqttClient = new PahoMQTTClientService(this);
 		httpClient = new HTTPClientService(this);
 		
 		this.packetWriter = new PacketWriter(this);
@@ -163,14 +159,13 @@ public class ClientService {
 		packetWriter.startup();
 		packetReader.startup();
 	}
-	
+	public void shutdown() {
+		packetWriter.shutdown();
+		packetReader.shutdown();
+	}
 	
 	public void connect() throws ConnectException {
 		getActualClient().connect();
-	}
-	
-	public void setListener(Listener listener) {
-		this.listener = listener;
 	}
 	
 	public void sendPacket(Packet packet, String public2Topic) {

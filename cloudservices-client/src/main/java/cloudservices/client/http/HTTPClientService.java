@@ -21,7 +21,6 @@ import cloudservices.client.http.async.BinaryResponseHandler;
 import cloudservices.client.http.async.StringResponseHandler;
 import cloudservices.client.http.async.support.ParamsWrapper;
 import cloudservices.client.http.async.support.RequestInvokerFactory;
-import cloudservices.client.mqtt.MQTTCallbackClient;
 import cloudservices.client.packets.Packet;
 import cloudservices.client.packets.PacketFactory;
 import cloudservices.utils.StringUtil;

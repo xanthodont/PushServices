@@ -38,7 +38,7 @@ public class TextPacketTest extends TestBase{
 				TextPacket t = new TextPacket();
 				t.setAck((i % 2) == 0);
 				t.setText(String.format("中文--%d--", i));
-				client.sendPacket(t, "beidou/HR");
+				client.sendPacket(t, "beidou/MR");
 				Thread.sleep(10000);
 				//break;
 			} catch (InterruptedException e) {
