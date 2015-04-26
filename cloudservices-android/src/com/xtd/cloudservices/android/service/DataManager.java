@@ -1,4 +1,4 @@
-package com.xtd.cloudservices.android;
+package com.xtd.cloudservices.android.service;
 
 import java.util.Properties;
 
@@ -6,9 +6,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 
-public class HttpDataManager {
+public class DataManager {
 	private static final String TAG = "DataManager";
-	public static String SERVER_URL = "";
 	public static final String SHARED_PREFERENCE_NAME = "cloudservices_preferences";
 	/** 用户名 */
     public static final String USERNAME = "USERNAME";
@@ -25,28 +24,20 @@ public class HttpDataManager {
 	private Context context;
 	private Properties props;
 	
-	private static Object flag = new Object();
-	private static HttpDataManager instance;
+	
+	private static DataManager instance = new DataManager();
 	/** */
 	public static boolean ALARM_STATUS = false;  
-	private HttpDataManager() {
+	private DataManager() {
 	}
-	public static HttpDataManager singleInstance() {
-		if (instance == null) {
-			synchronized (flag) {
-				if (instance == null) {
-					instance = new HttpDataManager();
-				}
-			}
-		}
+	public static DataManager getInstance() {
 		return instance;
 	}
 	
-	public void setContext(Context context) {
+	public void config(Context context) {
 		this.context = context;
 		sharedPrefs = this.context.getSharedPreferences(SHARED_PREFERENCE_NAME, Context.MODE_PRIVATE);
 		props = loadProperties();
-		SERVER_URL = props.getProperty("ServerUrl");
 	}
 	
 	private SharedPreferences getSharedPreferences() {
@@ -77,6 +68,46 @@ public class HttpDataManager {
         }
         return props;
     }
+	public int getConnectType() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	public String getUsername() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	public String getPassword() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	public String getHost() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	public int getPort() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	public String getBaseTopic() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	public String getReceiveUrl() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	public String getSendUrl() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	public String getConnectUrl() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	public int getBufferSize() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 
 	
 }

@@ -1,4 +1,4 @@
-package com.xtd.cloudservices.android;
+package com.xtd.cloudservices.android.demo;
 
 import cloudservices.client.ClientConfiguration;
 import cloudservices.client.ClientService;
@@ -7,6 +7,8 @@ import cloudservices.client.ConnectException;
 import cloudservices.client.mqtt.MQTTClientService;
 
 import com.xtd.cloudservices.android.R;
+import com.xtd.cloudservices.android.R.id;
+import com.xtd.cloudservices.android.R.layout;
 
 import android.os.Bundle;
 import android.view.View;
