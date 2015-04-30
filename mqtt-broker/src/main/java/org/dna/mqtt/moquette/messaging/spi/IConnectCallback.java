@@ -33,4 +33,13 @@ public interface IConnectCallback {
 	 * 离线消息超时
 	 */
 	void onSendMessageTimeout();
+	/**
+	 * 用户断开连接
+	 * @param username 
+	 */
+	void disconnect(String username);
+	/**
+	 * 服务启动成功
+	 */
+	void onServerStarted();
 }

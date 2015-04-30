@@ -27,6 +27,7 @@ class TreeNode {
     void addSubcription(Subscription s) {
         //avoid double registering
         if (m_subscriptions.contains(s)) {
+        	//if (!s.isActive()) 
             return;
         }
         m_subscriptions.add(s);

@@ -6,7 +6,9 @@ import org.apache.mina.core.session.IoSession;
 import org.dna.mqtt.moquette.messaging.spi.IMessaging;
 import org.dna.mqtt.moquette.proto.Utils;
 import org.dna.mqtt.moquette.proto.messages.AbstractMessage;
+
 import static org.dna.mqtt.moquette.proto.messages.AbstractMessage.*;
+
 import org.dna.mqtt.moquette.proto.messages.PingRespMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,5 +66,10 @@ public class MQTTHandler extends IoHandlerAdapter {
         m_messaging = messaging;
     }
 
-    
+    public void sessionClosed(IoSession session) throws Exception {
+        // Empty handler
+    	String username = (String) session.getAttribute(Constants.ATTR_CLIENTID);
+    	m_messaging.getConnCallback().disconnect(username);
+    	m_messaging.getSubscriptions().deactivate(username);
+    }
 }

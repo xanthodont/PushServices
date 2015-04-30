@@ -81,6 +81,18 @@ public class Server {
 				
 				System.out.printf("store offline message\n");
 			}
+			
+			@Override
+			public void disconnect(String username) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onServerStarted() {
+				// TODO Auto-generated method stub
+				
+			}
 		});
         mqttserver.startServer();
         
@@ -134,6 +146,7 @@ public class Server {
         m_acceptor.getStatistics().updateThroughput(System.currentTimeMillis());
         m_acceptor.bind( new InetSocketAddress(Constants.PORT) );
         LOG.info("Server binded");
+        messaging.getConnCallback().onServerStarted();
         
         //Bind  a shutdown hook
         Runtime.getRuntime().addShutdownHook(new Thread() {

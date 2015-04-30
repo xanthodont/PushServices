@@ -264,7 +264,7 @@ public class SimpleMessaging implements IMessaging, EventHandler<ValueEvent> {
         session.getConfig().setIdleTime(IdleStatus.READER_IDLE, Math.round(keepAlive * 1.5f));
 
         //Handle will flag
-        if (msg.isWillFlag()) {
+        if (false && msg.isWillFlag()) {  // 暂时去掉
             QOSType willQos = QOSType.values()[msg.getWillQos()];
             PublishEvent pubEvt = new PublishEvent(msg.getWillTopic(), willQos, msg.getWillMessage().getBytes(),
                     msg.isWillRetain(), msg.getClientID(), session);
@@ -440,7 +440,7 @@ public class SimpleMessaging implements IMessaging, EventHandler<ValueEvent> {
         }
         LOG.info("replying with SubAct to MSG ID " + msg.getMessageID());
         session.write(ackMessage);
-
+        connCallback.onSubscribeSuccess();
     }
 
     /**
@@ -477,6 +477,7 @@ public class SimpleMessaging implements IMessaging, EventHandler<ValueEvent> {
         //de-activate the subscriptions for this ClientID
 //        String clientID = (String) evt.getSession().getAttribute(Constants.ATTR_CLIENTID);
         subscriptions.deactivate(clientID);
+        connCallback.disconnect(clientID);
     }
     
     private void processStop() {
@@ -573,6 +574,10 @@ public class SimpleMessaging implements IMessaging, EventHandler<ValueEvent> {
 	public void setConnCallback(IConnectCallback connCallback) {
 		// TODO Auto-generated method stub
 		this.connCallback = connCallback;
+	}
+	
+	public IConnectCallback getConnCallback() {
+		return connCallback;
 	}
 	
 	public Map<String, ConnectionDescriptor> getCliendIds() {
