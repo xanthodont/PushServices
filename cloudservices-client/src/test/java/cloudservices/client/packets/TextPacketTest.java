@@ -1,6 +1,7 @@
 package cloudservices.client.packets;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 
 import org.junit.Assert;
@@ -15,18 +16,18 @@ import cloudservices.client.TestBase;
 
 public class TextPacketTest extends TestBase{
 
-	public static void main(String[] args) throws ConfigException, ConnectException {
+	public static void main(String[] args) throws ConfigException, ConnectException, IOException {
 		// TODO Auto-generated method stub
 		ClientConfiguration config = getInitConfig();
 		config.setUsername("TextSend");
-		config.setConnectType(ClientConfiguration.SHORT_HTTP);
-		//config.setConnectType(ClientConfiguration.LONG_MQTT);
+		//config.setConnectType(ClientConfiguration.SHORT_HTTP);
+		config.setConnectType(ClientConfiguration.LONG_MQTT);
 		config.setHttpCircle(2);
 		//sendConfig.setBufferSize(1000); // 测试
 		
 		ClientService client = ClientService.getInstance();
 		client.config(config);
-		client.startup();
+		client.startup();  
 		client.connect();
 
 		int i = 0;
@@ -38,14 +39,16 @@ public class TextPacketTest extends TestBase{
 				TextPacket t = new TextPacket();
 				t.setAck((i % 2) == 0);
 				t.setText(String.format("中文--%d--", i));
-				client.sendPacket(t, "beidou/MR");
-				Thread.sleep(10000);
-				//break;
+				client.sendPacket(t, "beidou/mqtt_1");
+				Thread.sleep(20000);
+				break;
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				break;
 			}
 		}
+		client.shutdown();
 	}
 
 	private TextPacket packet;

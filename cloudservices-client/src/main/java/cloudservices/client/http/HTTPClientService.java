@@ -42,6 +42,7 @@ public class HTTPClientService implements ISender {
             // http_log 轮询读取消息
         	ParamsWrapper params = new ParamsWrapper();
     		params.put("username", clientService.getConfiguration().getUsername());
+    		params.put("circle", clientService.getConfiguration().getHttpCircle());
     		//params.put("topic", String.format("%s/admin", clientService.getConfiguration().getTopic()));
             http.post(receiveUrl, params, new BinaryResponseHandler() {
 				@Override
@@ -115,7 +116,7 @@ public class HTTPClientService implements ISender {
 		putData(buffer, topicData);
 		putData(buffer, packetData);
 		params.streamParams = buffer.array();
-		System.out.printf("length:%d", buffer.capacity());
+		//System.out.printf("length:%d", buffer.capacity());
 
 		/*
 		params.put("username", clientService.getConfiguration().getUsername());
@@ -227,6 +228,7 @@ public class HTTPClientService implements ISender {
 		params.put("username", clientService.getConfiguration().getUsername());
 		params.put("password", clientService.getConfiguration().getPassword());
 		params.put("resource", clientService.getConfiguration().getTopic());
+		params.put("circle", clientService.getConfiguration().getHttpCircle());
 		http.post(connectUrl, params, new StringResponseHandler() {
 			@Override
 			public void onSubmit(URL url, ParamsWrapper params) {
@@ -276,5 +278,45 @@ public class HTTPClientService implements ISender {
 		// TODO Auto-generated method stub
 		buffer.putInt(data.length);
 		buffer.put(data);
+	}
+
+	/**
+	 * 断开连接
+	 */
+	@Override
+	public void disconnect() {
+		// TODO Auto-generated method stub
+		ParamsWrapper params = new ParamsWrapper();
+		params.put("username", clientService.getConfiguration().getUsername());
+		params.put("password", clientService.getConfiguration().getPassword());
+		params.put("resource", clientService.getConfiguration().getTopic());
+		params.put("type", "disconnect");
+		http.post(connectUrl, params, new StringResponseHandler() {
+			@Override
+			public void onSubmit(URL url, ParamsWrapper params) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void onStreamError(IOException exp) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void onConnectError(IOException exp) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			protected void onResponse(String content, URL url) {
+				// TODO Auto-generated method stub
+				System.out.println("response: " + content);
+				// 关闭轮询
+				receiveScheduler.shutdown();
+			}
+		});
 	}
 }

@@ -21,7 +21,7 @@ public class FilePacketTest extends TestBase {
 		// TODO Auto-generated method stub
 		
 		ClientConfiguration sendConfig = getInitConfig();
-		sendConfig.setUsername("FileSend");
+		sendConfig.setUsername("File");
 		sendConfig.setConnectType(1);
 		sendConfig.setBufferSize(2000); // 测试 -- 这个大小关系着在发送大文件数据时
 		

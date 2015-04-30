@@ -33,7 +33,7 @@ public class PahoMQTTClientService implements ISender {
 	
 	private String[] subscribeTopics;
 	private int[] subqos;
-	private String publicTopic = "common";
+	private String publicTopic = "beidou";
 	
 	CountDownLatch connLatch = new CountDownLatch(2);
 	volatile boolean connected = false;
@@ -46,11 +46,14 @@ public class PahoMQTTClientService implements ISender {
 	
 	public void config(ClientConfiguration config) throws ConfigException {
 		try {
-			mqtt = new MqttAsyncClient(config.getMqttHost(), config.getUsername());
+			mqtt = new MqttAsyncClient(config.getMqttHost(), config.getUsername(), null);
 		} catch (MqttException e) {
 			// TODO Auto-generated catch block
+			System.out.println(e);
 			e.printStackTrace();
+			throw new ConfigException("不能创建Mqtt类："+e.getStackTrace());
 		}
+		if (mqtt == null) throw new ConfigException("不能创建Mqtt类：");
 		connOpts = new MqttConnectOptions();
         // 连接前清空会话信息, false表示保留回话信息，在用户断线的情况下保留要发送给此客户端的消息  
 		connOpts.setCleanSession(false);  
@@ -60,8 +63,7 @@ public class PahoMQTTClientService implements ISender {
 		//connOpts.setReconnectDelay(config.getReconnectDelay()*1000);  
         //mqtt.setReconnectDelayMax(config.getReconnectDelayMax()*1000);
         //mqtt.setReconnectBackOffMultiplier(config.getReconnectBackOffMultiplier());
-        // 设置心跳时间  
-		connOpts.setKeepAliveInterval(config.getKeepAlive());  
+        // 设置心跳时间  		connOpts.setKeepAliveInterval(config.getKeepAlive());  
         // 设置缓冲的大小  
         //mqtt.setSendBufferSize(config.getBufferSize());
         //mqtt.setReceiveBufferSize(config.getBufferSize() + 100); // 多出来的100字节用于分段消息头的存储
@@ -81,7 +83,8 @@ public class PahoMQTTClientService implements ISender {
         subqos = new int[]{1, 1};
         publicTopic = String.format("%s/admin", config.getTopic());
         // 设置遗嘱消息
-        //mqtt.setWillTopic(publicTopic);
+        connOpts.setWill(config.getTopic(), "willtopic".getBytes(), 1, true);
+        
         //mqtt.setWillMessage("xxx");
         
         mqtt.setCallback(new MqttCallback() {
@@ -104,7 +107,7 @@ public class PahoMQTTClientService implements ISender {
 			@Override
 			public void connectionLost(Throwable cause) {
 				// TODO Auto-generated method stub
-				
+				System.out.println("connectionLost");
 			}
 		});
 	}
@@ -168,7 +171,8 @@ public class PahoMQTTClientService implements ISender {
 		}
 		
 		try {
-			connLatch.await(clientService.getConfiguration().getConnectTimeout(), TimeUnit.SECONDS);  // 连接等待10秒
+			connLatch.await();
+			//connLatch.await(clientService.getConfiguration().getConnectTimeout(), TimeUnit.SECONDS);  // 连接等待10秒
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -204,6 +208,17 @@ public class PahoMQTTClientService implements ISender {
 			// xtd_log 发送消息异常，重新发送
 			//clientService.sendPacket(packet, publicTopic);
 			//logger.info(String.format("发消息异常-- packet:%s  length:%d", packet.toString(), packet.toByteArray().length));
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void disconnect() {
+		// TODO Auto-generated method stub
+		try {
+			mqtt.disconnect();
+		} catch (MqttException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

@@ -16,19 +16,15 @@
 		</dependency>
    
 	<!-- 由于org.fusesource.mqtt-client对Android不兼容，放弃使用 -->
-    <dependency>
-		<groupId>org.fusesource.mqtt-client</groupId>
-		<artifactId>mqtt-client</artifactId>
-		<version>1.10</version>
-	</dependency>
-	<!-- paho mqtt客户端 --> 
+     
+	<!-- paho mqtt客户端 -->  
 	<dependency>
         <groupId>org.eclipse.paho</groupId>
         <artifactId>org.eclipse.paho.client.mqttv3</artifactId>
         <version>1.0.2</version>
     </dependency>
-	
-  </dependencies>
+	 
+  </dependencies> 
   
   
   <build>

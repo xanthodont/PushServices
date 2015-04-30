@@ -10,20 +10,6 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 import cloudservices.client.http.HTTPClientService;
 import cloudservices.client.http.async.AsyncHttpConnection;
 import cloudservices.client.http.async.StringResponseHandler;
@@ -31,7 +17,6 @@ import cloudservices.client.http.async.support.ParamsWrapper;
 import cloudservices.client.listeners.AckPacketListener;
 import cloudservices.client.listeners.HttpPacketListener;
 import cloudservices.client.listeners.SubPacketListener;
-import cloudservices.client.mqtt.MQTTClientService;
 import cloudservices.client.mqtt.PahoMQTTClientService;
 import cloudservices.client.packets.AckPacket;
 import cloudservices.client.packets.HttpPacket;
@@ -56,6 +41,9 @@ public class ClientService {
 	public static final int STATUS_STARTUP = 2;
 	public static final int STATUS_CONNECTED = 3;
 	
+	
+	/** 在线情况 */
+	private volatile boolean online = false;
 	/** 当前使用的客户端 true表示mqtt，false表示http*/
 	private volatile boolean actualClient = true;
 	/** 单例实现 */
@@ -87,6 +75,9 @@ public class ClientService {
 	private PacketWriter packetWriter;
 	/** 消息包读取器 */
 	private PacketReader packetReader;
+	
+	/** 连接监听器 */
+	private Collection<ConnectionListener> connectionListeners = new ConcurrentLinkedQueue<ConnectionListener>();
 	/** 回发包器集合，通过设置PacketFilter拦截回发包，然后做相应的处理 */
 	protected final Collection<PacketCollector> collectors = new ConcurrentLinkedQueue<PacketCollector>();
 	
@@ -102,6 +93,8 @@ public class ClientService {
 		
 		this.packetWriter = new PacketWriter(this);
 		this.packetReader = new PacketReader(this);
+		
+		this.addConnectionListener(new DefaultConnectionListener(this));
 	}
 	
 	public void config(final ClientConfiguration config) throws ConfigException {
@@ -148,6 +141,8 @@ public class ClientService {
 			}
 		};
 		this.addPacketListener(new SubPacketListener(this), subFilter);
+		
+		listenerConfigSuccess();
 	}
 	
 	
@@ -158,14 +153,21 @@ public class ClientService {
 	public void startup() {
 		packetWriter.startup();
 		packetReader.startup();
+		listenerStartWriterAndReader();
 	}
 	public void shutdown() {
-		packetWriter.shutdown();
-		packetReader.shutdown();
+		//packetWriter.shutdown();
+		//packetReader.shutdown();
+		
+		getActualClient().disconnect();
+		online = false;
+		listenerConnectionClosed();
 	}
 	
 	public void connect() throws ConnectException {
 		getActualClient().connect();
+		online = true;
+		listenerConnectionSuccessful();
 	}
 	
 	public void sendPacket(Packet packet, String public2Topic) {
@@ -181,6 +183,29 @@ public class ClientService {
     	} else {
     		packetWriter.sendPacket(packet);
     	}
+	}
+	
+	/**
+	 * 重连
+	 */
+	public void reconnect() {
+		listenerReconnectStart();
+		if (isOnline()) { 
+			shutdown();
+		}
+		
+		try {
+			config(config);
+		} catch (ConfigException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		try {
+			connect();
+		} catch (ConnectException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public ISender getActualClient() {
@@ -236,13 +261,61 @@ public class ClientService {
         recvListeners.remove(packetListener);
     }
 	/**
-     * Get a map of all packet listeners for received packets of this connection.
+     * 包接收器集合
      * 
      * @return a map of all packet listeners for received packets.
      */
     public Map<PacketListener, ListenerWrapper> getPacketListeners() {
         return recvListeners;
     }
-
     
+    
+    public void addConnectionListener(ConnectionListener connectionListener) {
+        if (connectionListener == null) {
+            return;
+        }
+        if (!connectionListeners.contains(connectionListener)) {
+            connectionListeners.add(connectionListener);
+        }
+    }
+    public void removeConnectionListener(ConnectionListener connectionListener) {
+        connectionListeners.remove(connectionListener);
+    }
+    protected Collection<ConnectionListener> getConnectionListeners() {
+        return connectionListeners;
+    }
+
+    public boolean isOnline() {
+    	return online;
+    }
+    public String getConnectType() {
+    	if (actualClient) return "长连接";
+    	return "短连接";
+    }
+    
+    private void listenerConfigSuccess() {
+    	for (ConnectionListener connectionListener : connectionListeners) {
+			connectionListener.configSuccess(config);
+		}
+    }
+    private void listenerStartWriterAndReader() {
+    	for (ConnectionListener connectionListener : connectionListeners) {
+			connectionListener.startWriterAndReader();
+		}
+    }
+    private void listenerConnectionSuccessful() {
+    	for (ConnectionListener connectionListener : connectionListeners) {
+			connectionListener.connectionSuccessful();
+		}
+    }
+    private void listenerReconnectStart() {
+    	for (ConnectionListener connectionListener : connectionListeners) {
+			connectionListener.reconnectStart();
+		}
+    }
+    private void listenerConnectionClosed() {
+    	for (ConnectionListener connectionListener : connectionListeners) {
+			connectionListener.connectionClosed();
+		}
+    }
 }

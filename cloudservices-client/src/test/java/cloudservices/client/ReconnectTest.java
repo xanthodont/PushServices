@@ -1,11 +1,11 @@
 package cloudservices.client;
 
-public class ReceiveMqttRTest extends TestBase{
+public class ReconnectTest extends TestBase {
 
 	public static void main(String[] args) throws ConfigException, ConnectException, InterruptedException {
 		// TODO Auto-generated method stub
 		ClientConfiguration config = getInitConfig();
-		config.setUsername("M");
+		config.setUsername("Reconnection");
 		config.setConnectType(ClientConfiguration.LONG_MQTT);
 		//sendConfig.setBufferSize(1000); // 测试
 		
@@ -14,11 +14,17 @@ public class ReceiveMqttRTest extends TestBase{
 		client.startup();
 		client.connect();
 
-		while (true) {
-			Thread.sleep(130000);
-			//break;
-		}
-		//client.shutdown();
+		Thread.sleep(10000);
+		
+		client.shutdown();
+		
+		Thread.sleep(10000);
+		// 换短连接
+		client.getConfiguration().setConnectType(ClientConfiguration.SHORT_HTTP);
+		client.reconnect();
+		
+		Thread.sleep(10000);
+		client.shutdown();
 	}
 
 }

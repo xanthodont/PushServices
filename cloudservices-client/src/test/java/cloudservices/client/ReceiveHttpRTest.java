@@ -15,8 +15,11 @@ public class ReceiveHttpRTest extends TestBase{
 		client.startup();
 		client.connect();
 
+		
+		//client.shutdown();
+		
 		while (true) {
-			Thread.sleep(60000);
+			Thread.sleep(20000);
 		}
 	}
 

@@ -20,14 +20,14 @@ public class HttpPacketTest extends TestBase {
 		// TODO Auto-generated method stub
 		ClientConfiguration config = new ClientConfiguration(SERVER_IP,
 				MQTT_PORT);
-		config.setUsername("Text_send");
+		config.setUsername("Http");
 		config.setPassword(DEFAULT_PASSWORD);
 		config.setTopic(TOPIC);
 		config.setSendUrl(SEND_URL);
 		config.setReceiveUrl(RECEIVE_URL);
 		config.setConnectUrl(CONNECT_URL);
 		config.setBufferSize(2000);
-		config.setConnectType(1);
+		config.setConnectType(2);
 
 		ClientService client = ClientService.getInstance();
 		try {
@@ -61,7 +61,7 @@ public class HttpPacketTest extends TestBase {
 				params.put("sn", "15811375356");
 				t.setParams(params);
 				client.sendPacket(t, "beidou/MR");
-				Thread.sleep(10000);
+				Thread.sleep(15000);
 				break;
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
