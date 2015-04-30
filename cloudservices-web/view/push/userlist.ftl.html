@@ -1,50 +1,96 @@
-<#import "../layout/adminLayout.ftl.html" as layout>
-<@layout.header ''>  
+<#import "../layout/defaultLayout.ftl.html" as layout>
+<@layout.header '用户列表'>  
   
 </@layout.header>
 
-<@layout.content '' ''>
+<@layout.content>
 
+<table id="dg"></table>
 
-
+<div id="dialog">
+	<div id="">
+    	主题：<input id="to_topic" type="text" style="width:85%;"/>    
+    </div>
+    <div>
+    	回执：<input type="radio" name="isAck" value="true" checked="checked"/> 是 
+    		 <input type="radio" name="isAck" value="false"/> 否
+    </div>
+	<div id="tt" class="easyui-tabs" style="width:500px;height:250px;">
+    <div title="文本消息" data-options="closable:false" style="padding:20px;">
+        <!-- <p>文本消息内容</p> --> 
+        <textarea id="text_content" rows="10" cols="60"></textarea>
+    </div>
+    <div title="文件消息" data-options="closable:false" style="overflow:auto;padding:20px;">
+        <input class="easyui-filebox" data-options="buttonText: '选择文件'" style="width:300px">
+    </div>
+    <div title="Http代理消息" data-options="closable:false" style="">
+    	<div>
+         URL：<input id="to_topic" type="text" style="width:85%;"/>
+        </div> 
+    </div>
+</div>
+</div>
 
 </@layout.content>
 
 <@layout.footer>
-<script src="assets/mqtt.paho.javascript/mqttws31.js" type="text/javascript"></script>
 <script>
-// Create a client instance
-var client = new Paho.MQTT.Client('127.0.0.1', 8080, '/cloudservices-web/ws/mqtt', 'javascript');
 
-// set callback handlers
-client.onConnectionLost = onConnectionLost;
-client.onMessageArrived = onMessageArrived;
+$('#dg').datagrid({
+    url:'push/userlist',
+    columns:[[
+        {field:'username',title:'用户名', width:100},
+        {field:'registerTime',title:'注册时间', width:100, formatter: Utils.dateTimeFormatter},
+        {field:'updateTime',title:'更新时间', width:100, formatter: Utils.dateTimeFormatter},
+        {field:'resource',title:'资源', width:100},
+        {field:'status',title:'在线状态', width:100, formatter: function(val, row) {
+        	if (val == '1') {
+        		return '<a style="color:darkgreen;">在线</a>';
+        	} else if (val == '2') {
+        		return '<a style="color:blue;">在线</a>';
+        	} else {
+        		return '<a style="color:red;">离线</a>';
+        	}
+        }},
+        {field:'op',title:'操作', width:100, formatter: function(val, row) {
+        	return '<a href="javascript:;" id="'+row.resource + '/' + row.username+'" onclick="open_dialog(this)">发送消息</a>'
+        }}, 
+    ]]
+});
 
-// connect the client
-console.log("begin connect");
-client.connect({onSuccess:onConnect, mqttVersion: 3});
-
-
-// called when the client connects
-function onConnect() {
-  // Once a connection has been made, make a subscription and send a message.
-  console.log("onConnect");
-  client.subscribe("/World");
-  message = new Paho.MQTT.Message("Hello");
-  message.destinationName = "/World";
-  client.send(message); 
-}
-
-// called when the client loses its connection
-function onConnectionLost(responseObject) {
-  if (responseObject.errorCode !== 0) {
-    console.log("onConnectionLost:"+responseObject.errorMessage);
-  }
-}
-
-// called when a message arrives
-function onMessageArrived(message) {
-  console.log("onMessageArrived:"+message.payloadString);
-}
+$('#dialog').dialog({
+    title: '发送消息', 
+    closed: true,
+    cache: false, 
+    modal: true,
+    buttons: [{
+		text:'发送',
+		handler:function(){
+			//$.messager.
+			$.ajax({
+				url: 'push/send',
+				type: 'post',
+				data: {topic: $('#to_topic').val(), isAck: $('input:checked[name="isAck"]').val(), text: $('#text_content').val()},
+				dataType: 'json',
+				success: function(r) {
+					if (r.code == '1') {  // success
+						$.messager.alert('提示', r.msg);
+					} else {
+						$.messager.alert('提示', r.msg);
+					}
+				}
+			});
+		}
+	},{
+		text:'关闭', 
+		handler:function(){
+			$('#dialog').dialog('close');
+		}
+	}]
+});
+function open_dialog(obj) {
+	$('#to_topic').val($(obj).attr('id'));
+	$('#dialog').dialog('open');
+} 
 </script>
 </@layout.footer>

@@ -23,6 +23,7 @@ public class ConnectWriter extends DBWriter<ConnectInfo> {
 	@Override
 	protected void setPrepareStatement(PreparedStatement ps, ConnectInfo info) throws SQLException {
 		long ct = System.currentTimeMillis();
+		//Date now = new Date();
 		ps.setString(1, info.getUsername());
 		ps.setString(2, info.getPassword());
 		ps.setLong(3, ct);

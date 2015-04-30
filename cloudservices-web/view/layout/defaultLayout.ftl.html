@@ -1,0 +1,45 @@
+<#macro header title="layout">
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf-8">
+    <title>${title}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <meta HTTP-EQUIV="Cache-control" CONTENT="max-age=90">
+    <base href="/cloudservices-web/" />  
+    
+  	<link href="assets/easyui/themes/default/easyui.css" rel="stylesheet" type="text/css"/>
+	
+	<!--[if lte IE 6]>
+  	<link rel="stylesheet" type="text/css" href="/assets/bsie/css/bootstrap-ie6.css">
+  	<![endif]-->
+  	<!--[if lte IE 7]>
+  	<link rel="stylesheet" type="text/css" href="/assets/bsie/css/ie.css">
+  	<![endif]-->
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="/assets/bsie/js/html5shiv.min.js"></script>
+      <script src="/assets/media/js/respond.min.js"></script>
+      <script src="/assets/media/js/excanvas.min.js"></script>
+    <![endif]-->
+    <#nested/>
+  </head>
+</#macro>	
+
+<#macro content>
+<body class="">
+    <#nested/>
+</#macro>	    
+
+<#macro footer>  
+	<script type="text/javascript" src="assets/js/jquery.min.js"></script>
+	<script type="text/javascript" src="assets/js/utils.js"></script>
+  	<script type="text/javascript" src="assets/easyui/jquery.easyui.min.js"></script>
+	<#nested/>
+</body>
+</html>
+</#macro>

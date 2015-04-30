@@ -13,3 +13,4 @@ var constants = {
 function developing() {
 	alert('开发中……');
 }
+

@@ -12,20 +12,26 @@
   <name>cloudservices-web Maven Webapp</name>
   <url>http://maven.apache.org</url>
   
+  <properties>
+  	<org.springframework-version>3.2.5.RELEASE</org.springframework-version>
+  	<hibernate-core-version>3.2.5.Final</hibernate-core-version>
+    <hibernate-validator-version>3.2.5.Final</hibernate-validator-version>
+  </properties>
+  
   <dependencies>
   	<dependency> 
     	<groupId>com.xtd</groupId>
     	<artifactId>mqtt-broker</artifactId>
 	    <version>${project.version}</version>
-    </dependency> 
-    <!-- 
+    </dependency>
+    
     <dependency> 
     	<groupId>com.xtd</groupId>
     	<artifactId>cloudservices-client</artifactId>
 	    <version>${project.version}</version>
-    </dependency> --> 
-    <dependency>
-      	<groupId>junit</groupId>
+    </dependency>
+    <dependency> 
+      	<groupId>junit</groupId>  
       	<artifactId>junit</artifactId>
       	<version>4.11</version>
       	<scope>test</scope>
@@ -48,12 +54,48 @@
 		<artifactId>javax.websocket-api</artifactId>
 		<version>1.1</version>
 	</dependency>
+	
+	<dependency>
+			<groupId>javassist</groupId>
+			<artifactId>javassist</artifactId>
+			<version>3.12.0.GA</version>
+		</dependency>
 	<!-- jedis -->
 	<dependency>
 		<groupId>redis.clients</groupId>
 		<artifactId>jedis</artifactId>
 		<version>2.7.0</version>
 	</dependency>
+	<!-- Hibernate 配置 -->
+	<dependency>
+		<groupId>org.hibernate</groupId>
+		<artifactId>hibernate-core</artifactId>
+		<version>3.6.3.Final</version>
+	</dependency>
+	
+    <dependency>
+        <groupId>c3p0</groupId>
+        <artifactId>c3p0</artifactId>
+        <version>0.9.1.2</version>
+    </dependency>
+
+    <dependency>
+        <groupId>org.hibernate</groupId>
+        <artifactId>hibernate-validator</artifactId>
+        <version>3.1.0.GA</version>
+    </dependency>
+    <dependency>
+            <groupId>commons-dbcp</groupId>
+            <artifactId>commons-dbcp</artifactId>
+            <version>1.4</version>
+        </dependency>
+        
+    <dependency>
+		<groupId>dom4j</groupId>
+		<artifactId>dom4j</artifactId>
+		<version>1.6.1</version>
+	</dependency>
+    
 	<!-- Spring -->
     <dependency>
 		<groupId>org.springframework</groupId>
@@ -91,6 +133,7 @@
 		<artifactId>spring-beans</artifactId>
 		<version>${org.springframework-version}</version>
 	</dependency>
+	
 	
 	<!-- Freemarker 视图引擎 -->
 	<dependency>
@@ -161,8 +204,71 @@
             </exclusion>
         </exclusions>
       </dependency>
+      
+    <!-- json -->
+    <dependency>  
+        <groupId>com.fasterxml.jackson.core</groupId>  
+        <artifactId>jackson-core</artifactId>  
+        <version>2.1.0</version>  
+    </dependency>  
+    <dependency>  
+        <groupId>com.fasterxml.jackson.core</groupId>  
+        <artifactId>jackson-databind</artifactId>  
+        <version>2.1.0</version>  
+    </dependency>  
+    <dependency>  
+        <groupId>com.fasterxml.jackson.core</groupId>  
+        <artifactId>jackson-annotations</artifactId>  
+        <version>2.1.0</version>  
+    </dependency>  
+    <dependency>
+		<groupId>org.codehaus.jackson</groupId>
+		<artifactId>jackson-mapper-asl</artifactId>
+		<version>1.9.13</version>
+	</dependency>
+	
+	<!-- quartz -->
+	<dependency>
+		<groupId>org.quartz-scheduler</groupId>
+		<artifactId>quartz</artifactId>
+		<version>1.7.3</version>
+	</dependency>
+	
   </dependencies> 
   <build>
     <finalName>cloudservices-web</finalName>
+
+    <plugins>
+    
+    	<plugin>  
+            <groupId>org.apache.maven.plugins</groupId>  
+            <artifactId>maven-war-plugin</artifactId>  
+            <version>2.4</version>                    
+            <configuration>  
+                <webXml>${basedir}\src\main\webapp\WEB-INF\web.xml</webXml>     
+				<webResources>  
+                    <resource>  
+                        <directory>src/main/webapp/WEB-INF</directory>  
+                        <filtering>true</filtering>  
+                        <targetPath>WEB-INF</targetPath>  
+                    </resource>  
+                </webResources> 
+                <webResources>
+                	<resource>  
+                        <directory>view</directory>  
+                        <targetPath>view</targetPath>  
+                    </resource>  
+                </webResources> 
+                <webResources>
+                	<resource>  
+                        <directory>assets</directory>  
+                        <filtering>true</filtering>  
+                        <targetPath>assets</targetPath>  
+                    </resource>  
+                </webResources>
+            </configuration>  
+        </plugin> 
+    
+    </plugins>
   </build>
 </project>

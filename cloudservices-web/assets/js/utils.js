@@ -1,7 +1,7 @@
 var Utils = (function(){
 	function dateTimeFormatter(val, row) {
 		if (val == null) return 'time is null';
-		var d = new Date(val.time);
+		var d = new Date(val);
 		return dateFormatter(d);
 	}
 	function dateFormatter(d) {

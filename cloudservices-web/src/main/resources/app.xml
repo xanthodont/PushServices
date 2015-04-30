@@ -12,10 +12,10 @@
 			            http://www.springframework.org/schema/aop
 			            http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
 		
-    <!-- 
+    
 	<import resource="app-dao.xml" />
 	<import resource="app-service.xml" />
-	-->
+	
 	
 	<bean id="propertyConfigurer"
 		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
@@ -48,7 +48,7 @@
         <property name = "dataSource" ref="dataSource"/>  
     </bean>
     
-	<!-- 
+	
     <bean id="sessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
 		<property name="dataSource">
 			<ref bean="dataSource"></ref>
@@ -64,23 +64,21 @@
 		</property>
 		<property name="annotatedClasses">
 		     <list>
-		         <value>com.konka.ois.mvc.model.OisSwitch</value>
-		         <value>com.konka.ois.mvc.model.OisApp</value>
+		         <value>mvc.model.PushUser</value>
 		     </list>
    		</property>
 
 	</bean> 
-     -->	            
+     
     <bean id="applicationContextUtil" class="utils.ApplicationContextUtil"></bean>
     <!-- MQTT服务器类 -->
 	<bean id="mqttServer" class="org.dna.mqtt.moquette.server.Server"></bean>
 	<!-- 
 	<bean id="mqttClient" class="cloudservices.client.ClientService"></bean> -->
-	<!-- Jedis配置 
+	<!-- Jedis配置 -->  
 	<bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
-		<property name="maxActive" value="500" />
+		<property name="maxTotal" value="500" />
 		<property name="maxIdle" value="100" />
-		<property name="maxWait" value="5000" />
 		<property name="testOnBorrow" value="true" />
 	</bean>
 	
@@ -88,5 +86,33 @@
 		<constructor-arg index="0" ref="jedisPoolConfig" />
 		<constructor-arg index="1" value="127.0.0.1" />
 		<constructor-arg index="2" value="6379" />
-	</bean>--> 
+	</bean>
+	
+	<!-- 定时器 -->
+	<!--要调度的对象 -->
+	<bean id="jobBean" class="mvc.scheduler.OnlineStatusUpdateJob" />
+	<bean id="jobDetail"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="jobBean" />
+		<property name="targetMethod" value="execute" />
+		<!--将并发设置为false -->
+		<property name="concurrent" value="false" />
+	</bean>
+
+	<bean id="trigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="jobDetail" />
+		<!--表达式，我的是每 30 执行一次 -->
+		<property name="cronExpression" value="0/30 * * * * ?" />
+	</bean>
+
+	<!-- 总管理类如果将lazy-init='false'那么容器启动就会执行调度程序 -->
+	<bean id="startQuertz" class="org.springframework.scheduling.quartz.SchedulerFactoryBean"
+		lazy-init="false">
+		<property name="triggers">
+			<list>
+				<!--作业调度器,list下可加入其他的调度器 -->
+				<ref bean="trigger" />
+			</list>
+		</property>
+	</bean>  
 </beans>
