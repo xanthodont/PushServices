@@ -4,6 +4,9 @@
 </@layout.header>
 
 <@layout.content>
+<div style="">
+在线人数: <a id="total-online">0</a> <a style="color:red;" id="total-online-error"></a>
+</div> 
 
 <table id="dg"></table>
 
@@ -55,8 +58,30 @@ $('#dg').datagrid({
         {field:'op',title:'操作', width:100, formatter: function(val, row) {
         	return '<a href="javascript:;" id="'+row.resource + '/' + row.username+'" onclick="open_dialog(this)">发送消息</a>'
         }}, 
-    ]]
+    ]],
+    pagination: true,
+    pageSize: 30,
+    pageList: [30, 50, 100, 200, 500],
+    rownumbers: true
 });
+function getTotalOnline() {
+	$.ajax({
+		url: 'push/online',
+		type: 'post',
+		dataType: 'json',
+		success: function(r) {
+			if (r.code == '1') {  // success
+				$('#total-online').html(r.msg);
+				$('#total-online-error').html('');
+			} else {
+				$('#total-online-error').html(r.msg);
+			}
+		}
+	});
+}
+getTotalOnline();
+setInterval(getTotalOnline, 3000);
+
 
 $('#dialog').dialog({
     title: '发送消息', 

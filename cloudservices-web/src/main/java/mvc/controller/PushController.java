@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.swing.JRadioButton;
 
 import mvc.dao.IPushUserDao;
+import mvc.dao.PageList;
 import mvc.model.JResponse;
 import mvc.model.PushUser;
 import mvc.service.IPushUserService;
@@ -48,13 +49,22 @@ public class PushController {
 	}
 	@RequestMapping(value = "userlist", method = RequestMethod.POST)
 	@ResponseBody
-	public Map userListPost(HttpServletRequest request, HttpServletResponse response) {
-		List<PushUser> list = pushuserService.getUserList();
+	public PageList userListPost(HttpServletRequest request, HttpServletResponse response,
+			@RequestParam("page") int page,
+			@RequestParam("rows") int size) {
+		PageList<PushUser> list = pushuserService.getUserList(page, size);
 		
-		Map map = new HashMap<String, Object>();
-		map.put("total", list.size());
-		map.put("rows", list);
-		return map;
+		//Map map = new HashMap<String, Object>();
+		//map.put("total", list.size());
+		//map.put("rows", list);
+		return list;
+	}
+	
+	@RequestMapping(value = "online")
+	@ResponseBody
+	public JResponse online(HttpServletRequest request, HttpServletResponse response) {
+		int count = pushuserService.getTotalOnline();
+		return JResponse.success(String.valueOf(count));
 	}
 	
 	@RequestMapping(value = "send")

@@ -4,23 +4,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PageList<TEntity> {
-	private List list;
+	private List rows;
 	private int total;
 
-	public PageList(List list) {
-		this.list = list;
+	public PageList() {
 	}
-	public PageList(List list, int total) {
-		this.list = list;
+	public PageList(List rows, int total) {
+		this.rows = rows;
 		this.total = total;
 	}
 
-	public List getList() {
-		return list;
+	public List getRows() {
+		return rows;
 	}
 
-	public void setList(List list) {
-		this.list = list;
+	public void setRows(List rows) {
+		this.rows = rows;
 	}
 	public int getTotal() {
 		return total;
