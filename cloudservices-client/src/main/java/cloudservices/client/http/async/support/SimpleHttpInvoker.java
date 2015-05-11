@@ -63,10 +63,10 @@ public class SimpleHttpInvoker extends RequestInvoker {
             // InputStream 由 onResponse 关闭
             callback.onResponse(cookieStore,stream,targetURL);
         }catch(IOException exp){
-            exp.printStackTrace();
+            //exp.printStackTrace();
             callback.onConnectError(exp);
         }catch (Throwable exp){
-            exp.printStackTrace();
+            //exp.printStackTrace();
             callback.onUncatchedError(exp);
         }
         if(httpConnection != null){

@@ -19,6 +19,9 @@ public class ReceiveMqttClientTest extends TestBase {
 		config.setReceiveUrl(RECEIVE_URL);
 		config.setConnectUrl(CONNECT_URL);
 		config.setBufferSize(1000);
+		config.setKeepAlive((short) 10);
+		config.setReconnectDelay(5);
+		config.setReconnectBackOffMultiplier(1);
 		config.setConnectType(2);  // 长连接
 		
 		ClientService client = ClientService.getInstance();
@@ -30,10 +33,6 @@ public class ReceiveMqttClientTest extends TestBase {
 			// TODO Auto-generated catch block
 			//e1.printStackTrace();
 			System.out.println(e1.getMessage());
-		} catch (ConnectException e) {
-			// TODO Auto-generated catch block
-			//e.printStackTrace();
-			System.out.println(e.getMessage());
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();

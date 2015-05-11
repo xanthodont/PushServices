@@ -33,6 +33,9 @@ public class ReceiveHttpClientServiceTest extends TestBase {
 		config.setReceiveUrl(RECEIVE_URL);
 		config.setConnectUrl(CONNECT_URL);
 		config.setConnectType(1);  // 短连接
+		config.setReconnectBackOffMultiplier(1);
+		config.setReconnectDelay(10);
+		config.setHttpCircle(15);
 		
 		ClientService client = ClientService.getInstance();
 		try {
@@ -43,10 +46,6 @@ public class ReceiveHttpClientServiceTest extends TestBase {
 			// TODO Auto-generated catch block
 			//e1.printStackTrace();
 			System.out.println(e1.getMessage());
-		} catch (ConnectException e) {
-			// TODO Auto-generated catch block
-			//e.printStackTrace();
-			System.out.println(e.getMessage());
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();

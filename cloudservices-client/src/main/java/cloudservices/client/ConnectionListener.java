@@ -5,6 +5,7 @@ public interface ConnectionListener {
 	public void configSuccess(ClientConfiguration config);
 	public void startWriterAndReader();
 	public void connectionSuccessful();
-	public void reconnectStart();
+	public void connectionFail(ConnectException e);
+	public void reconnectStart(long reconnectTimes, long reconnectDelay);
 	public void connectionClosed();
 }

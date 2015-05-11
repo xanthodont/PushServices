@@ -1,9 +1,9 @@
 package cloudservices.client;
 
 public class TestBase {
-	protected static final String SERVER_IP = "172.21.12.89";
+	protected static final String SERVER_IP = "172.21.4.64";
 	protected static final int MQTT_PORT = 1883;
-	protected static final String SERVER_URL = "http://172.21.12.89:8080/cloudservices-web";
+	protected static final String SERVER_URL = "http://172.21.4.64:8080/cloudservices-web";
 	protected static final String RECEIVE_URL = SERVER_URL + "/api/receive";
 	protected static final String SEND_URL = SERVER_URL + "/api/send";
 	protected static final String CONNECT_URL = SERVER_URL + "/api/connect";

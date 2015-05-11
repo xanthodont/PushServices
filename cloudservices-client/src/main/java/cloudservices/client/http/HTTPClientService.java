@@ -54,7 +54,9 @@ public class HTTPClientService implements ISender {
 				public void onConnectError(IOException exp) {
 					// http_log 请求连接失败
 					//logger.error("接收消息连接异常", exp);
-					System.out.printf("connect error\n");
+					System.out.printf("connect error -- 关闭轮询\n");
+					clientService.shutdown(); // 下线通知
+					clientService.reconnect();
 				}
 				@Override
 				public void onStreamError(IOException exp) {
@@ -74,11 +76,13 @@ public class HTTPClientService implements ISender {
 						Packet packet = PacketFactory.getPacket(ByteBuffer.wrap(packetData));
 						clientService.getPacketReader().putPacket(packet);
 					}
+					// 轮询获取消息
+					receiveScheduler.schedule(receiveDeamon, scheduleDelay, TimeUnit.SECONDS);
 				}});
         }
     };
 	
-	CountDownLatch connLatch = new CountDownLatch(3);
+	CountDownLatch connLatch;
 	volatile boolean sendInteface = false;
 	volatile boolean receiveInteface = false;
 	volatile boolean connectInteface = false;
@@ -158,6 +162,11 @@ public class HTTPClientService implements ISender {
 	@Override
 	public void connect() throws ConnectException {
 		// TODO Auto-generated method stub	
+		// 重置标识位
+		sendInteface = false;
+		receiveInteface = false;
+		connectInteface = false;
+		connLatch = new CountDownLatch(3);
 		// 发送消息接口验证
 		ParamsWrapper sendParams = new ParamsWrapper();
 		byte[] usernameData = Packet.encodingString(clientService.getConfiguration().getUsername());
@@ -268,10 +277,12 @@ public class HTTPClientService implements ISender {
 			if (!sendInteface) throw new ConnectException("发送消息接口验证失败");
 			if (!receiveInteface) throw new ConnectException("接收消息接口验证失败");
 			if (!connectInteface) throw new ConnectException("连接接口验证失败");
+			
+			
 		} 
-		// http_log 连接成功，开启定时获取消息
-		System.out.printf("连接成功，开启轮询\n");
-		receiveScheduler.scheduleWithFixedDelay(receiveDeamon, scheduleDelay, scheduleDelay, TimeUnit.SECONDS);
+		// http_log 连接成功，开启定时获取消息，获取成功之后继续定时获取，失败则开启重连线程
+		System.out.printf("开启轮询\n");
+		receiveScheduler.schedule(receiveDeamon, scheduleDelay, TimeUnit.SECONDS);
 	}
 
 	private void putData(ByteBuffer buffer, byte[] data) {

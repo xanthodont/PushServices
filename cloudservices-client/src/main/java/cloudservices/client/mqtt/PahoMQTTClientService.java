@@ -35,7 +35,7 @@ public class PahoMQTTClientService implements ISender {
 	private int[] subqos;
 	private String publicTopic = "beidou";
 	
-	CountDownLatch connLatch = new CountDownLatch(2);
+	CountDownLatch connLatch;// = new CountDownLatch(2);
 	volatile boolean connected = false;
 	volatile boolean subscribed = false;
 	
@@ -74,7 +74,8 @@ public class PahoMQTTClientService implements ISender {
         //connOpts.setClientId(config.getUsername());
         connOpts.setUserName(config.getUsername());
         connOpts.setPassword(config.getPassword().toCharArray());
-        
+        connOpts.setConnectionTimeout(config.getConnectTimeout());
+        connOpts.setKeepAliveInterval(config.getKeepAlive());
         
         if (StringUtil.isEmpty(config.getTopic())) throw new ConfigException("未配置主题信息");
         subscribeTopics = new String[2];
@@ -84,8 +85,6 @@ public class PahoMQTTClientService implements ISender {
         publicTopic = String.format("%s/admin", config.getTopic());
         // 设置遗嘱消息
         connOpts.setWill(config.getTopic(), "willtopic".getBytes(), 1, true);
-        
-        //mqtt.setWillMessage("xxx");
         
         mqtt.setCallback(new MqttCallback() {
 			
@@ -107,7 +106,11 @@ public class PahoMQTTClientService implements ISender {
 			@Override
 			public void connectionLost(Throwable cause) {
 				// TODO Auto-generated method stub
-				System.out.println("connectionLost");
+				cause.printStackTrace();
+				System.out.println("connectionLost" + cause.getMessage());
+				
+				clientService.shutdown();//(false); // 下线通知
+				clientService.reconnect();
 			}
 		});
 	}
@@ -121,6 +124,11 @@ public class PahoMQTTClientService implements ISender {
 	}
 	
 	public void connect() throws ConnectException {
+		// 重置标识位
+		connected = false;
+		subscribed = false;
+		connLatch = new CountDownLatch(2);
+		
 		try {
 			mqtt.connect(connOpts, null, new IMqttActionListener() {
 				@Override
@@ -179,6 +187,7 @@ public class PahoMQTTClientService implements ISender {
 		} finally {
 			if (!connected) throw new ConnectException("连接服务器失败");
 			if (!subscribed) throw new ConnectException("订阅主题失败");
+			
 		}
 	}
 	

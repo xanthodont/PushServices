@@ -70,7 +70,7 @@ public class ClientConfiguration {
 	private String name;
 	
 	/** 连接超时时间 */
-	private long connectTimeout = 20L;
+	private int connectTimeout = 20;
 	
 	/** 调试模式
 	 *  true 表示开启调试模式，程序输出日志信息
@@ -264,12 +264,12 @@ public class ClientConfiguration {
 	}
 
 
-	public long getConnectTimeout() {
+	public int getConnectTimeout() {
 		return connectTimeout;
 	}
 
 
-	public void setConnectTimeout(long connectTimeout) {
+	public void setConnectTimeout(int connectTimeout) {
 		this.connectTimeout = connectTimeout;
 	}
 

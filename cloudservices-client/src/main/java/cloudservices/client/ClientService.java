@@ -9,6 +9,9 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import cloudservices.client.http.HTTPClientService;
 import cloudservices.client.http.async.AsyncHttpConnection;
@@ -50,6 +53,29 @@ public class ClientService {
 	private static class ProviderHolder {
 		static ClientService instance = new ClientService();
 	}
+	
+	/** 重连定时器 */
+	private ScheduledExecutorService reconnectScheduler;
+	/** 重连次数记录 */
+	private long reconnects = 0;
+	/** 重连线程 */
+	final Runnable reconnectDeamon = new Runnable() {
+		@Override
+		public void run() {
+			if (isOnline()) { 
+				return;
+			}
+			
+			try {
+				config(config);
+			} catch (ConfigException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			connect();
+		}
+	};
+	
 	/** 接口调用顺序<br/>
 	 *                                          |--> sendPacket()   -->|<br/>
 	 * 	config() --> startup() --> connect() -->|					   |--> shutdown()<br/>
@@ -94,26 +120,10 @@ public class ClientService {
 		this.packetWriter = new PacketWriter(this);
 		this.packetReader = new PacketReader(this);
 		
+		reconnectScheduler = Executors.newScheduledThreadPool(1);
+		
 		this.addConnectionListener(new DefaultConnectionListener(this));
-	}
-	
-	public void config(final ClientConfiguration config) throws ConfigException {
-		/** 根据配置信息初始化相应的类 */
-		this.config = config;
-		switch (config.getConnectType()) {
-		case 1: // 短连接
-			httpClient.config(config);
-			actualClient = false;
-			break;
-		case 2: // 长连接
-			mqttClient.config(config);
-			break;
-		case 3: // both
-		default:
-			mqttClient.config(config);
-			httpClient.config(config);
-			break;
-		}
+		
 		/** 配置回发Ack消息监听器 */
 		PacketFilter ackFilter = new PacketFilter() {
 			@Override
@@ -141,6 +151,26 @@ public class ClientService {
 			}
 		};
 		this.addPacketListener(new SubPacketListener(this), subFilter);
+	}
+	
+	public void config(final ClientConfiguration config) throws ConfigException {
+		/** 根据配置信息初始化相应的类 */
+		this.config = config;
+		switch (config.getConnectType()) {
+		case 1: // 短连接
+			httpClient.config(config);
+			actualClient = false;
+			break;
+		case 2: // 长连接
+			mqttClient.config(config);
+			break;
+		case 3: // both
+		default:
+			mqttClient.config(config);
+			httpClient.config(config);
+			break;
+		}
+		
 		
 		listenerConfigSuccess();
 	}
@@ -164,10 +194,24 @@ public class ClientService {
 		listenerConnectionClosed();
 	}
 	
-	public void connect() throws ConnectException {
-		getActualClient().connect();
-		online = true;
-		listenerConnectionSuccessful();
+	public void connect() {
+		try {
+			getActualClient().connect();
+			
+			reconnects = 0; // 重置重连次数
+			online = true;
+			listenerConnectionSuccessful();
+		} catch (ConnectException e) {
+			// TODO Auto-generated catch block
+			//e.printStackTrace();
+			listenerConnectionFail(e);
+			if (reconnects < config.getReconnectAttemptsMax()) {
+				reconnect();
+			} 
+		} finally {
+			
+		}
+		
 	}
 	
 	public void sendPacket(Packet packet, String public2Topic) {
@@ -189,22 +233,23 @@ public class ClientService {
 	 * 重连
 	 */
 	public void reconnect() {
-		listenerReconnectStart();
 		if (isOnline()) { 
-			shutdown();
+			return;
 		}
+		reconnects += 1;
+		long reconnectDelay = config.getReconnectDelay();
+        if( reconnectDelay> 0 && config.getReconnectBackOffMultiplier() > 1.0 ) {
+            reconnectDelay = (long) Math.pow(config.getReconnectDelay()*reconnects, config.getReconnectBackOffMultiplier());
+        }
+        reconnectDelay = Math.min(reconnectDelay, config.getReconnectDelayMax());
+        
+        // 重连信息回调
+		listenerReconnectStart(reconnects, reconnectDelay);
 		
-		try {
-			config(config);
-		} catch (ConfigException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		try {
-			connect();
-		} catch (ConnectException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if (reconnects <= config.getReconnectAttemptsMax()) {
+			reconnectScheduler.schedule(reconnectDeamon, reconnectDelay, TimeUnit.SECONDS);
+		} else {
+			System.out.println("-- 重连结束");
 		}
 	}
 	
@@ -288,6 +333,9 @@ public class ClientService {
     public boolean isOnline() {
     	return online;
     }
+    private void setOnline(boolean value) {
+    	this.online = value;
+    }
     public String getConnectType() {
     	if (actualClient) return "长连接";
     	return "短连接";
@@ -308,9 +356,14 @@ public class ClientService {
 			connectionListener.connectionSuccessful();
 		}
     }
-    private void listenerReconnectStart() {
+    private void listenerConnectionFail(ConnectException e) {
     	for (ConnectionListener connectionListener : connectionListeners) {
-			connectionListener.reconnectStart();
+    		connectionListener.connectionFail(e);
+    	}
+    }
+    private void listenerReconnectStart(long reconnectTimes, long reconnectDelay) {
+    	for (ConnectionListener connectionListener : connectionListeners) {
+			connectionListener.reconnectStart(reconnectTimes, reconnectDelay);
 		}
     }
     private void listenerConnectionClosed() {

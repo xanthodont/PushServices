@@ -36,10 +36,6 @@ public class AckListenerTest extends TestBase {
 			// TODO Auto-generated catch block
 			// e1.printStackTrace();
 			System.out.println(e1.getMessage());
-		} catch (ConnectException e) {
-			// TODO Auto-generated catch block
-			// e.printStackTrace();
-			System.out.println(e.getMessage());
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
