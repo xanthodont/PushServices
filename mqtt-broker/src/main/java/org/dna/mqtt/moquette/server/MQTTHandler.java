@@ -51,6 +51,8 @@ public class MQTTHandler extends IoHandlerAdapter {
 
     @Override
     public void sessionIdle(IoSession session, IdleStatus status) {
+    	String username = (String) session.getAttribute(Constants.ATTR_CLIENTID);
+    	LOG.info("session idle -- "+username);
         if (status == IdleStatus.READER_IDLE) {
             session.close(false);
             //TODO send a notification to messaging part to remove the bining clientID-ConnConfig
@@ -59,6 +61,8 @@ public class MQTTHandler extends IoHandlerAdapter {
     
     @Override 
     public void exceptionCaught(IoSession session, Throwable throwable) {
+    	String username = (String) session.getAttribute(Constants.ATTR_CLIENTID);
+    	LOG.info("session exception caught-- "+username);
     	session.close(false);
     }
 

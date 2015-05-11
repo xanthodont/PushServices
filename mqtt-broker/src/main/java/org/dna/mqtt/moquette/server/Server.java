@@ -41,6 +41,13 @@ public class Server {
 //    Thread messagingEventLoop;
     //private ExecutorService m_notifierPool/* = Executors.newFixedThreadPool(NOTIFIER_POOL_SIZE)*/;
     
+    // 单例实现
+    private static Server instance = new Server();
+    private Server() {}
+    public static Server getInstance() {
+    	return instance;
+    }
+    
     public static void main(String[] args) throws IOException {
         Server mqttserver = new Server();
         mqttserver.setConnectCallback(new IConnectCallback() {
@@ -152,6 +159,7 @@ public class Server {
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
+            	System.out.printf("shutdown\n");
                 stopServer();
             }
         });

@@ -11,6 +11,7 @@ import org.dna.mqtt.moquette.messaging.spi.IMatchingCondition;
 import org.dna.mqtt.moquette.messaging.spi.IStorageService;
 import org.dna.mqtt.moquette.messaging.spi.impl.HawtDBStorageService.StoredMessage;
 import org.dna.mqtt.moquette.messaging.spi.impl.events.PublishEvent;
+import org.dna.mqtt.moquette.messaging.spi.impl.subscriptions.SubConstants;
 import org.dna.mqtt.moquette.messaging.spi.impl.subscriptions.Subscription;
 import org.dna.mqtt.moquette.proto.messages.AbstractMessage.QOSType;
 
@@ -105,20 +106,68 @@ public class RedisDBStroageService implements IStorageService {
 	@Override
 	public void addNewSubscription(Subscription newSubscription, String clientID) {
 		// TODO Auto-generated method stub
-		
+		Jedis jedis = jedisPool.getResource();
+		try {
+			jedis.sadd(SubConstants.getSubKeyBytes(clientID), SerializationUtil.serialize(newSubscription));
+		} catch (Exception e) {
+			// TODO: handle exception
+		} finally {
+			jedisPool.returnResourceObject(jedis);
+		}
+		/*
+		if (!m_persistentSubscriptions.containsKey(clientID)) {
+            m_persistentSubscriptions.put(clientID, new HashSet<Subscription>());
+        }
+
+        Set<Subscription> subs = m_persistentSubscriptions.get(clientID);
+        if (!subs.contains(newSubscription)) {
+            subs.add(newSubscription);
+            m_persistentSubscriptions.put(clientID, subs);
+        }*/
+	}
+
+	private void fillSubs(HashSet<Subscription> subs, Set<byte[]> subBytes) {
+		// TODO Auto-generated method stub
+		if (subBytes != null) {
+			for (byte[] bs : subBytes) {
+				Subscription subscription = (Subscription) SerializationUtil.deserialize(bs);
+				subs.add(subscription);
+			}
+		}
 	}
 
 	@Override
 	public void removeAllSubscriptions(String clientID) {
 		// TODO Auto-generated method stub
-		
+		Jedis jedis = jedisPool.getResource();
+		try {
+			jedis.del(SubConstants.getSubKeyBytes(clientID));
+		} catch (Exception e) {
+			// TODO: handle exception
+		} finally {
+			jedisPool.returnResourceObject(jedis);
+		}
 	}
 
 	@Override
 	public List<Subscription> retrieveAllSubscriptions() {
 		// TODO Auto-generated method stub
-		List<Subscription> subs = new ArrayList<Subscription>();
-		return subs;
+		List<Subscription> allSubscriptions = new ArrayList<Subscription>();
+		Jedis jedis = jedisPool.getResource();
+		try {
+			Set<byte[]> clients = jedis.keys(SubConstants.getSubPrefixParttenBytes());
+			for (byte[] client : clients) {
+				Set<byte[]> subBytes = jedis.smembers(client);
+				HashSet<Subscription> subs = new HashSet<Subscription>();
+				fillSubs(subs, subBytes); // 转换
+				allSubscriptions.addAll(subs);
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		} finally {
+			jedisPool.returnResourceObject(jedis);
+		}
+        return allSubscriptions;
 	}
 
 	@Override
