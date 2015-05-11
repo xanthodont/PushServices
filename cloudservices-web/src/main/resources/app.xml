@@ -71,9 +71,8 @@
 	</bean> 
      
     <bean id="applicationContextUtil" class="utils.ApplicationContextUtil"></bean>
-    <!-- MQTT服务器类 -->
+    <!-- MQTT服务器类 
 	<bean id="mqttServer" class="org.dna.mqtt.moquette.server.Server"></bean>
-	<!-- 
 	<bean id="mqttClient" class="cloudservices.client.ClientService"></bean> -->
 	<!-- Jedis配置 -->  
 	<bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">

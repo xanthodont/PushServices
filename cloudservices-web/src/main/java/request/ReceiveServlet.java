@@ -31,7 +31,7 @@ public class ReceiveServlet  extends HttpServlet {
 	@Override
 	public void init(ServletConfig config) {
 		jedisPool = (JedisPool) ApplicationContextUtil.getBeanByName("jedisPool");
-		mqttServer = (Server) ApplicationContextUtil.getBeanByName("mqttServer");
+		mqttServer = Server.getInstance();
 	}
 	
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{

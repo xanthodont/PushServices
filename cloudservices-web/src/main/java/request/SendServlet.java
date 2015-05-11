@@ -27,7 +27,7 @@ public class SendServlet extends HttpServlet {
 	
 	@Override
 	public void init(ServletConfig config) {
-		mqttServer = (Server) ApplicationContextUtil.getBeanByName("mqttServer");
+		mqttServer = Server.getInstance();
 
 	}
 	

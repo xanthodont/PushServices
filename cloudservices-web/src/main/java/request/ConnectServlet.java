@@ -34,7 +34,7 @@ public class ConnectServlet extends HttpServlet {
 		jedisPool = (JedisPool) ApplicationContextUtil.getBeanByName("jedisPool");
 		/** 启动数据库异步写入类 */
 		connectWriter = ConnectWriter.getInstance();
-		mqttServer = (Server) ApplicationContextUtil.getBeanByName("mqttServer");
+		mqttServer = Server.getInstance();
 	}
 	
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{

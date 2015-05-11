@@ -41,7 +41,7 @@ public class MqttServlet extends HttpServlet {
 	@Override
 	public void init(ServletConfig config) {
 		jedisPool = (JedisPool) ApplicationContextUtil.getBeanByName("jedisPool");
-		mqttServer = (Server) ApplicationContextUtil.getBeanByName("mqttServer");
+		mqttServer = Server.getInstance();
 		/** 设置账号密码验证器 */
 		mqttServer.setAuthenticator(new IAuthenticator() {
 			@Override
@@ -112,16 +112,6 @@ public class MqttServlet extends HttpServlet {
 				// TODO Auto-generated method stub
 				// 更新在线状态
 				OnlineStatus.updateOfflineStatus(jedisPool, username, "30");
-				/*
-				Jedis jedis = null;
-				try {
-					jedis = jedisPool.getResource();
-					jedis.set(OnlineStatus.getOnlineKey(username), OnlineStatus.STATUS_OFFLINE);
-				} catch (Exception e) {
-					
-				} finally {
-					jedisPool.returnResourceObject(jedis);
-				}*/
 			}
 
 			@Override
@@ -131,6 +121,8 @@ public class MqttServlet extends HttpServlet {
 				config.setUsername("admin");
 				config.setConnectType(ClientConfiguration.LONG_MQTT);
 				config.setBufferSize(2000); // 
+				config.setReconnectDelay(5);
+				config.setReconnectAttemptsMax(1000); // 服务器端口重连次数要多
 				
 				ClientService client = ClientService.getInstance();
 				try {
@@ -140,10 +132,7 @@ public class MqttServlet extends HttpServlet {
 				} catch (ConfigException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-				} catch (ConnectException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				} 
 			}
 		});
 		
