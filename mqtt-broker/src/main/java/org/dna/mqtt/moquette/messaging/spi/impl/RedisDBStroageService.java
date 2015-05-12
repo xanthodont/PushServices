@@ -131,6 +131,7 @@ public class RedisDBStroageService implements IStorageService {
 		if (subBytes != null) {
 			for (byte[] bs : subBytes) {
 				Subscription subscription = (Subscription) SerializationUtil.deserialize(bs);
+				subscription.setActive(false);
 				subs.add(subscription);
 			}
 		}
