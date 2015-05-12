@@ -65,6 +65,7 @@
 		<property name="annotatedClasses">
 		     <list>
 		         <value>mvc.model.PushUser</value>
+		         <value>mvc.model.PushMessage</value>
 		     </list>
    		</property>
 

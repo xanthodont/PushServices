@@ -14,6 +14,7 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import request.writer.ConnectWriter;
 import request.writer.InitConfiguration;
+import request.writer.SendMessageWriter;
 import utils.ApplicationContextUtil;
 
 
@@ -32,6 +33,7 @@ public class InitServlet  extends HttpServlet {
 		
 		// 启动数据库读写类
 		ConnectWriter.getInstance().startup();
+		SendMessageWriter.getInstance().startup();
 		
 		initOnlineStatus(jedisPool);
 	}

@@ -1,0 +1,49 @@
+<#import "../layout/defaultLayout.ftl.html" as layout>
+<@layout.header '消息列表'>  
+  
+</@layout.header>
+
+<@layout.content>
+
+<table id="dg_message"></table>
+
+<div id="dialog_m">
+	
+</div>
+
+</@layout.content>
+
+<@layout.footer>
+<script>
+
+$('#dg_message').datagrid({
+    url:'push/message/list',
+    columns:[[
+		{field:'id', title:'Id', width:50},
+        {field:'username', title:'发送者', width:50},
+        {field:'topic', title:'主题', width:100}, 
+        {field:'messageId', title:'消息Id', width:50},
+        {field:'packetType', title:'类型', width:30},
+        {field:'ack', title:'回执', width:30},
+        {field:'sub', title:'分段', width:30},
+        {field:'createTime',title:'创建时间', width:100, formatter: Utils.dateTimeFormatter},
+        {field:'updateTime',title:'更新时间', width:100, formatter: Utils.dateTimeFormatter},
+        {field:'status',title:'消息状态', width:50, formatter: function(val, row) {
+        	if (val == '1') { 
+        		return '<a style="color:blue;">已发送</a>';
+        	} else {
+        		return '<a style="color:gray;">离线存储</a>';
+        	}
+        }}, 
+        {field:'payload', title:'负载信息', width:200},
+        {field:'op',title:'操作', width:100, formatter: function(val, row) {
+        	return '<a href="javascript:;" id="'+row.resource + '/' + row.username+'" onclick="open_dialog(this)"></a>'
+        }}, 
+    ]],
+    pagination: true,
+    pageSize: 30,
+    pageList: [30, 50, 100, 200, 500],
+    rownumbers: true
+});
+</script>
+</@layout.footer>

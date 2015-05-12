@@ -1,6 +1,7 @@
 package request;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -25,10 +26,14 @@ import cloudservices.client.ClientConfiguration;
 import cloudservices.client.ClientService;
 import cloudservices.client.ConfigException;
 import cloudservices.client.ConnectException;
+import cloudservices.client.packets.Packet;
+import cloudservices.client.packets.PacketFactory;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import request.writer.ConnectInfo;
 import request.writer.ConnectWriter;
+import request.writer.MessageInfo;
+import request.writer.SendMessageWriter;
 import utils.ApplicationContextUtil;
 import utils.StringUtil;
 
@@ -36,6 +41,7 @@ public class MqttServlet extends HttpServlet {
 	private static Logger logger = Logger.getLogger(MqttServlet.class);
 	private Server mqttServer;
 	private ConnectWriter connectWriter;
+	private SendMessageWriter sendMessageWriter;
 	private JedisPool jedisPool;
 	
 	@Override
@@ -52,6 +58,7 @@ public class MqttServlet extends HttpServlet {
 		});
 		/** 数据库异步写入类 */
 		connectWriter = ConnectWriter.getInstance();
+		sendMessageWriter = SendMessageWriter.getInstance();
 		/** 添加连接监听器 */
 		mqttServer.setConnectCallback(new IConnectCallback() {
 			@Override
@@ -77,22 +84,16 @@ public class MqttServlet extends HttpServlet {
 				connectWriter.putInfo(connInfo);
 				// 更新在线状态
 				OnlineStatus.updateLongOnlineStatus(jedisPool, conn.getUsername(), "30");
-				/*
-				Jedis jedis = null;
-				try {
-					jedis = jedisPool.getResource();
-					jedis.set(OnlineStatus.getOnlineKey(conn.getUsername()), OnlineStatus.STATUS_ONLINE_LONG);
-				} catch (Exception e) {
-					
-				} finally {
-					jedisPool.returnResourceObject(jedis);
-				}*/
 			}
 
 			@Override
 			public void onSendMessageSuccess(PublishMessage pubMessage) {
 				// TODO Auto-generated method stub
-				
+				MessageInfo info = new MessageInfo();
+				info.decode(ByteBuffer.wrap(pubMessage.getPayload()));
+				info.setPublic2Topic(pubMessage.getTopicName());
+				info.setStatus(true);
+				sendMessageWriter.putInfo(info);
 			}
 
 			@Override
@@ -104,7 +105,12 @@ public class MqttServlet extends HttpServlet {
 			@Override
 			public void onStoreOfflineMessage(PublishEvent newPublishEvt) {
 				// TODO Auto-generated method stub
-				logger.info(String.format("store offline message:%s\n", newPublishEvt));
+				logger.info(String.format("store offline message:%s", newPublishEvt));
+				MessageInfo info = new MessageInfo();
+				info.decode(ByteBuffer.wrap(newPublishEvt.getMessage()));
+				info.setPublic2Topic(newPublishEvt.getTopic());
+				info.setStatus(false);
+				sendMessageWriter.putInfo(info);
 			}
 
 			@Override

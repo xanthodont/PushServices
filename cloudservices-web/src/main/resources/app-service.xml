@@ -5,8 +5,12 @@
 	xmlns:p="http://www.springframework.org/schema/p"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans classpath:/org/springframework/beans/factory/xml/spring-beans-3.0.xsd">
 	
-    <bean id="pushuserService" class="mvc.service.impl.PushUserService">
+    <bean id="pushUserService" class="mvc.service.impl.PushUserService">
         <property name="jedisPool" ref="jedisPool" />
-	    <property name="pushuserDao" ref="pushuserDao" />
+	    <property name="pushUserDao" ref="pushUserDao" />
+	</bean>
+	
+    <bean id="pushMessageService" class="mvc.service.impl.PushMessageService">
+	    <property name="pushMessageDao" ref="pushMessageDao" />
 	</bean>
 </beans>

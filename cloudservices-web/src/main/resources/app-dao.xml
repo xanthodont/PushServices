@@ -5,9 +5,12 @@
 	xmlns:p="http://www.springframework.org/schema/p"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans classpath:/org/springframework/beans/factory/xml/spring-beans-3.0.xsd">
 	
-    <bean id="pushuserDao" class="mvc.dao.impl.PushUserDaoImpl">
+    <bean id="pushUserDao" class="mvc.dao.impl.PushUserDaoImpl">
         <property name="sessionFactory" ref="sessionFactory" />
 		<property name="jdbcTemplate" ref="jdbcTemplate" />
     </bean>
-    
+    <bean id="pushMessageDao" class="mvc.dao.impl.PushMessageDaoImpl">
+        <property name="sessionFactory" ref="sessionFactory" />
+		<property name="jdbcTemplate" ref="jdbcTemplate" />
+    </bean>
 </beans>

@@ -40,7 +40,7 @@
 <script>
 
 $('#dg').datagrid({
-    url:'push/userlist',
+    url:'push/user/list',
     columns:[[
         {field:'username',title:'用户名', width:100},
         {field:'registerTime',title:'注册时间', width:100, formatter: Utils.dateTimeFormatter},
@@ -66,7 +66,7 @@ $('#dg').datagrid({
 });
 function getTotalOnline() {
 	$.ajax({
-		url: 'push/online',
+		url: 'push/user/online',
 		type: 'post',
 		dataType: 'json',
 		success: function(r) {
@@ -93,7 +93,7 @@ $('#dialog').dialog({
 		handler:function(){
 			//$.messager.
 			$.ajax({
-				url: 'push/send',
+				url: 'push/user/send',
 				type: 'post',
 				data: {topic: $('#to_topic').val(), isAck: $('input:checked[name="isAck"]').val(), text: $('#text_content').val()},
 				dataType: 'json',

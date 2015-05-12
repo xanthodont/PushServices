@@ -18,8 +18,11 @@ import org.apache.log4j.Logger;
 import org.dna.mqtt.moquette.messaging.spi.impl.events.PublishEvent;
 import org.dna.mqtt.moquette.server.Server;
 
+import cloudservices.client.packets.PacketFactory;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
+import request.writer.MessageInfo;
+import request.writer.SendMessageWriter;
 import utils.ApplicationContextUtil;
 import utils.StringUtil;
 
@@ -27,11 +30,13 @@ public class ReceiveServlet  extends HttpServlet {
 	private static Logger logger = Logger.getLogger(ReceiveServlet.class);
 	private Server mqttServer;
 	private JedisPool jedisPool;
+	private SendMessageWriter sendMessageWriter;
 	
 	@Override
 	public void init(ServletConfig config) {
 		jedisPool = (JedisPool) ApplicationContextUtil.getBeanByName("jedisPool");
 		mqttServer = Server.getInstance();
+		sendMessageWriter = SendMessageWriter.getInstance();
 	}
 	
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
@@ -53,16 +58,6 @@ public class ReceiveServlet  extends HttpServlet {
 		}
 		// 更新在线状态
 		OnlineStatus.updateShortOnlineStatus(jedisPool, username, circle);
-		/*
-		Jedis jedis = null;
-		try {
-			jedis = jedisPool.getResource();
-			jedis.set(OnlineStatus.getOnlineKey(username), OnlineStatus.STATUS_ONLINE_SHORT);
-		} catch (Exception e) {
-			
-		} finally {
-			jedisPool.returnResourceObject(jedis);
-		}*/
 		// 接口测试
 		String type = request.getParameter("type");
 		if ("test".equals(type)) {
@@ -75,15 +70,20 @@ public class ReceiveServlet  extends HttpServlet {
 		List<PublishEvent> publishedEvents = mqttServer.getStorageService().retrivePersistedPublishes(username);
 		ByteBuffer resultBuffer = ByteBuffer.allocate(4);
 		resultBuffer.putInt(publishedEvents.size());
-        if (publishedEvents == null) {
-        	
-        } else {
+        if (publishedEvents != null) {
         	for (PublishEvent pubEvt : publishedEvents) {
         		ByteBuffer oldBuffer = resultBuffer;
         		resultBuffer = ByteBuffer.allocate(oldBuffer.capacity() + 4 + pubEvt.getMessage().length);
         		resultBuffer.put(oldBuffer.array());
         		resultBuffer.putInt(pubEvt.getMessage().length);
         		resultBuffer.put(pubEvt.getMessage());
+        		
+        		// update db
+        		MessageInfo info = new MessageInfo();
+        		info.decode(ByteBuffer.wrap(pubEvt.getMessage()));
+        		info.setPublic2Topic(pubEvt.getTopic());
+				info.setStatus(true);
+				sendMessageWriter.putInfo(info);
         	}
         }
 		

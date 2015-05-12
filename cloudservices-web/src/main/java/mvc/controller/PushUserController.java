@@ -33,21 +33,21 @@ import cloudservices.client.packets.filters.PacketAckFilter;
 
 
 @Controller
-@RequestMapping(value="/push/*")
-public class PushController {
-	private static Logger logger = Logger.getLogger(PushController.class);
+@RequestMapping(value="/push/user/*")
+public class PushUserController {
+	private static Logger logger = Logger.getLogger(PushUserController.class);
 	@Resource
 	private IPushUserService pushuserService;
 	
 
-	@RequestMapping(value = "userlist", method = RequestMethod.GET)  
+	@RequestMapping(value = "list", method = RequestMethod.GET)  
 	public ModelAndView userListView(HttpServletRequest request, HttpServletResponse response) {
 		ModelAndView mv = new ModelAndView("push/userlist");
 		mv.addObject("title", "Spring MVC And Freemarker");
 		mv.addObject("content", " Hello world ， test my first spring mvc ! ");
 		return mv;
 	}
-	@RequestMapping(value = "userlist", method = RequestMethod.POST)
+	@RequestMapping(value = "list", method = RequestMethod.POST)
 	@ResponseBody
 	public PageList userListPost(HttpServletRequest request, HttpServletResponse response,
 			@RequestParam("page") int page,

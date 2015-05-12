@@ -21,8 +21,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Entity
 @Table(name="push_user")
 public class PushUser {
-	
-	
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private long id;

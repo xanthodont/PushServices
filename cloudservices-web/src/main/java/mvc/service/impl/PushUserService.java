@@ -16,14 +16,14 @@ import mvc.service.IPushUserService;
 
 public class PushUserService implements IPushUserService {
 	private JedisPool jedisPool; 
-	private IPushUserDao pushuserDao;
+	private IPushUserDao pushUserDao;
 
 	@Override
 	public PageList<PushUser> getUserList(int page, int size) {
 		// TODO Auto-generated method stub
 		int firstFetch = (page-1)*size;
 		PageList<PushUser> pl = new PageList<PushUser>();
-		List<PushUser> list = pushuserDao.findAndOrderByProperty(firstFetch, size, "updateTime", false);
+		List<PushUser> list = pushUserDao.findAndOrderByProperty(firstFetch, size, "updateTime", false);
 		Jedis jedis = null;
 		try {
 			jedis = jedisPool.getResource();
@@ -42,16 +42,16 @@ public class PushUserService implements IPushUserService {
 			jedisPool.returnResourceObject(jedis);
 		}
 		pl.setRows(list);
-		pl.setTotal(pushuserDao.countAll());
+		pl.setTotal(pushUserDao.countAll());
 		return pl;
 	}
 
-	public IPushUserDao getPushuserDao() {
-		return pushuserDao;
+	public IPushUserDao getPushUserDao() {
+		return pushUserDao;
 	}
 
-	public void setPushuserDao(IPushUserDao pushuserDao) {
-		this.pushuserDao = pushuserDao;
+	public void setPushUserDao(IPushUserDao pushUserDao) {
+		this.pushUserDao = pushUserDao;
 	}
 
 	public JedisPool getJedisPool() {
