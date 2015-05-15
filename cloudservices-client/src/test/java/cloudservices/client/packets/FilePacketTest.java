@@ -27,7 +27,7 @@ public class FilePacketTest extends TestBase {
 		
 		ClientService client = ClientService.getInstance();
 		client.config(sendConfig);
-		client.startup();
+		//client.startup();
 		client.connect();
 		
 		FilePacket filePacket = new FilePacket();

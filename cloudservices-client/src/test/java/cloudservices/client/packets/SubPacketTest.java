@@ -24,7 +24,7 @@ public class SubPacketTest extends TestBase {
 		
 		ClientService sendClient = ClientService.getInstance();
 		sendClient.config(sendConfig);
-		sendClient.startup();
+		//sendClient.startup();
 		sendClient.connect();
 		
 		

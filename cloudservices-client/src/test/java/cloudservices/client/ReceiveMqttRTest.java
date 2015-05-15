@@ -11,7 +11,7 @@ public class ReceiveMqttRTest extends TestBase{
 		
 		ClientService client = ClientService.getInstance();
 		client.config(config);
-		client.startup();
+		//client.startup();
 		client.connect();
 
 		while (true) {

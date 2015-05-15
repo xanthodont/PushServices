@@ -76,7 +76,7 @@ public class PahoMQTTClientService implements ISender {
         connOpts.setPassword(config.getPassword().toCharArray());
         connOpts.setConnectionTimeout(config.getConnectTimeout());
         connOpts.setKeepAliveInterval(config.getKeepAlive());
-        
+        connOpts.setMqttVersion(MqttConnectOptions.MQTT_VERSION_3_1);
         if (StringUtil.isEmpty(config.getTopic())) throw new ConfigException("未配置主题信息");
         subscribeTopics = new String[2];
         subscribeTopics[0] = config.getTopic();

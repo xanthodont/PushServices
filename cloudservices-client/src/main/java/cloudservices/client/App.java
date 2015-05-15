@@ -64,7 +64,7 @@ public class App {
 		ClientService client = ClientService.getInstance();
 		try {
 			client.config(config);
-			client.startup();
+			//client.startup();
 			client.connect();
 			System.out.println("connect success");
 		} catch (ConfigException e1) {

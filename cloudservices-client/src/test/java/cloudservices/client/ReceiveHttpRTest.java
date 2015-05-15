@@ -12,7 +12,7 @@ public class ReceiveHttpRTest extends TestBase{
 		
 		ClientService client = ClientService.getInstance();
 		client.config(config);
-		client.startup();
+		//client.startup();
 		client.connect();
 
 		

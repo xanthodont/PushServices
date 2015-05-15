@@ -248,7 +248,7 @@ public abstract class Packet {
 		}
 		return strDatas;
 	}
-	protected  String decodingString(byte[] datas) {
+	public static String decodingString(byte[] datas) {
 		String r = "";
 		try {
 			r = new String(datas, ENCODING);

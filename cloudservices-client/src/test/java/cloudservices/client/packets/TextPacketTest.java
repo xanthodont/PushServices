@@ -27,7 +27,7 @@ public class TextPacketTest extends TestBase{
 		
 		ClientService client = ClientService.getInstance();
 		client.config(config);
-		client.startup();  
+		//client.startup();  
 		client.connect();
 
 		int i = 0;

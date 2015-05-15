@@ -48,4 +48,23 @@ public class PacketFactory {
 		return packet;
 	}
 	
+	
+	public static Packet getParentPacket(ByteBuffer buffer) {
+		// TODO Auto-generated method stub
+		Packet packet = new Packet(){
+			@Override
+			protected byte[] processSubData() {
+				// TODO Auto-generated method stub
+				return this.getRemainBytes();
+			}
+ 
+			@Override
+			protected void subDecode(byte[] remain) {
+				// TODO Auto-generated method stub
+				
+			}};
+		packet.decode(buffer);
+		
+		return packet;
+	}
 }

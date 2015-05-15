@@ -11,6 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import cloudservices.client.http.HTTPClientService;
@@ -47,6 +48,7 @@ public class ClientService {
 	
 	/** 在线情况 */
 	private volatile boolean online = false;
+	private volatile boolean reconnecting = false;
 	/** 当前使用的客户端 true表示mqtt，false表示http*/
 	private volatile boolean actualClient = true;
 	/** 单例实现 */
@@ -62,9 +64,6 @@ public class ClientService {
 	final Runnable reconnectDeamon = new Runnable() {
 		@Override
 		public void run() {
-			if (isOnline()) { 
-				return;
-			}
 			
 			try {
 				config(config);
@@ -109,6 +108,7 @@ public class ClientService {
 	
 	protected final Map<PacketListener, ListenerWrapper> recvListeners =
             new ConcurrentHashMap<PacketListener, ListenerWrapper>();
+	private ScheduledFuture<?> reconnHandler;
 	
 	private ClientService() {
 		init();
@@ -119,6 +119,7 @@ public class ClientService {
 		
 		this.packetWriter = new PacketWriter(this);
 		this.packetReader = new PacketReader(this);
+		startup();
 		
 		reconnectScheduler = Executors.newScheduledThreadPool(1);
 		
@@ -171,7 +172,6 @@ public class ClientService {
 			break;
 		}
 		
-		
 		listenerConfigSuccess();
 	}
 	
@@ -180,7 +180,7 @@ public class ClientService {
 		return config;
 	}
 	
-	public void startup() {
+	private void startup() {
 		packetWriter.startup();
 		packetReader.startup();
 		listenerStartWriterAndReader();
@@ -196,7 +196,7 @@ public class ClientService {
 	
 	public void connect() {
 		try {
-			getActualClient().connect();
+			getActualClient().connect();  // 线程等待，知道连接完成或超时
 			
 			reconnects = 0; // 重置重连次数
 			online = true;
@@ -205,11 +205,12 @@ public class ClientService {
 			// TODO Auto-generated catch block
 			//e.printStackTrace();
 			listenerConnectionFail(e);
+			reconnecting = false;
 			if (reconnects < config.getReconnectAttemptsMax()) {
 				reconnect();
 			} 
 		} finally {
-			
+			reconnecting = false;
 		}
 		
 	}
@@ -233,9 +234,15 @@ public class ClientService {
 	 * 重连
 	 */
 	public void reconnect() {
-		if (isOnline()) { 
+		if (isOnline() || reconnecting) { 
+			System.out.printf("-- 当前在线或正在重连中，不做任何操作 -- online:%b, reconnecting:%b\n", online, reconnecting);
+			//shutdown();
 			return;
 		}
+		if (reconnHandler != null) {
+			reconnHandler.cancel(false);
+		}
+		
 		reconnects += 1;
 		long reconnectDelay = config.getReconnectDelay();
         if( reconnectDelay> 0 && config.getReconnectBackOffMultiplier() > 1.0 ) {
@@ -247,7 +254,8 @@ public class ClientService {
 		listenerReconnectStart(reconnects, reconnectDelay);
 		
 		if (reconnects <= config.getReconnectAttemptsMax()) {
-			reconnectScheduler.schedule(reconnectDeamon, reconnectDelay, TimeUnit.SECONDS);
+			reconnecting = true;
+			reconnHandler = reconnectScheduler.schedule(reconnectDeamon, reconnectDelay, TimeUnit.SECONDS);
 		} else {
 			System.out.println("-- 重连结束");
 		}

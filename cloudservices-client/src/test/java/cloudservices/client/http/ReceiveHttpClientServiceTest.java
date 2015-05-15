@@ -40,7 +40,6 @@ public class ReceiveHttpClientServiceTest extends TestBase {
 		ClientService client = ClientService.getInstance();
 		try {
 			client.config(config);
-			client.startup();
 			client.connect();
 		} catch (ConfigException e1) {
 			// TODO Auto-generated catch block
