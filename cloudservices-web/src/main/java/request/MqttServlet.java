@@ -133,7 +133,7 @@ public class MqttServlet extends HttpServlet {
 				ClientService client = ClientService.getInstance();
 				try {
 					client.config(config);
-					client.startup();  
+					//client.startup();  
 					client.connect();
 				} catch (ConfigException e) {
 					// TODO Auto-generated catch block
