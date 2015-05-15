@@ -243,8 +243,9 @@ public class SimpleMessaging implements IMessaging, EventHandler<ValueEvent> {
                 //cleanup topic subscriptions
                 processRemoveAllSubscriptions(msg.getClientID());
             }
-
-            m_clientIDs.get(msg.getClientID()).getSession().close(false);
+            System.out.printf("m_clientIDs.containsKey %s ,no close\n", msg.getClientID());
+            //m_clientIDs.get(msg.getClientID()).getSession().close(true);
+            //subscriptions.deactivate(msg.getClientID());
         }
 
         

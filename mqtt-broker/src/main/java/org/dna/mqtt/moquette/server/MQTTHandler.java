@@ -73,7 +73,13 @@ public class MQTTHandler extends IoHandlerAdapter {
     public void sessionClosed(IoSession session) throws Exception {
         // Empty handler
     	String username = (String) session.getAttribute(Constants.ATTR_CLIENTID);
-    	m_messaging.getConnCallback().disconnect(username);
-    	m_messaging.getSubscriptions().deactivate(username);
+    	ConnectionDescriptor client = m_messaging.getCliendIds().get(username);
+    	if (client != null && client.getSession() == session) { 
+	    	m_messaging.getSubscriptions().deactivate(username);
+	    	m_messaging.getCliendIds().remove(username);
+	    	m_messaging.getConnCallback().disconnect(username);
+    	} else {
+    		LOG.info("关闭旧Session:"+username);
+    	}
     }
 }
