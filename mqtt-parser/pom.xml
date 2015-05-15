@@ -20,7 +20,7 @@
         <version>${project.junit.version}</version>
         <scope>test</scope>
     </dependency>
-  </dependencies>
+  </dependencies> 
   
   <build>
   	
