@@ -126,7 +126,7 @@ public class ParamsWrapper implements Serializable {
 				.append("&");
 		}
 		if(buffer.length()>0) buffer.deleteCharAt(buffer.length()-1);
-		return buffer.length() > 0 ? buffer.toString() : null;
+		return buffer.length() > 0 ? buffer.toString() : "";
 	}
 	
 }
