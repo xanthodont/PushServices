@@ -589,4 +589,13 @@ public class SimpleMessaging implements IMessaging, EventHandler<ValueEvent> {
         return m_storageService;
 	}
 	
+	public boolean isOffline(String topic) {
+		boolean status = false;
+		for (final Subscription sub : subscriptions.matches(topic)) {
+			if (!sub.isActive()) {
+				status = true;
+			}
+		}
+		return status;
+	}
 }
