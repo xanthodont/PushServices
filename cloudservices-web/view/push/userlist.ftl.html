@@ -28,7 +28,7 @@
     </div>
     <div title="Http代理消息" data-options="closable:false" style="">
     	<div>
-         URL：<input id="to_topic" type="text" style="width:85%;"/>
+         URL：<input id="url_content" type="text" style="width:85%;"/>
         </div> 
     </div>
 </div>
@@ -92,19 +92,46 @@ $('#dialog').dialog({
 		text:'发送',
 		handler:function(){
 			//$.messager.
-			$.ajax({
-				url: 'push/user/send',
-				type: 'post',
-				data: {topic: $('#to_topic').val(), isAck: $('input:checked[name="isAck"]').val(), text: $('#text_content').val()},
-				dataType: 'json',
-				success: function(r) {
-					if (r.code == '1') {  // success
-						$.messager.alert('提示', r.msg);
-					} else {
-						$.messager.alert('提示', r.msg);
+			var tab = $('#tt').tabs('getSelected');
+			var tIndex = $('#tt').tabs('getTabIndex', tab);
+			var tp = $('#to_topic').val();
+			var ack = $('input:checked[name="isAck"]').val();
+			
+			switch (tIndex) {
+			case 0:
+				$.ajax({
+					url: 'push/user/send',
+					type: 'post',
+					data: {topic: tp, isAck: ack, text: $('#text_content').val()},
+					dataType: 'json',
+					success: function(r) {
+						if (r.code == '1') {  // success
+							$.messager.alert('提示', r.msg);
+						} else {
+							$.messager.alert('提示', r.msg);
+						}
 					}
-				}
-			});
+				});
+				break;
+			case 1:
+				break;
+			case 2:
+				$.ajax({
+					url: 'push/user/sendhttp',
+					type: 'post',
+					data: {topic: tp, isAck: ack, url: $('#url_content').val()},
+					dataType: 'json',
+					success: function(r) {
+						if (r.code == '1') {  // success
+							$.messager.alert('提示', r.msg);
+						} else {
+							$.messager.alert('提示', r.msg);
+						}
+					}
+				});
+				break;
+			}
+			
 		}
 	},{
 		text:'关闭', 

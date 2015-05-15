@@ -17,6 +17,7 @@ import mvc.model.PushUser;
 import mvc.service.IPushUserService;
 
 import org.apache.log4j.Logger;
+import org.dna.mqtt.moquette.server.Server;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,6 +27,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import cloudservices.client.ClientService;
+import cloudservices.client.http.async.support.ParamsWrapper;
+import cloudservices.client.packets.AckPacket;
+import cloudservices.client.packets.FilePacket;
+import cloudservices.client.packets.HttpPacket;
 import cloudservices.client.packets.Packet;
 import cloudservices.client.packets.PacketCollector;
 import cloudservices.client.packets.TextPacket;
@@ -76,6 +81,10 @@ public class PushUserController {
 		TextPacket packet = new TextPacket();
 		packet.setText(text);
 		packet.setAck(isAck);
+		if (Server.getInstance().getMessaging().isOffline(topic)) { // topic已离线
+			ClientService.getInstance().sendPacket(packet, topic);
+			return JResponse.success("用户离线，消息已存储");
+		}
 		if (isAck) {
 			PacketCollector collector = ClientService.getInstance().createPacketCollector(new PacketAckFilter(packet.getMessageId()));
 			ClientService.getInstance().sendPacket(packet, topic);
@@ -83,6 +92,61 @@ public class PushUserController {
 			collector.cancel();
 			if (r != null) {
 				return JResponse.success("收到回执");
+			} else {
+				return JResponse.success("等待消息回执超时");
+			}
+		} else {
+			ClientService.getInstance().sendPacket(packet, topic);
+			return JResponse.success("消息已下发");
+		}
+	}
+	
+	@RequestMapping(value = "sendfile")
+	@ResponseBody
+	public JResponse sendFile(@RequestParam("topic") String topic,
+			@RequestParam("isAck") boolean isAck,
+			@RequestParam("text") String text) {
+		FilePacket packet = new FilePacket();
+		if (Server.getInstance().getMessaging().isOffline(topic)) { // topic已离线
+			ClientService.getInstance().sendPacket(packet, topic);
+			return JResponse.success("用户离线，消息已存储");
+		}
+		if (isAck) {
+			PacketCollector collector = ClientService.getInstance().createPacketCollector(new PacketAckFilter(packet.getMessageId()));
+			ClientService.getInstance().sendPacket(packet, topic);
+			Packet r = collector.nextResult(60000); // 等待超时时间设置为60秒
+			collector.cancel();
+			if (r != null) {
+				return JResponse.success("收到回执");
+			} else {
+				return JResponse.success("等待消息回执超时");
+			}
+		} else {
+			ClientService.getInstance().sendPacket(packet, topic);
+			return JResponse.success("消息已下发");
+		}
+	}
+	
+	@RequestMapping(value = "sendhttp")
+	@ResponseBody
+	public JResponse sendHttp(@RequestParam("topic") String topic,
+			@RequestParam("isAck") boolean isAck,
+			@RequestParam("url") String url) {
+		HttpPacket packet = new HttpPacket();
+		packet.setAck(isAck);
+		packet.setUrl(url);
+		packet.setParams(new ParamsWrapper());
+		if (Server.getInstance().getMessaging().isOffline(topic)) { // topic已离线
+			ClientService.getInstance().sendPacket(packet, topic);
+			return JResponse.success("用户离线，消息已存储");
+		}
+		if (isAck) {
+			PacketCollector collector = ClientService.getInstance().createPacketCollector(new PacketAckFilter(packet.getMessageId()));
+			ClientService.getInstance().sendPacket(packet, topic);
+			AckPacket r = (AckPacket) collector.nextResult(60000); // 等待超时时间设置为60秒
+			collector.cancel();
+			if (r != null) {
+				return JResponse.success("收到回执:"+r.getText());
 			} else {
 				return JResponse.success("等待消息回执超时");
 			}

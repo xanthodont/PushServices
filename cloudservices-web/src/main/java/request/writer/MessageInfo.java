@@ -1,5 +1,6 @@
 package request.writer;
 
+import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 
 import cloudservices.client.packets.AckPacket;
@@ -24,7 +25,12 @@ public class MessageInfo extends Packet {
 		ByteBuffer buffer = ByteBuffer.wrap(remain);
 		switch(this.getPacketType()) {
 		case Packet.TEXT:
-			description = new String(remain);
+			try {
+				description = new String(remain, Packet.ENCODING);
+			} catch (UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			break;
 		case Packet.FILE:
 			int totalFile = buffer.getInt();
