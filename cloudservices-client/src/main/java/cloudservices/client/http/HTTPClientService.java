@@ -7,9 +7,11 @@ import java.nio.ByteBuffer;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 //import org.apache.log4j.Logger;
+
 
 import cloudservices.client.ClientConfiguration;
 import cloudservices.client.ClientService;
@@ -37,6 +39,7 @@ public class HTTPClientService implements ISender {
 	private long scheduleDelay = 5; 
 	/** 接收消息定时器 */
 	private ScheduledExecutorService receiveScheduler;
+	private ScheduledFuture<?> receiveHandler;
 	final Runnable receiveDeamon = new Runnable() {
         public void run() {
             // http_log 轮询读取消息
@@ -77,7 +80,7 @@ public class HTTPClientService implements ISender {
 						clientService.getPacketReader().putPacket(packet);
 					}
 					// 轮询获取消息
-					receiveScheduler.schedule(receiveDeamon, scheduleDelay, TimeUnit.SECONDS);
+					receiveHandler = receiveScheduler.schedule(receiveDeamon, scheduleDelay, TimeUnit.SECONDS);
 				}});
         }
     };
@@ -274,15 +277,15 @@ public class HTTPClientService implements ISender {
 			// TODO: handle exception
 			e.printStackTrace();
 		} finally {
-			if (!sendInteface) throw new ConnectException("发送消息接口验证失败");
-			if (!receiveInteface) throw new ConnectException("接收消息接口验证失败");
-			if (!connectInteface) throw new ConnectException("连接接口验证失败");
+			if (!sendInteface) throw new ConnectException("发送消息接口验证失败, sendUrl:"+sendUrl);
+			if (!receiveInteface) throw new ConnectException("接收消息接口验证失败,receiveUrl:"+receiveUrl);
+			if (!connectInteface) throw new ConnectException("连接接口验证失败,connUrl:"+connectUrl);
 			
 			
 		} 
 		// http_log 连接成功，开启定时获取消息，获取成功之后继续定时获取，失败则开启重连线程
 		System.out.printf("开启轮询\n");
-		receiveScheduler.schedule(receiveDeamon, scheduleDelay, TimeUnit.SECONDS);
+		receiveHandler = receiveScheduler.schedule(receiveDeamon, scheduleDelay, TimeUnit.SECONDS);
 	}
 
 	private void putData(ByteBuffer buffer, byte[] data) {
@@ -302,6 +305,9 @@ public class HTTPClientService implements ISender {
 		params.put("password", clientService.getConfiguration().getPassword());
 		params.put("resource", clientService.getConfiguration().getTopic());
 		params.put("type", "disconnect");
+		if (receiveHandler != null) {
+			receiveHandler.cancel(true);
+		}
 		http.post(connectUrl, params, new StringResponseHandler() {
 			@Override
 			public void onSubmit(URL url, ParamsWrapper params) {
@@ -326,7 +332,7 @@ public class HTTPClientService implements ISender {
 				// TODO Auto-generated method stub
 				System.out.println("response: " + content);
 				// 关闭轮询
-				receiveScheduler.shutdown();
+				//receiveScheduler.shutdown();
 			}
 		});
 	}

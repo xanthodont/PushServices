@@ -15,7 +15,11 @@ import cloudservices.utils.StringUtil;
 
 public class FilePacket extends Packet{
 	/** 接收文件的存储路径 */
-	private String filePath = "D://tmp//";
+	public static String filePath = "/";
+	public static void setFilePath(String path) {
+		filePath = path;
+	}
+	
 	private Map<String, File> files = new HashMap<String, File>();
 	
 	public FilePacket() {
@@ -94,11 +98,6 @@ public class FilePacket extends Packet{
 		if (!StringUtil.isEmpty(filePath))
 			FileUtil.mkdirs(filePath);
 		return filePath;
-	}
-
-
-	public void setFilePath(String filePath) {
-		this.filePath = filePath;
 	}
 
 

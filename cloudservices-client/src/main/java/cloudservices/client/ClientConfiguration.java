@@ -1,5 +1,7 @@
 package cloudservices.client;
 
+import cloudservices.client.packets.FilePacket;
+
 public class ClientConfiguration {
 	/** 基于HTTP协议的短连接轮询方式 */
 	public static final int SHORT_HTTP = 1;
@@ -58,8 +60,6 @@ public class ClientConfiguration {
 	
 	/** Http轮询周期 */
 	private int httpCircle = 30;
-	/** 文件接收保存文件夹 */
-	private int dirPath;
 	
 	/** 用户名 */
 	private String username;
@@ -79,7 +79,17 @@ public class ClientConfiguration {
 	private boolean debugMode;
 	
 	private int numberOfSchedulerThread = 1;
+	/** 文件接收保存文件夹 */
+	private String filePath = "\\";
 	
+	
+	public String getFilePath() {
+		return filePath;
+	}
+	public void setFilePath(String filePath) {
+		this.filePath = filePath;
+		FilePacket.setFilePath(filePath);
+	}
 	public ClientConfiguration() {}
 	public ClientConfiguration(String host, int port) {
 		this.host = host;

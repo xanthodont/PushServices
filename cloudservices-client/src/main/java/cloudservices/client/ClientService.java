@@ -191,7 +191,11 @@ public class ClientService {
 		
 		getActualClient().disconnect();
 		online = false;
+		if (reconnHandler != null) {
+			reconnHandler.cancel(false);
+		}
 		listenerConnectionClosed();
+		
 	}
 	
 	public void connect() {

@@ -59,7 +59,7 @@ public class App {
 		config.setConnectUrl(getConnectUrl(ip, 8080));
 		config.setConnectType(Integer.parseInt(args[0]));
 		config.setHttpCircle(circle);
-		
+		config.setFilePath("D:\\tp\\");
 		//System.in.read();System.in.read();
 		ClientService client = ClientService.getInstance();
 		try {
