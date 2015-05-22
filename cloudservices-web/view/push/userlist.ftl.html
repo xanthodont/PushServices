@@ -6,6 +6,7 @@
 <@layout.content>
 <div style="">
 在线人数: <a id="total-online">0</a> <a style="color:red;" id="total-online-error"></a>
+<a href="push/message/list">消息列表</a>
 </div> 
 
 <table id="dg"></table>
@@ -24,7 +25,11 @@
         <textarea id="text_content" rows="10" cols="60"></textarea>
     </div>
     <div title="文件消息" data-options="closable:false" style="overflow:auto;padding:20px;">
-        <input class="easyui-filebox" data-options="buttonText: '选择文件'" style="width:300px">
+	    <form id="fileform" method="post" action="push/user/sendfile" enctype="multipart/form-data">
+	    	<input type="hidden" name="topic" id="f_topic"/>
+	    	<input type="hidden" name="isAck" id="f_isAck"/>
+        	<input type="file" class="" data-options="buttonText: '选择文件'" style="width:300px" name="file" id="file">
+    	</form>
     </div>
     <div title="Http代理消息" data-options="closable:false" style="">
     	<div>
@@ -37,33 +42,9 @@
 </@layout.content>
 
 <@layout.footer>
+<script type="text/javascript" src="assets/js/jquery.form.js"></script>
 <script>
 
-$('#dg').datagrid({
-    url:'push/user/list',
-    columns:[[
-        {field:'username',title:'用户名', width:100},
-        {field:'registerTime',title:'注册时间', width:100, formatter: Utils.dateTimeFormatter},
-        {field:'updateTime',title:'更新时间', width:100, formatter: Utils.dateTimeFormatter},
-        {field:'resource',title:'资源', width:100},
-        {field:'status',title:'在线状态', width:100, formatter: function(val, row) {
-        	if (val == '1') {
-        		return '<a style="color:darkgreen;">在线</a>';
-        	} else if (val == '2') {
-        		return '<a style="color:blue;">在线</a>';
-        	} else {
-        		return '<a style="color:red;">离线</a>';
-        	}
-        }},
-        {field:'op',title:'操作', width:100, formatter: function(val, row) {
-        	return '<a href="javascript:;" id="'+row.resource + '/' + row.username+'" onclick="open_dialog(this)">发送消息</a>'
-        }}, 
-    ]],
-    pagination: true,
-    pageSize: 30,
-    pageList: [30, 50, 100, 200, 500],
-    rownumbers: true
-});
 function getTotalOnline() {
 	$.ajax({
 		url: 'push/user/online',
@@ -79,67 +60,127 @@ function getTotalOnline() {
 		}
 	});
 }
-getTotalOnline();
-setInterval(getTotalOnline, 3000);
 
 
-$('#dialog').dialog({
-    title: '发送消息', 
-    closed: true,
-    cache: false, 
-    modal: true,
-    buttons: [{
-		text:'发送',
-		handler:function(){
-			//$.messager.
-			var tab = $('#tt').tabs('getSelected');
-			var tIndex = $('#tt').tabs('getTabIndex', tab);
-			var tp = $('#to_topic').val();
-			var ack = $('input:checked[name="isAck"]').val();
-			
-			switch (tIndex) {
-			case 0:
-				$.ajax({
-					url: 'push/user/send',
-					type: 'post',
-					data: {topic: tp, isAck: ack, text: $('#text_content').val()},
-					dataType: 'json',
-					success: function(r) {
-						if (r.code == '1') {  // success
-							$.messager.alert('提示', r.msg);
-						} else {
-							$.messager.alert('提示', r.msg);
-						}
-					}
-				});
-				break;
-			case 1:
-				break;
-			case 2:
-				$.ajax({
-					url: 'push/user/sendhttp',
-					type: 'post',
-					data: {topic: tp, isAck: ack, url: $('#url_content').val()},
-					dataType: 'json',
-					success: function(r) {
-						if (r.code == '1') {  // success
-							$.messager.alert('提示', r.msg);
-						} else {
-							$.messager.alert('提示', r.msg);
-						}
-					}
-				});
-				break;
+$(document).ready(function(){
+	var uploadOptions = {
+		beforeSubmit: function(formData, jqForm, options) {
+			if (!$('#file').val()) {
+				$.messager.alert('提示', '请先选择文件');
+				return false;
 			}
+				
+			return true;
+		},
+		success: function(json, statusText) {
 			
-		}
-	},{
-		text:'关闭', 
-		handler:function(){
-			$('#dialog').dialog('close');
-		}
-	}]
+			var r = $.parseJSON(json);
+			if (r.code == '1') {  // success
+				$.messager.alert('提示', r.msg);
+			} else {
+				$.messager.alert('提示', r.msg);
+			}
+		},
+		dataType: 'text'
+	};
+	$('#fileform').ajaxForm(uploadOptions);
+	
+	$('#dg').datagrid({
+	    url:'push/user/list',
+	    columns:[[
+	        {field:'username',title:'用户名', width:100},
+	        {field:'registerTime',title:'注册时间', width:100, formatter: Utils.dateTimeFormatter},
+	        {field:'updateTime',title:'更新时间', width:100, formatter: Utils.dateTimeFormatter},
+	        {field:'resource',title:'资源', width:100},
+	        {field:'status',title:'在线状态', width:100, formatter: function(val, row) {
+	        	if (val == '1') {
+	        		return '<a style="color:darkgreen;">在线</a>';
+	        	} else if (val == '2') {
+	        		return '<a style="color:blue;">在线</a>';
+	        	} else {
+	        		return '<a style="color:red;">离线</a>';
+	        	}
+	        }},
+	        {field:'op',title:'操作', width:100, formatter: function(val, row) {
+	        	return '<a href="javascript:;" id="'+row.resource + '/' + row.username+'" onclick="open_dialog(this)">发送消息</a>'
+	        }}, 
+	    ]],
+	    pagination: true,
+	    pageSize: 30,
+	    pageList: [30, 50, 100, 200, 500],
+	    rownumbers: true
+	});
+	
+	$('#dialog').dialog({
+	    title: '发送消息', 
+	    closed: true,
+	    cache: false, 
+	    modal: true,
+	    buttons: [{
+			text:'发送',
+			handler:function(){
+				//$.messager.
+				var tab = $('#tt').tabs('getSelected');
+				var tIndex = $('#tt').tabs('getTabIndex', tab);
+				var tp = $('#to_topic').val();
+				var ack = $('input:checked[name="isAck"]').val();
+				
+				
+				if (tp == null || tp == '') {
+					$.messager.alert('提示', '主题不能为空');
+					return;
+				}
+				
+				switch (tIndex) {
+				case 0:
+					$.ajax({
+						url: 'push/user/send',
+						type: 'post',
+						data: {topic: tp, isAck: ack, text: $('#text_content').val()},
+						dataType: 'json',
+						success: function(r) {
+							if (r.code == '1') {  // success
+								$.messager.alert('提示', r.msg);
+							} else {
+								$.messager.alert('提示', r.msg);
+							}
+						}
+					});
+					break;
+				case 1:
+					$('#f_topic').val($('#to_topic').val());
+					$('#f_isAck').val($('input:checked[name="isAck"]').val() ? 'true':'false'); 
+					$('#fileform').submit();
+					break;
+				case 2:
+					$.ajax({
+						url: 'push/user/sendhttp',
+						type: 'post',
+						data: {topic: tp, isAck: ack, url: $('#url_content').val()},
+						dataType: 'json',
+						success: function(r) {
+							if (r.code == '1') {  // success
+								$.messager.alert('提示', r.msg);
+							} else {
+								$.messager.alert('提示', r.msg);
+							}
+						}
+					});
+					break;
+				}
+				
+			}
+		},{
+			text:'关闭', 
+			handler:function(){
+				$('#dialog').dialog('close');
+			}
+		}]
+	});
+	getTotalOnline();
+	setInterval(getTotalOnline, 3000);
 });
+
 function open_dialog(obj) {
 	$('#to_topic').val($(obj).attr('id'));
 	$('#dialog').dialog('open');

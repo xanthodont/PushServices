@@ -87,7 +87,11 @@ public abstract class DBWriter<T> {
 						//logger.debug("count:" + count + " ps:");
 						if (ps != null) {
 							logger.debug("execute Batch count:"+count);
-							ps.executeBatch();
+							try {
+								ps.executeBatch();
+							} catch (Exception e) {
+								logger.error("execute Batch Exception");
+							} 
 						}
 						count = 0;
 						colsePreparedStatement(ps);

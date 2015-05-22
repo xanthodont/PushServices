@@ -41,19 +41,20 @@ public class MessageInfo extends Packet {
 			short length = buffer.getShort();
 			if (length > 0) {
 				byte[] data = new byte[length];
+				buffer.get(data);
 				url = new String(data);
 			}
 			description = String.format("url：%s", url);
 			break;
 		case Packet.ACK: 
 			int ackId = buffer.getInt();
-			String text = "";
+			/*
 			if (buffer.remaining() > 0) {
 				byte[] tx = new byte[buffer.remaining()];
 				buffer.get(tx);
 				text = new String(tx);
-			}
-			description = String.format("ackId：%d, text：%s", ackId, text);
+			}*/
+			description = String.format("ackId：%d, length：%d", ackId, buffer.remaining());
 			break;
 		case Packet.SUB:
 			break;

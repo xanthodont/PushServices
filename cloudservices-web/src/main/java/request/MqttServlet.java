@@ -126,7 +126,7 @@ public class MqttServlet extends HttpServlet {
 				ClientConfiguration config = ConfigConstants.getInitConfig();
 				config.setUsername("admin");
 				config.setConnectType(ClientConfiguration.LONG_MQTT);
-				config.setBufferSize(2000); // 
+				config.setBufferSize(1024*1024); // 
 				config.setReconnectDelay(5);
 				config.setReconnectAttemptsMax(1000); // 服务器端口重连次数要多
 				

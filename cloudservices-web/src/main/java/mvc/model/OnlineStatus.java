@@ -2,6 +2,7 @@ package mvc.model;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
+import utils.StringUtil;
 
 public class OnlineStatus {
 	public static final String STATUS_PREFIX = "online-";
@@ -14,6 +15,24 @@ public class OnlineStatus {
 	
 	public static String getOnlineKey(String username) {
 		return STATUS_PREFIX + username;
+	}
+	
+	public static boolean getStautus(JedisPool jedisPool, String username) {
+		Jedis jedis = null;
+		int status = 0;
+		try {
+			jedis = jedisPool.getResource();
+			String v = jedis.get("online-"+username);
+			if (!StringUtil.isEmpty(v)) {
+				OnlineFormat of = OnlineFormat.parseValue(v);
+				status = Integer.parseInt(of.getStatus());
+			}
+		} catch (Exception e) {
+			
+		} finally {
+			jedisPool.returnResourceObject(jedis);
+		}
+		return status > 0;
 	}
 	
 	/**
