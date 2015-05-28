@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50530
 File Encoding         : 65001
 
-Date: 2015-05-14 13:54:29
+Date: 2015-05-28 11:24:09
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -34,7 +34,7 @@ CREATE TABLE `push_message` (
   `createTime` bigint(20) DEFAULT NULL,
   `updateTime` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=172 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=404 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for push_user
@@ -48,7 +48,7 @@ CREATE TABLE `push_user` (
   `updateTime` bigint(20) NOT NULL,
   `resource` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=36022 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=36023 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Procedure structure for pro_update_pushmessage
