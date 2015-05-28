@@ -164,11 +164,13 @@ public class ClientService {
 			break;
 		case 2: // 长连接
 			mqttClient.config(config);
+			actualClient = true;
 			break;
 		case 3: // both
 		default:
 			mqttClient.config(config);
 			httpClient.config(config);
+			actualClient = true;
 			break;
 		}
 		
